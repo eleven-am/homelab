@@ -134,42 +134,6 @@ resource "local_file" "control_plane_patch" {
 	}
 	cluster = {
 	  allowSchedulingOnControlPlanes = true
-	  externalCloudProvider = {
-		enabled = true
-		manifests = [
-		  "https://raw.githubusercontent.com/metallb/metallb/v0.14.5/config/manifests/metallb-native.yaml",
-		]
-	  }
-	  inlineManifests = [
-		{
-		  name = "metallb-ip-address-pool"
-		  contents = yamlencode({
-			apiVersion = "metallb.io/v1beta1"
-			kind = "IPAddressPool"
-			metadata: {
-			  name = "${var.cluster_prefix}-ip-pool"
-			  namespace: "metallb-system"
-			},
-			spec = {
-			  addresses = [cidrsubnet(var.subnet, 8, var.ip_offset + var.master_count + var.worker_count)]
-			}
-		  })
-		},
-		{
-		  name = "metallb-layer2-config"
-		  contents = yamlencode({
-			apiVersion = "config.metallb.io/v1"
-			kind = "L2Advertisement"
-			metadata = {
-			  name = "${var.cluster_prefix}-layer2-config"
-			  namespace = "metallb-system"
-			}
-			spec = {
-			  ipAddressPools = ["${var.cluster_prefix}-ip-pool"]
-			}
-		  })
-		}
-	  ]
 	}
   })
 
