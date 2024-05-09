@@ -25,7 +25,7 @@ spec:
   interval: 1m0s
   chart:
     spec:
-      chart: csi-nfs
+      chart: csi-driver-nfs
       sourceRef:
         kind: HelmRepository
         name: nfs-csi
