@@ -7,3 +7,4 @@ test.tf
 terraform.tfstate
 terraform.tfstate.backup
 clusters/talos-cluster/secrets
+modules/talos-cluster/packer/values.pkr.json

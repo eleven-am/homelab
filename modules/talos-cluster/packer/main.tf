@@ -25,6 +25,8 @@ resource "local_file" "values_pkr_json" {
 }
 
 resource "null_resource" "packer_build" {
+  depends_on = [local_file.values_pkr_json]
+
   triggers = {
 	talos_iso_url = local.talos_iso_url
 	iso_url       = var.iso_url
@@ -44,7 +46,6 @@ resource "null_resource" "cleanup" {
   }
 
   provisioner "local-exec" {
-	when    = destroy
 	command = "rm -rf ${path.module}/values.pkr.json"
   }
 }
