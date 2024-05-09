@@ -40,4 +40,7 @@ module "talos_cluster" {
   schematic_id            = var.schematic_id
   master_disk_size        = var.master_disk_size
   worker_disk_size        = var.worker_disk_size
+  github_repo             = var.github_repo
+  github_token            = var.github_token
+  github_username         = var.github_username
 }

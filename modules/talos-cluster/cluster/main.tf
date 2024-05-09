@@ -287,6 +287,6 @@ resource "null_resource" "health_check" {
   count      = length(module.kubernetes-masters) > 0 ? 1 : 0
 
   provisioner "local-exec" {
-	command = "${path.root}/scripts/health_check_and_configure.sh -p ${module.kubernetes-masters[0].node_ip} -t ${var.talos_directory}"
+	command = "${path.root}/scripts/health_check_and_configure.sh -p ${module.kubernetes-masters[0].node_ip} -t ${var.talos_directory} -c ${local.cluster_name} -u ${var.github_username} -r ${var.github_repo} -k ${var.github_token}"
   }
 }

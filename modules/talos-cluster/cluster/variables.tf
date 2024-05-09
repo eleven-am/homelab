@@ -103,3 +103,18 @@ variable "worker_disk_size" {
   description = "Disk size for worker nodes"
   type 	  	  = number
 }
+
+variable "github_username" {
+  description = "Github username to use for the installation of flux"
+  type        = string
+}
+
+variable "github_token" {
+  description = "Github token to use for the installation of flux"
+  type        = string
+}
+
+variable "github_repo" {
+  description = "Github repo to use for the installation of flux"
+  type        = string
+}
