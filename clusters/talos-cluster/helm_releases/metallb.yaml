@@ -46,7 +46,7 @@ spec:
 ---
 # Define a Layer 2 configuration for Metal LB
 apiVersion: metallb.io/v1beta1
-ind: L2Advertisement
+kind: L2Advertisement
 metadata:
   name: talos-cluster-l2
   namespace: metallb-system
