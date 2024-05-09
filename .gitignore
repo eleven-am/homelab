@@ -6,3 +6,4 @@ test.tf
 .terraform.lock.hcl
 terraform.tfstate
 terraform.tfstate.backup
+clusters/talos-cluster/secrets
