@@ -29,3 +29,7 @@ spec:
     controller:
       runOnControlPlane: true
       replicas: 3
+      tolerations:
+        - key: node.cloudprovider.kubernetes.io/uninitialized
+          effect: NoSchedule
+          operator: Exists
