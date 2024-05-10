@@ -33,3 +33,23 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: metallb
+---
+# Create a IP Address Pool resource for the Metal LB Helm chart
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: talos-cluster-ip-pool
+  namespace: metallb-system
+spec:
+  addresses:
+    - 192.168.101.8/32
+---
+# Create a L2 Configuration resource for the Metal LB Helm chart
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: layer2
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+    - talos-cluster-ip-pool

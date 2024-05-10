@@ -32,6 +32,9 @@ initialize_fluxcd() {
   local cluster_name=$4
 
   echo "[INFO] Initializing the fluxcd"
+
+  export GITHUB_TOKEN="${github_token}"
+
   flux bootstrap github \
     --owner="${github_username}" \
     --repository="${github_repo}" \
@@ -39,7 +42,6 @@ initialize_fluxcd() {
     --path=clusters/"${cluster_name}" \
     --personal \
     --token-auth \
-    --token="${github_token}"
 
   echo "[INFO] Successfully initialized the fluxcd"
 }
