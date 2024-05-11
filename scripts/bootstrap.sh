@@ -1,5 +1,21 @@
 #!/bin/bash
 
+#This function assumes that the first argument is the talos directory and the second argument is an IP address
+# It bootstraps the talos cluster
+bootstrap_talos() {
+  local talos_dir=$1
+  local primary_controller=$2
+
+  sleep 45
+
+  echo "[INFO] Bootstrapping the talos cluster"
+  talosctl bootstrap --nodes "${primary_controller}" -e "${primary_controller}" --talosconfig="${talos_dir}"/talosconfig
+
+  sleep 45
+
+  echo "[INFO] Successfully bootstrapped the talos cluster"
+}
+
 # This function assumes that the first argument is an IP address and the second argument is the talos directory
 # It checks the health of the cluster
 check_health() {
@@ -77,6 +93,7 @@ main() {
   local github_token=$5
   local cluster_name=$6
 
+  bootstrap_talos "${talos_dir}" "${primary_controller}"
   update_kubeconfig "${primary_controller}" "${talos_dir}"
   check_health "${primary_controller}" "${talos_dir}"
   initialize_fluxcd "${github_username}" "${github_repo}" "${github_token}" "${cluster_name}"

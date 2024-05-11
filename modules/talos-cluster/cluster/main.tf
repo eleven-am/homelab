@@ -196,33 +196,12 @@ resource "null_resource" "apply_worker_config" {
   }
 }
 
-# Bootstrap the cluster
-resource "null_resource" "bootstrap" {
+# Health check the cluster
+resource "null_resource" "health_check" {
   depends_on = [null_resource.apply_machine_config, null_resource.apply_worker_config]
   count      = length(module.kubernetes-masters) > 0 ? 1 : 0
 
-  # sleep for 45 seconds to allow the machine configuration to complete
   provisioner "local-exec" {
-	command = "sleep 45"
-  }
-
-  # bootstrap the cluster
-  provisioner "local-exec" {
-	command = "talosctl bootstrap --nodes ${module.kubernetes-masters[0].node_ip} -e ${module.kubernetes-masters[0].node_ip} --talosconfig=${var.talos_directory}/talosconfig"
-  }
-
-  # wait another 45 seconds for the bootstrap to complete
-  provisioner "local-exec" {
-	command = "sleep 45"
-  }
-}
-
-# Health check the cluster
-resource "null_resource" "health_check" {
-  depends_on = [null_resource.bootstrap]
-  count      = length(module.kubernetes-masters) > 0 ? 1 : 0
-
-  provisioner "local-exec" {
-	command = "${path.root}/scripts/health_check_and_configure.sh -p ${module.kubernetes-masters[0].node_ip} -t ${var.talos_directory} -c ${local.cluster_name} -u ${var.github_username} -r ${var.github_repo} -k ${var.github_token}"
+	command = "${path.root}/scripts/bootstrap.sh -p ${module.kubernetes-masters[0].node_ip} -t ${var.talos_directory} -c ${local.cluster_name} -u ${var.github_username} -r ${var.github_repo} -k ${var.github_token}"
   }
 }

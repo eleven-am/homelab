@@ -20,6 +20,9 @@ create_cilium() {
       --set=k8sServicePort=7445)
 
    echo "[INFO] cilium.yaml file created successfully"
+
+  # Add 4 tabs to every line in the cilium_yaml
+  cilium_yaml=$(echo "$cilium_yaml" | sed 's/^/       /g')
 }
 
 # This function generates a machine config patch file
@@ -54,7 +57,7 @@ cluster:
   inlineManifests:
     - name: cilium
       contents: |
-            $cilium_yaml
+$cilium_yaml
 EOF
 
     echo "[INFO] machine-config-patch.yaml file created successfully"
@@ -73,6 +76,11 @@ generate_talos_config() {
 
     # Run the generate_machine_config_patch function
     generate_machine_config_patch "$machine_os_image"
+
+    echo "[INFO] Preparing to generate talos configuration file..."
+
+    # Delete anc recreate the talos directory
+    rm -rf "$talos_dir" && mkdir -p "$talos_dir"
 
     echo "[INFO] Generating talos configuration file..."
 
@@ -135,7 +143,3 @@ build_args() {
 }
 
 build_args "$@"
-
-
-# example usage
-# ./create_cilium.sh -t /path/to/talos -c cluster-name -p primary-endpoint -m machine-os-image
