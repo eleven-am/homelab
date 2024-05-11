@@ -43,7 +43,7 @@ provisioner: nfs.csi.k8s.io
 reclaimPolicy: Delete
 volumeBindingMode: Immediate
 parameters:
-  server: "192.168.101.217"
+  server: "192.168.101.100"
   share: "/mnt/snow"
 ---
 # Create a Retain StorageClass resource for the NFS CSI driver
@@ -55,5 +55,5 @@ provisioner: nfs.csi.k8s.io
 reclaimPolicy: Retain
 volumeBindingMode: Immediate
 parameters:
-  server: "192.168.101.217"
+  server: "192.168.101.100"
   share: "/mnt/snow"
