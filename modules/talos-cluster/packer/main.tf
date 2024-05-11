@@ -1,5 +1,5 @@
 locals {
-  vm_id 		= "8000"
+  vm_id 		= 8500
   template_name = "talos-${var.talos_version}"
   talos_iso_url = "https://factory.talos.dev/image/${var.schematic_id}/${var.talos_version}/nocloud-amd64.raw.xz"
 }

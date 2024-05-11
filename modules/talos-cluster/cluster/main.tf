@@ -79,19 +79,9 @@ resource "null_resource" "machine_config" {
 	kubernetes_worker_ips = join(",", module.kubernetes-workers.*.node_ip)
   }
 
-  # remove and recreate the talos directory
-  provisioner "local-exec" {
-	command = "rm -rf ${var.talos_directory} && mkdir -p ${var.talos_directory}"
-  }
-
   # generate the talos configuration
   provisioner "local-exec" {
-	command = "talosctl gen config ${local.cluster_name} ${local.primary_endpoint} --output-dir ${var.talos_directory}"
-  }
-
-  # sleep for a few seconds to allow the talosctl command to complete
-  provisioner "local-exec" {
-	command = "sleep 20"
+	command = "${path.root}/scripts/create_cilium.sh -t ${var.talos_directory} -c ${local.cluster_name} -p ${local.primary_endpoint} -m ${local.installer}"
   }
 }
 
@@ -103,7 +93,6 @@ resource "local_file" "control_plane_patch" {
   content =	yamlencode({
 	machine = {
 	  network = {
-		nameservers = ["1.1.1.1", "8.8.8.8"]
 		hostname = local.master_node_names[count.index]
 		interfaces = [
 		  {
@@ -118,18 +107,11 @@ resource "local_file" "control_plane_patch" {
 		]
 	  }
 	  features = {
-		kubePrism = {
-		  enabled = true
-		  port	= 7445
-		}
 		kubernetesTalosAPIAccess = {
 		  enabled = true
 		  allowedRoles = ["os:reader"]
 		  allowedKubernetesNamespaces = ["kube-system"]
 		}
-	  }
-	  install = {
-		image = local.installer
 	  }
 	}
 	cluster = {
@@ -148,7 +130,6 @@ resource "local_file" "worker_patch" {
   content =	yamlencode({
 	machine = {
 	  network = {
-		nameservers = ["1.1.1.1", "8.8.8.8"]
 		hostname = local.worker_node_names[count.index]
 		interfaces = [
 		  {
@@ -158,15 +139,6 @@ resource "local_file" "worker_patch" {
 			}
 		  }
 		]
-	  }
-	  features = {
-		kubePrism = {
-		  enabled = true
-		  port    = 7445
-		}
-	  }
-	  install = {
-		image = local.installer
 	  }
 	}
   })
