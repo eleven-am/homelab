@@ -4,6 +4,7 @@ metadata:
   name: Plex
   labels:
     app: Plex
+  namespace: plex
 spec:
   replicas: 1
   selector:
