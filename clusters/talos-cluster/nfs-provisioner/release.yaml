@@ -1,0 +1,26 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: nfs-provisioner
+  namespace: nfs-provisioner
+spec:
+  chart:
+    spec:
+      chart: nfs-subdir-external-provisioner
+      version: 4.X.X
+      sourceRef:
+        kind: HelmRepository
+        name: nfs-provisioner
+        namespace: flux-system
+  interval: 15m
+  timeout: 5m
+  releaseName: nfs-provisioner
+  values:
+    replicaCount: 3
+    storageClass:
+      name: snow-storage
+      defaultClass: true
+    nfs:
+      server: 192.168.101.100
+      path: /mnt/snow
+

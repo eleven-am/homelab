@@ -1,9 +1,0 @@
-# Create a HelmRepository resource for the NFS CSI Helm chart
-apiVersion: source.toolkit.fluxcd.io/v1beta2
-kind: HelmRepository
-metadata:
-  name: nfs-csi
-  namespace: kube-system
-spec:
-  interval: 10m
-  url: https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/charts
