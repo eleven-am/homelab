@@ -9,7 +9,12 @@ spec:
   selector:
     app: plex-server
   ports:
-    - name: plex
-      port: 32400
+    - port: 32400
       targetPort: 32400
+      name: pms-web
+      protocol: TCP
+    - port: 32469
+      targetPort: 32469
+      name: dlna-tcp
+      protocol: TCP
 
