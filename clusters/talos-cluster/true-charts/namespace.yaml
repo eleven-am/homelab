@@ -1,7 +1,0 @@
-# Create a namespace for the TrueCharts Helm chart
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: true-charts
-  labels:
-    name: true-charts
