@@ -9,7 +9,7 @@ spec:
   selector:
     app: plex-server
   ports:
-    - protocol: TCP
+    - name: plex
       port: 32400
       targetPort: 32400
 
