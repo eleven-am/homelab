@@ -46,5 +46,5 @@ spec:
       targetPort: 32414
       name: gdm-32414
       protocol: UDP
-  type: NodePort
+  type: LoadBalancer
 
