@@ -11,5 +11,5 @@ spec:
       chart: true-charts
       sourceRef:
         kind: HelmRepository
-        name: plex
+        name: true-charts
       version: 18.0.7
