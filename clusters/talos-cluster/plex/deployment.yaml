@@ -41,7 +41,7 @@ spec:
             - mountPath: /config
               name: plex-config
             - mountPath: /tv
-              name: lex-tv
+              name: plex-tv
             - mountPath: /movies
               name: plex-movies
       restartPolicy: Always
