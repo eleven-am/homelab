@@ -1,0 +1,7 @@
+# Create a namespace for the Tailscale Helm chart
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tailscale
+  labels:
+    name: tailscale

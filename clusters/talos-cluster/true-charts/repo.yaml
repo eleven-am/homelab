@@ -1,0 +1,9 @@
+# Create a HelmRepository resource for the TrueCharts Tailscale Helm chart
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: true-charts
+  namespace: true-charts
+spec:
+  interval: 1m0s
+  url: oci://tccr.io/truecharts/
