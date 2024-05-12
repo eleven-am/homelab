@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: Plex
+  name: plex-server
   labels:
-    app: Plex
+    app: plex-server
   namespace: plex
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: Plex
+      app: plex-server
   template:
     metadata:
-      name: Plex
+      name: plex-server
       labels:
-        app: Plex
+        app: plex-server
     spec:
       containers:
-        - name: Plex
+        - name: plex-server
           image: lscr.io/linuxserver/plex:12.02.24
           imagePullPolicy: IfNotPresent
           ports:
