@@ -5,6 +5,5 @@ metadata:
   name: true-charts
   namespace: true-charts
 spec:
-  type: oci
   interval: 1m0s
-  url: oci://tccr.io/truecharts/
+  url: https://charts.truecharts.org
