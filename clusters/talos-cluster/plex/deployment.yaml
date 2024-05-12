@@ -60,7 +60,7 @@ spec:
       volumes:
         - name: plex-config
           persistentVolumeClaim:
-              claimName: plex-claim
+            claimName: plex-claim
         - name: plex-tv
           persistentVolumeClaim:
             claimName: plex-claim
