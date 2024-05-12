@@ -44,8 +44,26 @@ spec:
               value: "1000"
             - name: VERSION
               value: "latest"
+            - name: PLEX_CLAIM
+              valueFrom:
+                secretKeyRef:
+                  name: plex-secret
+                  key: secret
+          volumeMounts:
+            - mountPath: /config
+              name: plex-config
+            - mountPath: /tv
+              name: plex-tv
+            - mountPath: /movies
+              name: plex-movies
       restartPolicy: Always
       volumes:
-        - name: plex
+        - name: plex-config
           persistentVolumeClaim:
-            claimName: plex
+              claimName: plex-claim
+        - name: plex-tv
+          persistentVolumeClaim:
+            claimName: plex-claim
+        - name: plex-movies
+          persistentVolumeClaim:
+            claimName: plex-claim
