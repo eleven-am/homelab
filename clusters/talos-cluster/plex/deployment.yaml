@@ -38,10 +38,14 @@ spec:
                   name: plex-secret
                   key: secret
           volumeMounts:
+            - mountPath: /config
+              name: plex-volume
             - mountPath: /movies
-              name: plex-movies
+              name: plex-volume
+            - mountPath: /tv
+              name: plex-volume
       restartPolicy: Always
       volumes:
-        - name: plex-movies
+        - name: plex-volume
           persistentVolumeClaim:
             claimName: plex-claim
