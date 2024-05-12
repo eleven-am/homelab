@@ -17,4 +17,5 @@ spec:
       targetPort: 32469
       name: dlna-tcp
       protocol: TCP
+  type: NodePort
 
