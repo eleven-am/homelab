@@ -3,6 +3,8 @@ kind: Service
 metadata:
   name: plex-service
   namespace: plex
+  annotations:
+    tailscale.com/expose: "true"
 spec:
   selector:
     app: plex-server
