@@ -47,4 +47,4 @@ spec:
       name: gdm-32414
       protocol: UDP
   type: LoadBalancer
-
+  loadBalancerClass: tailscale
