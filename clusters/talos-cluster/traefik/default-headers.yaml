@@ -14,3 +14,6 @@ spec:
     customFrameOptionsValue: SAMEORIGIN
     customRequestHeaders:
       X-Forwarded-Proto: https
+
+      # roy@theossaibrothers.com:$apr1$6nphbz19$f39dKtX9Htz0ypW47igk6.
+      # cm95QHRoZW9zc2FpYnJvdGhlcnMuY29tOiRhcHIxJDZucGhiejE5JGYzOWRLdFg5SHR6MHlwVzQ3aWdrNi4=
