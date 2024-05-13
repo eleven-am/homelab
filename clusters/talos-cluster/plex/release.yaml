@@ -1,0 +1,24 @@
+# Create a HelmRelease resource for the Plex Helm chart
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: plex-release
+  namespace: plex
+spec:
+  interval: 1m0s
+  chart:
+    spec:
+      chart: plex
+      sourceRef:
+        kind: HelmRepository
+        name: k8s-at-home
+        namespace: flux-system
+      version: 6.4.3
+  values:
+    image: linuxserver/plex
+    tag: 1.40.2
+    persistence:
+      config:
+        enabled: true
+        existingClaim: plex-claim
+
