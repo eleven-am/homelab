@@ -50,16 +50,6 @@ machine:
       port: 7445
   install:
     image: $machine_os_image
-cluster:
-  network:
-    cni:
-      name: none
-  proxy:
-    disabled: true
-  inlineManifests:
-    - name: cilium
-      contents: |
-$cilium_yaml
 EOF
 
     echo "[INFO] machine-config-patch.yaml file created successfully"
