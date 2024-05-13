@@ -8,7 +8,5 @@ spec:
   loadBalancerClass: tailscale
   ports:
     - port: 9000
-      targetPort: 9000
-      protocol: TCP
   selector:
     app: minio
