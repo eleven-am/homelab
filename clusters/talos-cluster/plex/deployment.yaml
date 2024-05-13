@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: plex-server
+  name: plex
   labels:
-    app: plex-server
+    app: plex
   namespace: plex
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: plex-server
+      app: plex
   template:
     metadata:
-      name: plex-server
+      name: plex
       labels:
-        app: plex-server
+        app: plex
     spec:
       containers:
         - name: plex-server
