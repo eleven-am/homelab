@@ -1,9 +1,0 @@
-# Create a HelmRepository resource for the Tailscale Helm chart
-apiVersion: source.toolkit.fluxcd.io/v1beta2
-kind: HelmRepository
-metadata:
-  name: tailscale
-  namespace: tailscale
-spec:
-  interval: 1m0s
-  url: https://pkgs.tailscale.com/helmcharts
