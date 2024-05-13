@@ -17,7 +17,7 @@ spec:
         app: plex
     spec:
       containers:
-        - name: plex-server
+        - name: plex
           image: lscr.io/linuxserver/plex:1.40.2
           imagePullPolicy: IfNotPresent
           ports:
