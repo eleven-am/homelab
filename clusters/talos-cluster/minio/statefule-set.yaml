@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: minio
+  labels:
+    app: minio
+  namespace: minio-cluster
+spec:
+  serviceName: minio
+  replicas: 3
+  selector:
+    matchLabels:
+      app: minio
+  template:
+    metadata:
+      labels:
+        app: minio
+    spec:
+      containers:
+        - name: minio
+          env:
+            - name: MINIO_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: minio-secret
+                  key: MINIO_ACCESS_KEY
+            - name: MINIO_SECRET_KEY
+              valueFrom:
+                  secretKeyRef:
+                    name: minio-secret
+                    key: MINIO_SECRET_KEY
+          image: minio/minio:latest
+          args:
+            - server
+            - http://minio-0.minio.default.svc.cluster.local/data
+            - http://minio-1.minio.default.svc.cluster.local/data
+            - http://minio-2.minio.default.svc.cluster.local/data
+          ports:
+            - containerPort: 9000
+              hostPort: 9000
+          # These volume mounts are persistent. Each pod in the Statefulset
+          # gets a volume mounted based on this field.
+          volumeMounts:
+            - name: data
+              mountPath: /data
+  # These are converted to volume claims by the controller
+  # and mounted at the paths mentioned above.
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: snow-storage
+        resources:
+          requests:
+            storage: 100Gi

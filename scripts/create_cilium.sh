@@ -20,6 +20,8 @@ create_cilium() {
       --set=cgroup.autoMount.enabled=false \
       --set=cgroup.hostRoot=/sys/fs/cgroup \
       --set=k8sServiceHost=localhost \
+      --set hubble.relay.enabled=true \
+      --set hubble.ui.enabled=true \
       --set=k8sServicePort=7445)
 
    echo "[INFO] cilium.yaml file created successfully"
