@@ -29,7 +29,7 @@ spec:
                 secretKeyRef:
                   name: minio-secret
                   key: MINIO_SECRET_KEY
-          image: minio/minio:latest
+          image: quay.io/minio/minio:latest
           imagePullPolicy: IfNotPresent
           securityContext:
             seccompProfile:
@@ -39,15 +39,17 @@ spec:
             capabilities:
               drop:
                 - ALL
+          args:
+            - minio server /data --console-address :9090
+            - http://minio-{0...2}.minio.minio.svc.cluster.local/data
+          command:
+            - /bin/bash
+            - -c
           ports:
             - containerPort: 9000
           volumeMounts:
             - name: data
               mountPath: /data
-          command:
-           - /bin/sh                                                                                                                                                                         │
-           - -c
-           - minio server http://minio-{0...2}.minio.minio.svc.cluster.local/data --address :9000 --console-address :9001
   volumeClaimTemplates:
     - metadata:
         name: data
