@@ -9,5 +9,7 @@ spec:
   ports:
     - port: 80
       targetPort: 9000
+      protocol: TCP
+      name: http
   selector:
     app: minio
