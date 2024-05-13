@@ -5,6 +5,7 @@ metadata:
   namespace: minio-cluster
 spec:
   type: LoadBalancer
+  loadBalancerClass: tailscale
   ports:
     - port: 9000
       targetPort: 9000
