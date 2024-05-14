@@ -21,9 +21,10 @@ create_cilium() {
       --set hubble.metrics.enabled="{dns,drop,tcp,flow,icmp,http}" \
       --set hubble.relay.enabled=true \
       --set hubble.ui.enabled=true \
-      --enable-bgp-control-plane=true \
       --set bgp.announce.loadbalancerIP=true \
       --set ingressController.enabled=true \
+      --set bgp.enabled=true \
+      --set bgpControlPlane.enabled=true \
       --set=k8sServicePort=7445)
 
    echo "[INFO] cilium.yaml file created successfully"

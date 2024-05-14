@@ -22,7 +22,7 @@ module "talos_cluster" {
 
   cidr                    = var.cidr
   cluster_prefix          = var.cluster_prefix
-  ip_offset               = var.ip_offset
+  master_ip_offset        = var.master_ip_offset
   master_count 			  = var.master_count
   worker_count 			  = var.worker_count
   master_cores            = var.master_cores
@@ -32,6 +32,7 @@ module "talos_cluster" {
   proxmox_node            = var.proxmox_node
   subnet                  = var.subnet
   template_name           = module.talos_image.template_name
+  worker_ip_offset        = var.worker_ip_offset
   worker_cores            = var.worker_cores
   worker_memory           = var.worker_memory
   worker_network_bridge   = var.worker_network_bridge

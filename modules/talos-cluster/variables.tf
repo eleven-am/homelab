@@ -63,11 +63,6 @@ variable cluster_prefix {
   type        = string
 }
 
-variable ip_offset {
-  description = "The offset for the IP addresses"
-  type        = number
-}
-
 variable master_count {
   description = "The number of Kubernetes master nodes"
   type        = number
@@ -91,6 +86,11 @@ variable master_memory {
 variable master_network_bridge {
   description = "The network bridge for the master nodes"
   type        = string
+}
+
+variable "master_ip_offset" {
+  description = "Offset for the IP addresses for the master nodes"
+  type 	  	  = number
 }
 
 variable master_vlan_tag {
@@ -121,6 +121,11 @@ variable worker_memory {
 variable worker_network_bridge {
   description = "The network bridge for the worker nodes"
   type        = string
+}
+
+variable "worker_ip_offset" {
+  description = "Offset for the IP addresses for the worker nodes"
+  type 	  	  = number
 }
 
 variable worker_vlan_tag {

@@ -4,8 +4,8 @@ locals {
   worker_tag 	   = "worker"
   talos_tag 	   = "talos"
   cluster_name     = "${var.cluster_prefix}-cluster"
-  cluster_ip 	   = cidrhost(var.subnet, var.ip_offset - 1)
-  primary_ip 	   = cidrhost(var.subnet, var.ip_offset)
+  cluster_ip 	   = cidrhost(var.subnet, var.master_ip_offset - 1)
+  primary_ip 	   = cidrhost(var.subnet, var.master_ip_offset)
   cluster_endpoint = "https://${local.cluster_ip}:6443"
   primary_endpoint = "https://${local.primary_ip}:6443"
   installer 	   = "factory.talos.dev/installer/${var.schematic_id}:${var.talos_version}"
@@ -17,7 +17,7 @@ module "kubernetes-masters" {
   count  = var.master_count
 
   cidr   		 = var.cidr
-  ip_offset 	 = var.ip_offset + count.index
+  ip_offset 	 = var.master_ip_offset + count.index
   node_cores     = var.master_cores
   node_memory    = var.master_memory
   node_name      = "${var.cluster_prefix}-${local.master_tag}-${count.index}"
@@ -43,7 +43,7 @@ module "kubernetes-workers" {
   count  = var.worker_count
 
   cidr   		 = var.cidr
-  ip_offset 	 = count.index + var.master_count + var.ip_offset
+  ip_offset 	 = var.worker_ip_offset + count.index
   node_cores     = var.worker_cores
   node_memory    = var.worker_memory
   node_name      = "${var.cluster_prefix}-${local.worker_tag}-${count.index}"

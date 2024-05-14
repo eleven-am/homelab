@@ -8,11 +8,6 @@ variable "cidr" {
   type 	  	  = number
 }
 
-variable "ip_offset" {
-  description = "Offset for the IP addresses"
-  type 	  	  = number
-}
-
 variable "subnet" {
   description = "Subnet for the cluster"
   type 	  	  = string
@@ -69,6 +64,11 @@ variable "master_network_bridge" {
   type 	  	  = string
 }
 
+variable "master_ip_offset" {
+  description = "Offset for the IP addresses for the master nodes"
+  type 	  	  = number
+}
+
 variable "master_vlan_tag" {
   description = "VLAN tag for the master network"
   type 	  	  = number
@@ -92,6 +92,11 @@ variable "worker_memory" {
 variable "worker_network_bridge" {
   description = "Name of the bridge for the worker network"
   type 	  	  = string
+}
+
+variable "worker_ip_offset" {
+  description = "Offset for the IP addresses for the worker nodes"
+  type 	  	  = number
 }
 
 variable "worker_vlan_tag" {
