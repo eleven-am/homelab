@@ -60,7 +60,6 @@ cluster:
       name: none
   proxy:
     disabled: true
-  allowSchedulingOnControlPlanes: true
   inlineManifests:
     - name: cilium
       contents: |
