@@ -8,7 +8,7 @@ create_cilium() {
    cilium_yaml=$(helm template \
       cilium \
       cilium/cilium \
-      --version 1.14.0 \
+      --version 1.15.4 \
       --namespace kube-system \
       --set ipam.mode=kubernetes \
       --set=kubeProxyReplacement=true \
@@ -16,12 +16,7 @@ create_cilium() {
       --set=securityContext.capabilities.cleanCiliumState="{NET_ADMIN,SYS_ADMIN,SYS_RESOURCE}" \
       --set=cgroup.autoMount.enabled=false \
       --set=cgroup.hostRoot=/sys/fs/cgroup \
-      --set prometheus.enabled=true \
       --set=k8sServiceHost=localhost \
-      --set hubble.metrics.enabled="{dns,drop,tcp,flow,icmp,http}" \
-      --set hubble.relay.enabled=true \
-      --set hubble.ui.enabled=true \
-      --set ingressController.enabled=true \
       --set l2announcements.enabled=true \
       --set k8sClientRateLimit.qps="{QPS}" \
       --set k8sClientRateLimit.burst="{BURST}" \
