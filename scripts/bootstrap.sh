@@ -62,11 +62,20 @@ initialize_fluxcd() {
   echo "[INFO] Successfully initialized the fluxcd"
 }
 
-# This function assumes that the first argument is an IP address and the second argument is the talos directory
+# This function assumes that the first argument is an IP address, the second argument is the talos directory
+# The third argument is list of master node ips in format "master-0,master-1,master-2" and
+# The fourth argument is the list of worker node ips in format "worker-0,worker-1,worker-2"
 # It updates the kubeconfig
 update_kubeconfig() {
   local primary_controller=$1
   local talos_dir=$2
+  local master_nodes=$3
+  local worker_nodes_ips=$4
+
+  # convert the worker nodes ips to a space separated string
+  worker_nodes_ips=$(echo "${worker_nodes_ips}" | tr ',' ' ')
+  # convert the master nodes ips to a space separated string
+  master_nodes=$(echo "${master_nodes}" | tr ',' ' ')
 
   echo "[INFO] Setting the TALOSCONFIG environment variable"
   export TALOSCONFIG="${talos_dir}"/talosconfig
@@ -75,15 +84,34 @@ update_kubeconfig() {
   talosctl kubeconfig --nodes "${primary_controller}" -e "${primary_controller}" --talosconfig="${talos_dir}"/talosconfig --force
 
   echo "[INFO] Setting the endpoint and node values for the talosctl command"
-  talosctl config endpoint "${primary_controller}"
-  talosctl config node "${primary_controller}"
+  talosctl config endpoint "${master_nodes}"
+  talosctl config node "${master_nodes} ${worker_nodes_ips}"
 
   echo "[INFO] Successfully retrieved the kubeconfig from the cluster"
 }
 
+# This function assumes that the first argument is a list of all the worker nodes names in format "worker-0,worker-1,worker-2"
+# It uses kubectl to properly label the worker nodes
+label_worker_nodes() {
+  local worker_nodes=$1
+
+  echo "[INFO] Labeling the worker nodes"
+
+  IFS=',' read -r -a nodes <<< "$worker_nodes"
+
+  for node in "${nodes[@]}"; do
+    kubectl label node "${node}" node-role.kubernetes.io/worker=worker
+  done
+
+  echo "[INFO] Successfully labeled the worker nodes"
+}
+
 # This function assumes that the first argument is an IP address, the second argument is the talos directory
 # the third argument is a github username, the fourth argument is a github repository name,
-# the fifth argument is the github token and the sixth argument is the cluster name
+# the fifth argument is the github token, the sixth argument is the cluster name
+# the seventh argument is a list of all the worker nodes names in format "worker-0,worker-1,worker-2"
+# the eighth argument is the list of worker node ips in format "worker-0 worker-1 worker-2" and
+# the ninth argument is the list of master node ips in format "master-0 master-1 master-2"
 # It starts the health check and kubeconfig update process
 main() {
   local primary_controller=$1
@@ -92,10 +120,14 @@ main() {
   local github_repo=$4
   local github_token=$5
   local cluster_name=$6
+  local worker_nodes=$7
+  local worker_nodes_ips=$8
+  local master_nodes_ips=$9
 
   bootstrap_talos "${talos_dir}" "${primary_controller}"
-  update_kubeconfig "${primary_controller}" "${talos_dir}"
+  update_kubeconfig "${primary_controller}" "${talos_dir}" "${master_nodes_ips}" "${worker_nodes_ips}"
   check_health "${primary_controller}" "${talos_dir}"
+  label_worker_nodes "${worker_nodes}"
   initialize_fluxcd "${github_username}" "${github_repo}" "${github_token}" "${cluster_name}"
 }
 
@@ -107,6 +139,9 @@ build_args() {
   local github_username=""
   local github_repo=""
   local github_token=""
+  local worker_nodes=""
+  local master_nodes_ips=""
+  local worker_nodes_ips=""
 
    while test $# -gt 0; do
       case "$1" in
@@ -140,13 +175,28 @@ build_args() {
               github_token=$1
               shift
               ;;
+          -w|--worker-nodes)
+              shift
+              worker_nodes=$1
+              shift
+              ;;
+          -m|--master-nodes-ips)
+              shift
+              master_nodes_ips=$1
+              shift
+              ;;
+          -i|--worker-nodes-ips)
+              shift
+              worker_nodes_ips=$1
+              shift
+              ;;
           *)
               break
               ;;
       esac
   done
 
-  main "${primary_controller}" "${talos_dir}" "${github_username}" "${github_repo}" "${github_token}" "${cluster_name}"
+  main "${primary_controller}" "${talos_dir}" "${github_username}" "${github_repo}" "${github_token}" "${cluster_name}" "${worker_nodes}" "${worker_nodes_ips}" "${master_nodes_ips}"
 }
 
 build_args "$@"
