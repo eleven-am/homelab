@@ -22,7 +22,9 @@ create_cilium() {
       --set hubble.relay.enabled=true \
       --set hubble.ui.enabled=true \
       --set ingressController.enabled=true \
-      --set bgpControlPlane.enabled=true \
+      --set l2announcements.enabled=true \
+      --set k8sClientRateLimit.qps="{QPS}" \
+      --set k8sClientRateLimit.burst="{BURST}" \
       --set=k8sServicePort=7445)
 
    echo "[INFO] cilium.yaml file created successfully"
