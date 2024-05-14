@@ -16,9 +16,14 @@ create_cilium() {
       --set=securityContext.capabilities.cleanCiliumState="{NET_ADMIN,SYS_ADMIN,SYS_RESOURCE}" \
       --set=cgroup.autoMount.enabled=false \
       --set=cgroup.hostRoot=/sys/fs/cgroup \
+      --set prometheus.enabled=true \
       --set=k8sServiceHost=localhost \
+      --set hubble.metrics.enabled="{dns,drop,tcp,flow,icmp,http}" \
       --set hubble.relay.enabled=true \
       --set hubble.ui.enabled=true \
+      --enable-bgp-control-plane=true \
+      --set bgp.announce.loadbalancerIP=true \
+      --set ingressController.enabled=true \
       --set=k8sServicePort=7445)
 
    echo "[INFO] cilium.yaml file created successfully"
