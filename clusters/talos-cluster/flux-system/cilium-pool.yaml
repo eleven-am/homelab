@@ -4,4 +4,4 @@ metadata:
   name: service-ip-pool
 spec:
   cidrs:
-    - cidr: 172.27.0.32/27
+    - cidr: 172.198.1.0/24
