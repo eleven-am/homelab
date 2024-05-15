@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: plex-server
+  name: plex-server
+  namespace: plex
+spec:
+  replicas: 1
+  revisionHistoryLimit: 0
+  selector:
+    matchLabels:
+      app: plex-server
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: plex-server
+    spec:
+      containers:
+        - name: plex-server
+          image: lscr.io/linuxserver/plex:1.40.2
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 32400
+              name: plex
+            - containerPort: 32400
+              name: plex-udp
+              protocol: UDP
+            - containerPort: 32469
+              name: plex2
+            - containerPort: 32469
+              name: plex2-udp
+              protocol: UDP
+            - containerPort: 5353
+              name: plex3-udp
+              protocol: UDP
+            - containerPort: 1900
+              name: plex4-udp
+              protocol: UDP
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: VERSION
+              value: "latest"
+            - name: TZ
+              value: "Europe/Paris"
+            - name: PLEX_CLAIM
+              valueFrom:
+                secretKeyRef:
+                  name: plex-secret
+                  key: secret
+          volumeMounts:
+            - mountPath: /config
+              name: plex-volume
+      restartPolicy: Always
+      volumes:
+        - name: plex-volume
+          persistentVolumeClaim:
+            claimName: plex-data
