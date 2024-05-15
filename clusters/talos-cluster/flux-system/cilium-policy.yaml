@@ -8,6 +8,7 @@ spec:
       node-role.kubernetes.io/worker: "worker"
   virtualRouters:
     - localASN: 64512
+      exportPodCIDR: true
       serviceSelector:
         matchExpressions:
           - {key: "io.cilium/bgp-announce", operator: In, values: ['worker']}
