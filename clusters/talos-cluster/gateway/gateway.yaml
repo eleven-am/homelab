@@ -11,7 +11,7 @@ spec:
     - protocol: HTTPS
       port: 443
       name: https-gateway
-      hostname: "*.staging.maix.ovh"
+      hostname: "*.staging.ossai.dev"
       tls:
         mode: Terminate
         certificateRefs:
