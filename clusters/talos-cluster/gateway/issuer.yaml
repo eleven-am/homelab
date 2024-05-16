@@ -1,17 +1,21 @@
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
-  name: cloudflare-issuer
+  name: cloudflare--staging-issuer
   namespace: gateway
 spec:
   acme:
-    server: https://acme-v02.api.letsencrypt.org/directory
-    email: "<--YOUR EMAIL-->"
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    email: "maixperiyon@gmail.com"
     privateKeySecretRef:
       name: cloudflare-key
     solvers:
       - dns01:
           cloudflare:
+            email: "maixperiyon@gmail.com"
             apiTokenSecretRef:
               name: cloudflare-api-token
               key: api-token
+        selector:
+          dnsNames:
+            - "maix.ovh"
