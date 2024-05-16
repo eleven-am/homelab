@@ -119,7 +119,7 @@ variable "github_token" {
   type        = string
 }
 
-variable "github_repo" {
-  description = "Github repo to use for the installation of flux"
+variable "github_repository" {
+  description = "Github repository to use for the installation of flux"
   type        = string
 }

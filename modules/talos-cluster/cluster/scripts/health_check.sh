@@ -1,20 +1,5 @@
 #!/bin/bash
 
-#This function assumes that the first argument is the talos directory and the second argument is an IP address
-# It bootstraps the talos cluster
-bootstrap_talos() {
-  local talos_dir=$1
-  local primary_controller=$2
-
-  sleep 45
-
-  echo "[INFO] Bootstrapping the talos cluster"
-  talosctl bootstrap --nodes "${primary_controller}" -e "${primary_controller}" --talosconfig="${talos_dir}"/talosconfig
-
-  sleep 45
-
-  echo "[INFO] Successfully bootstrapped the talos cluster"
-}
 
 # This function assumes that the first argument is an IP address and the second argument is the talos directory
 # It checks the health of the cluster
@@ -124,7 +109,6 @@ main() {
   local worker_nodes_ips=$8
   local master_nodes_ips=$9
 
-  bootstrap_talos "${talos_dir}" "${primary_controller}"
   update_kubeconfig "${primary_controller}" "${talos_dir}" "${master_nodes_ips}" "${worker_nodes_ips}"
   check_health "${primary_controller}" "${talos_dir}"
   label_worker_nodes "${worker_nodes}"
