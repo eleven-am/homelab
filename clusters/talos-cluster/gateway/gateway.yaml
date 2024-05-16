@@ -9,7 +9,7 @@ spec:
   gatewayClassName: cilium
   listeners:
     - protocol: HTTPS
-      port: 443
+      port: 44
       name: https-gateway
       hostname: "*.staging.maix.ovh"
       tls:
