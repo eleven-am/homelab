@@ -30,5 +30,13 @@ cluster:
   proxy:
     disabled: true
   inlineManifests:
+    - name: controller
+      contents: -|
+        apiVersion: gateway.networking.k8s.io/v1beta1
+        kind: GatewayClass
+        metadata:
+          name: cilium
+        spec:
+          controllerName: io.cilium/gateway-controller
     - name: cilium
       contents: ${CILIUM_MANIFEST}
