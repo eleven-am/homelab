@@ -304,6 +304,11 @@ data "helm_template" "cilium_template" {
   }
 
   set {
+    name  = "nodePort.enabled"
+    value = "true"
+  }
+
+  set {
       name  = "k8sServicePort"
       value = "7445"
   }
