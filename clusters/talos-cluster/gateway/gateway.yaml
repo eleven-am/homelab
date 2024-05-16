@@ -15,7 +15,7 @@ spec:
       tls:
         certificateRefs:
           - kind: Secret
-            name: cloudflare-cert
+            name: cloudflare-staging-certificate
       allowedRoutes:
         namespaces:
           from: All
