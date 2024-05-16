@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 # This function assumes that the first argument is an IP address and the second argument is the talos directory
 # It checks the health of the cluster
 check_health() {
