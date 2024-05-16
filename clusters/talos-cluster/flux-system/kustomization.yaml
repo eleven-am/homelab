@@ -11,4 +11,5 @@ resources:
 - https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/v1.0.0/config/crd/experimental/gateway.networking.k8s.io_tlsroutes.yaml
 - cilium-policy.yaml
 - cilium-pool.yaml
+- cilium-gateway-class.yaml
 
