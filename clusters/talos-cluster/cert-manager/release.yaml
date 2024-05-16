@@ -16,7 +16,7 @@ spec:
   timeout: 5m
   releaseName: cert-manager
   values:
-    installCRDs: true
+    installCRDs: false
     replicaCount: 3
     extraArgs:
       - --feature-gates=ExperimentalGatewayAPISupport=true
