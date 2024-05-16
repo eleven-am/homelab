@@ -1,7 +1,7 @@
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
-  name: cloudflare--staging-issuer
+  name: cloudflare-staging-issuer
   namespace: gateway
 spec:
   acme:
