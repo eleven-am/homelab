@@ -109,6 +109,10 @@ main() {
   local github_repository=$8
   local cluster_name=$9
 
+  # Sleep for 30 seconds to allow the cluster to come up
+  echo "[INFO] Sleeping for 30 seconds to allow the cluster to come up"
+  sleep 30
+
   check_health "${primary_controller}" "${talos_dir}"
   update_kubeconfig "${primary_controller}" "${talos_dir}" "${master_nodes_ips}" "${worker_nodes_ips}"
   label_worker_nodes "${worker_nodes_names}"
