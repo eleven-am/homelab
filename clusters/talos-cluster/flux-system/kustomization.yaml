@@ -5,6 +5,4 @@ resources:
 - gotk-sync.yaml
 - cilium-policy.yaml
 - cilium-pool.yaml
-- https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/v1.0.0/config/crd/standard/gateway.networking.k8s.io_referencegrants.yaml
-- https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/v1.0.0/config/crd/experimental/gateway.networking.k8s.io_grpcroutes.yaml
 
