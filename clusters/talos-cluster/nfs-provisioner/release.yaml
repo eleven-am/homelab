@@ -21,5 +21,3 @@ spec:
       replicas: 3
     driver:
       name: snow-storage
-    storageClass:
-      create: true
