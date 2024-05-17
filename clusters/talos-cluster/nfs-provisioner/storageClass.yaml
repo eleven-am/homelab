@@ -8,5 +8,6 @@ parameters:
   share: /mnt/snow
 reclaimPolicy: Delete
 volumeBindingMode: Immediate
+allowVolumeExpansion: true
 mountOptions:
   - nfsvers=4.1
