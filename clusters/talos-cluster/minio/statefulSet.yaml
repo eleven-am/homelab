@@ -29,7 +29,6 @@ spec:
             - http://minio-{0...2}.minio.minio.svc.cluster.local/data
           ports:
             - containerPort: 9000
-              hostPort: 9000
           volumeMounts:
             - name: data
               mountPath: /data
