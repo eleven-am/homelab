@@ -17,6 +17,7 @@ spec:
   releaseName: nfs-csi
   values:
     controller:
+      runOnControlPlane: true
       replicas: 3
     driver:
       name: snow-storage
