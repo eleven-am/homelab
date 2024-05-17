@@ -19,5 +19,3 @@ spec:
     controller:
       runOnControlPlane: true
       replicas: 3
-    driver:
-      name: snow-storage
