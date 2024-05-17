@@ -1,0 +1,61 @@
+version: '3.9'
+services:
+  npm:
+    image: jc21/nginx-proxy-manager:latest
+    ports:
+      - "80:80"
+      - "81:81"
+      - "443:443"
+    volumes:
+      - ./data/npm/data:/data
+      - ./data/npm/letsencrypt:/etc/letsencrypt
+    restart: always
+    networks:
+      - backend
+
+  pi-hole:
+    image: pihole/pihole:latest
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "7070:80"
+    dns:
+      - 127.0.0.1
+      - 1.1.1.1
+      - 8.8.8.8
+    environment:
+      - TZ=Europe/Paris
+      - WEBPASSWORD=ziqpYw-katbup-kihzo6
+    volumes:
+      - ./data/pihole/pihole:/etc/pihole/
+      - ./data/pihole/dnsmasq.d:/etc/dnsmasq.d/
+    restart: unless-stopped
+    networks:
+      - backend
+
+  headscale-admin:
+    image: goodieshq/headscale-admin:latest
+    container_name: headscale-admin
+    restart: unless-stopped
+    networks:
+      - backend
+
+  headscale:
+    container_name: headscale
+    image: headscale/headscale:0.23.0-alpha11
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data/headscale/config:/etc/headscale
+      - ./data/headscale/data:/var/lib/headscale
+    entrypoint: headscale serve
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
