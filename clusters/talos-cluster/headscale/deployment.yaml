@@ -18,10 +18,23 @@ spec:
     spec:
       containers:
         - name: headscale
-          image: simcu/headscale-ui
+          image: ghcr.io/ifargle/headscale-webui:latest
           imagePullPolicy: IfNotPresent
+          env:
+            - name: TZ
+              value: "Europe/Paris"
+            - name: HS_SERVER
+              value: https://headscale.maix.ovh
+            - name: DOMAIN_NAME
+              value: https://headscale.horus.ossai.dev
+            - name: AUTH_TYPE
+              value: Basic
+            - name: BASIC_AUTH_USER
+              value: 'eleven-am'
+            - name: BASIC_AUTH_PASS
+              value: 'headscale'
           ports:
-            - containerPort: 80
+            - containerPort: 5000
           readinessProbe:
             httpGet:
               path: /
