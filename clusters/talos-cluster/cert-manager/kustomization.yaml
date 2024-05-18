@@ -3,5 +3,6 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - repo.yaml
+  - secret.yaml
   - https://github.com/cert-manager/cert-manager/releases/download/v1.14.5/cert-manager.crds.yaml
   - release.yaml
