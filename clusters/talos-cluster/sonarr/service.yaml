@@ -8,7 +8,12 @@ spec:
     app: sonarr-deployment
   type: LoadBalancer
   ports:
-    - port: 8989
-      targetPort: 8989
-      name: sonarr-web
+    - name: shadowsocks-tcp
       protocol: TCP
+      port: 8388
+    - name: shadowsocks-udp
+      protocol: UDP
+      port: 8388
+    - name: sonarr
+      protocol: TCP
+      port: 8989
