@@ -4,7 +4,7 @@ metadata:
   name: sonarr-deployment
   namespace: sonarr
   labels:
-    app: gluetun
+    app: sonarr-deployment
 spec:
   replicas: 1
   strategy:
@@ -13,11 +13,11 @@ spec:
       maxSurge: 1
   selector:
     matchLabels:
-      app: gluetun
+      app: sonarr-deployment
   template:
     metadata:
       labels:
-        app: gluetun
+        app: sonarr-deployment
     spec:
       containers:
         - name: gluetun
