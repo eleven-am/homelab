@@ -5,7 +5,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 10m0s
-  path: ./clusters/talos-cluster/secret
+  path: ./clusters/talos-cluster/test
   prune: true
   sourceRef:
     kind: GitRepository
