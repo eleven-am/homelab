@@ -1,7 +1,7 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
-  name: cilium-staging-gateway
+  name: cilium-gateway
   namespace: gateway
   annotations:
     cert-manager.io/issuer: cloudflare-staging-issuer
@@ -11,7 +11,7 @@ spec:
     - protocol: HTTPS
       port: 443
       name: https-gateway
-      hostname: "*.staging.ossai.dev"
+      hostname: "*.horus.ossai.dev"
       tls:
         mode: Terminate
         certificateRefs:
@@ -24,7 +24,7 @@ spec:
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
-  name: cilium-gateway
+  name: cilium-reserved-gateway
   namespace: gateway
   annotations:
     cert-manager.io/issuer: cloudflare-issuer
