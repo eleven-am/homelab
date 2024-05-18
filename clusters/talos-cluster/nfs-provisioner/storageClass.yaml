@@ -38,7 +38,7 @@ provisioner: nfs.csi.k8s.io
 parameters:
   server: 192.168.101.100
   share: /mnt/snow
-  subDir: /apps
+  subDir: /apps/${pvc.metadata.namespace}
   onDelete: retain
 reclaimPolicy: Delete
 volumeBindingMode: Immediate
