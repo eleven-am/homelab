@@ -167,6 +167,7 @@ data "talos_client_configuration" "client_configuration" {
 
 data "talos_machine_configuration" "control_plane" {
   count      = length(module.kubernetes-masters)
+  depends_on = [module.kubernetes-masters]
 
   talos_version    = var.talos_version
   cluster_endpoint = local.cluster_endpoint
@@ -187,7 +188,8 @@ data "talos_machine_configuration" "control_plane" {
 }
 
 data "talos_machine_configuration" "worker" {
-  count = length(module.kubernetes-workers)
+  count      = length(module.kubernetes-workers)
+  depends_on = [module.kubernetes-workers]
 
   talos_version    = var.talos_version
   cluster_endpoint = local.cluster_endpoint
@@ -207,7 +209,7 @@ data "talos_machine_configuration" "worker" {
 
 resource "talos_machine_configuration_apply" "control_plane" {
   count      = length(module.kubernetes-masters)
-  depends_on = [talos_machine_secrets.secrets, data.talos_machine_configuration.control_plane]
+  depends_on = [talos_machine_secrets.secrets, module.kubernetes-masters, data.talos_machine_configuration.control_plane]
 
   client_configuration        = talos_machine_secrets.secrets.client_configuration
   machine_configuration_input = data.talos_machine_configuration.control_plane[count.index].machine_configuration
@@ -216,7 +218,7 @@ resource "talos_machine_configuration_apply" "control_plane" {
 
 resource "talos_machine_configuration_apply" "worker" {
   count      = length(module.kubernetes-workers)
-  depends_on = [talos_machine_secrets.secrets, data.talos_machine_configuration.worker]
+  depends_on = [talos_machine_secrets.secrets, module.kubernetes-workers, data.talos_machine_configuration.worker]
 
   client_configuration        = talos_machine_secrets.secrets.client_configuration
   machine_configuration_input = data.talos_machine_configuration.worker[count.index].machine_configuration
