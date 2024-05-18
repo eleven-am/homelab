@@ -3,8 +3,8 @@ data:
     name: ENC[AES256_GCM,data:esdPCFyYBx9Y3AhuxCzUXlzu0FY=,iv:YvwIxmswis7JeVdbqMM6ZY14rzL/Ghsx92PNrWlSrZ4=,tag:eqc9YDkSiIy1wVs4c8bm/Q==,type:str]
 kind: Secret
 metadata:
-    creationTimestamp: null
     name: db
+    namespace: plex
 sops:
     kms: []
     gcp_kms: []
