@@ -225,9 +225,22 @@ resource "talos_machine_configuration_apply" "worker" {
   node                        = module.kubernetes-workers[count.index].node_ip
 }
 
-resource "talos_machine_bootstrap" "bootstrap" {
+resource "null_resource" "sleep_45" {
   count      = length(module.kubernetes-masters) > 0 ? 1 : 0
   depends_on = [talos_machine_configuration_apply.control_plane, talos_machine_configuration_apply.worker]
+
+  triggers = {
+      always_run = timestamp()
+  }
+
+  provisioner "local-exec" {
+      command = "sleep 45"
+  }
+}
+
+resource "talos_machine_bootstrap" "bootstrap" {
+  count      = length(module.kubernetes-masters) > 0 ? 1 : 0
+  depends_on = [talos_machine_configuration_apply.control_plane, talos_machine_configuration_apply.worker, null_resource.sleep_45]
 
   client_configuration = talos_machine_secrets.secrets.client_configuration
   node = module.kubernetes-masters[0].node_ip
