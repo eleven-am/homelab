@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: radarr-deployment
+  namespace: radarr
+  labels:
+    app: radarr-deployment
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: radarr-deployment
+  template:
+    metadata:
+      name: radarr-deployment
+      labels:
+        app: radarr-deployment
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: gluetun
+          image: qmcgaw/gluetun:latest
+          imagePullPolicy: Always
+          securityContext:
+            capabilities:
+              add: [ "NET_ADMIN" ]
+          env:
+            - name: TZ
+              value: "Europe/Paris"
+            - name: VPN_SERVICE_PROVIDER
+              value: "mullvad"
+            - name: VPN_TYPE
+              value: "wireguard"
+            - name: WIREGUARD_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: radarr-secret
+                  key: WIREGUARD_PRIVATE_KEY
+            - name: WIREGUARD_ADDRESSES
+              valueFrom:
+                secretKeyRef:
+                  name: radarr-secret
+                  key: WIREGUARD_ADDRESSES
+            - name: SERVER_CITIES
+              value: "Paris"
+            - name: FIREWALL_DEBUG
+              value: "on"
+            - name: FIREWALL_INPUT_PORTS
+              value: "8388,7878"
+          volumeMounts:
+            - name: gluetun-config
+              mountPath: /gluetun
+          ports:
+            - containerPort: 8388
+              name: shadowsocks-tcp
+              protocol: TCP
+            - containerPort: 8388
+              name: shadowsocks-udp
+              protocol: UDP
+            - containerPort: 7878
+              name: radarr
+              protocol: TCP
+        - name: radarr
+          image: lscr.io/linuxserver/radarr:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 7878
+              name: radarr
+              protocol: TCP
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Europe/Paris"
+          volumeMounts:
+            - name: radarr-config
+              mountPath: /config
+            - name: radarr-media
+              mountPath: /media
+      volumes:
+        - name: gluetun-config
+          persistentVolumeClaim:
+            claimName: gluetun-data
+        - name: radarr-config
+          persistentVolumeClaim:
+            claimName: radarr-data
+        - name: radarr-media
+          persistentVolumeClaim:
+            claimName: radarr-media
