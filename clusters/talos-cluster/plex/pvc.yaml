@@ -1,13 +1,27 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: plex-data
+  name: plex-media-pvc
   namespace: plex
 spec:
   accessModes:
     - ReadWriteOnce
   volumeMode: Filesystem
-  storageClassName: snow-storage
+  storageClassName: media-storage
   resources:
     requests:
       storage: 1Ti
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: plex-config-pvc
+  namespace: plex
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  storageClassName: app-storage
+  resources:
+    requests:
+      storage: 10Gi

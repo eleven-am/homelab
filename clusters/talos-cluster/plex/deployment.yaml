@@ -58,9 +58,14 @@ spec:
                   key: secret
           volumeMounts:
             - mountPath: /config
-              name: plex-volume
+              name: plex-config-volume
+            - mountPath: /media
+              name: plex-media-volume
       restartPolicy: Always
       volumes:
-        - name: plex-volume
+        - name: plex-media-volume
           persistentVolumeClaim:
-            claimName: plex-data
+            claimName: plex-media-pvc
+        - name: plex-config-volume
+          persistentVolumeClaim:
+            claimName: plex-config-pvc
