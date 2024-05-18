@@ -235,6 +235,7 @@ resource "talos_machine_bootstrap" "bootstrap" {
 
 # Save the configurations to disk
 resource "local_file" "config" {
+  depends_on = [talos_machine_bootstrap.bootstrap, data.talos_client_configuration.client_configuration]
   count    = length(module.kubernetes-masters) > 0 ? 1 : 0
   content  = data.talos_client_configuration.client_configuration.talos_config
   filename = "${var.talos_directory}/talosconfig"
