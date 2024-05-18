@@ -78,7 +78,7 @@ spec:
               name: deluge-torrent
               protocol: TCP
             - containerPort: 6881
-              name: deluge-torrent
+              name: deluge-torrent-udp
               protocol: UDP
           env:
             - name: PUID
