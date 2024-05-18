@@ -61,7 +61,7 @@ spec:
             - containerPort: 8388
               name: shadowsocks-udp
               protocol: UDP
-            - containerPort: 8989
+            - containerPort: 8112
               name: deluge
               protocol: TCP
         - name: deluge
