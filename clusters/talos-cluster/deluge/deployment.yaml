@@ -75,10 +75,10 @@ spec:
               name: deluge-daemon
               protocol: TCP
             - containerPort: 6881
-              name: deluge-torrent
+              name: deluge-tcp
               protocol: TCP
             - containerPort: 6881
-              name: deluge-torrent-udp
+              name: deluge-udp
               protocol: UDP
           env:
             - name: PUID
