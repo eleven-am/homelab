@@ -48,10 +48,28 @@ spec:
           volumeMounts:
             - name: gluetun-config
               mountPath: /gluetun
-        - name: curl-container
-          image: quay.io/curl/curl:latest
-          command: ["sleep", "infinity"]
+        - name: sonarr
+          image: lscr.io/linuxserver/sonarr:latest
+          imagePullPolicy: Always
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Europe/Paris"
+          volumeMounts:
+            - name: sonarr-config
+              mountPath: /config
+            - name: sonarr-media
+              mountPath: /media
       volumes:
         - name: gluetun-config
           persistentVolumeClaim:
             claimName: gluetun-data
+        - name: sonarr-config
+          persistentVolumeClaim:
+            claimName: sonarr-data
+        - name: sonarr-media
+          persistentVolumeClaim:
+            claimName: sonarr-media
