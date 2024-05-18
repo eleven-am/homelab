@@ -47,6 +47,10 @@ spec:
                   key: WIREGUARD_ADDRESSES
             - name: SERVER_CITIES
               value: "Paris"
+            - name: FIREWALL_DEBUG
+              value: "on"
+            - name: FIREWALL_INPUT_PORTS
+              value: "8388,8388/udp,8989"
           volumeMounts:
             - name: gluetun-config
               mountPath: /gluetun
