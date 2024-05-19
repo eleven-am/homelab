@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: khonsu-deployment
+  namespace: khonsu
+  labels:
+    app: khonsu-deployment
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: khonsu-deployment
+  template:
+    metadata:
+      name: khonsu-deployment
+      labels:
+        app: khonsu-deployment
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: gluetun
+          image: qmcgaw/gluetun:latest
+          imagePullPolicy: Always
+          securityContext:
+            capabilities:
+              add: [ "NET_ADMIN" ]
+          env:
+            - name: TZ
+              value: "Europe/Paris"
+            - name: VPN_SERVICE_PROVIDER
+              value: "mullvad"
+            - name: VPN_TYPE
+              value: "wireguard"
+            - name: WIREGUARD_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: khonsu-secret
+                  key: WIREGUARD_PRIVATE_KEY
+            - name: WIREGUARD_ADDRESSES
+              valueFrom:
+                secretKeyRef:
+                  name: khonsu-secret
+                  key: WIREGUARD_ADDRESSES
+            - name: SERVER_CITIES
+              value: "Paris"
+            - name: FIREWALL_OUTBOUND_SUBNETS
+              value: "10.0.0.0/8,172.198.1.0/24,192.168.101.0/24"
+            - name: FIREWALL_DEBUG
+              value: "on"
+            - name: FIREWALL_INPUT_PORTS
+              value: "8388,8112"
+          volumeMounts:
+            - name: gluetun-config
+              mountPath: /gluetun
+          ports:
+            - containerPort: 8388
+              name: shadowsocks-tcp
+              protocol: TCP
+            - containerPort: 8388
+              name: shadowsocks-udp
+              protocol: UDP
+            - containerPort: 8112
+              name: khonsu-web
+              protocol: TCP
+        - name: khonsu
+          image: tailscale/tailscale:latest
+          imagePullPolicy: Always
+          env:
+            - name: TS_KUBE_SECRET
+              value: ""
+            - name: TAILSCALE_AUTHKEY
+              valueFrom:
+                secretKeyRef:
+                  name: khonsu-secret
+                  key: TAILSCALE_AUTHKEY
+            - name: TAILSCALE_HOSTNAME
+              value: "khonsu"
+            - name: TS_EXTRA_ARGS
+              valueFrom:
+                secretKeyRef:
+                  name: khonsu-secret
+                  key: TS_EXTRA_ARGS
+            - name: TS_NO_LOGS_NO_SUPPORT
+              value: "true"
+            - name: TS_STATE_DIR
+              value: "/state"
+          volumeMounts:
+            - name: khonsu-config
+              mountPath: /var/lib
+            - name: khonsu-state
+              mountPath: /state
+      volumes:
+        - name: gluetun-config
+          persistentVolumeClaim:
+            claimName: gluetun-data
+        - name: khonsu-config
+          persistentVolumeClaim:
+            claimName: khonsu-data
+        - name: khonsu-state
+          persistentVolumeClaim:
+            claimName: khonsu-state
