@@ -47,8 +47,6 @@ spec:
                   key: WIREGUARD_ADDRESSES
             - name: SERVER_CITIES
               value: "Paris"
-            - name: FIREWALL_OUTBOUND_SUBNETS
-              value: "10.0.0.0/8,172.198.1.0/24,192.168.101.0/24"
             - name: FIREWALL_DEBUG
               value: "on"
             - name: FIREWALL_INPUT_PORTS
