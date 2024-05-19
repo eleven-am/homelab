@@ -72,12 +72,12 @@ spec:
           env:
             - name: TS_KUBE_SECRET
               value: ""
-            - name: TAILSCALE_AUTHKEY
+            - name: TS_AUTHKEY
               valueFrom:
                 secretKeyRef:
                   name: khonsu-secret
                   key: TAILSCALE_AUTHKEY
-            - name: TAILSCALE_HOSTNAME
+            - name: TS_HOSTNAME
               value: "khonsu-2"
             - name: TS_EXTRA_ARGS
               valueFrom:
