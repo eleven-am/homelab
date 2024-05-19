@@ -53,6 +53,43 @@ services:
     networks:
       - backend
 
+  mullvad-paris:
+    image: qmcgaw/gluetun:latest
+    container_name: gluetun
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    volumes:
+      - ./data/mullvad-paris:/gluetun
+    environment:
+      - VPN_SERVICE_PROVIDER=mullvad
+      - VPN_TYPE=wireguard
+      - WIREGUARD_PRIVATE_KEY=xxxxxxxx=
+      - WIREGUARD_ADDRESSES=x.x.x.x/32
+      - SERVER_CITIES=Paris
+      - TZ=Europe/Paris
+
+  tailscale-paris:
+    image: tailscale/tailscale:latest
+    container_name: tailscale
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    volumes:
+      - ./tailscale/var/lib:/var/lib
+      - ./tailscale/state:/state
+      - /dev/net/tun:/dev/net/tun
+    network_mode: "service:mullvad-paris"
+    environment:
+      - TS_HOSTNAME=airvpn-exit-node
+      - TS_AUTHKEY=xxxxxxxx
+      - TS_EXTRA_ARGS=--login-server=https://example.com --advertise-exit-node
+      - TS_NO_LOGS_NO_SUPPORT=true
+      - TS_STATE_DIR=/state
+
 networks:
   backend:
     driver: bridge
