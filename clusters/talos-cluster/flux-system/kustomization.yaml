@@ -12,7 +12,3 @@ resources:
 - cilium-gateway-class.yaml
 - cilium-policy.yaml
 - cilium-pool.yaml
-- capacitor-repo.yaml
-- capacitor-kustomization.yaml
-- httpRoute.yaml
-
