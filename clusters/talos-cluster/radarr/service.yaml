@@ -16,4 +16,4 @@ spec:
       port: 8388
     - name: radarr
       protocol: TCP
-      port: 8989
+      port: 7878

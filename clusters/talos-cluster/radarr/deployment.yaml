@@ -50,7 +50,7 @@ spec:
             - name: FIREWALL_DEBUG
               value: "on"
             - name: FIREWALL_INPUT_PORTS
-              value: "8388,8989"
+              value: "8388,7878"
           volumeMounts:
             - name: gluetun-config
               mountPath: /gluetun
@@ -61,14 +61,14 @@ spec:
             - containerPort: 8388
               name: shadowsocks-udp
               protocol: UDP
-            - containerPort: 8989
+            - containerPort: 7878
               name: radarr
               protocol: TCP
         - name: radarr
           image: lscr.io/linuxserver/radarr:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 8989
+            - containerPort: 7878
               name: radarr
               protocol: TCP
           env:
