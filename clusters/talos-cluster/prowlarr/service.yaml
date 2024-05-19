@@ -6,7 +6,6 @@ metadata:
 spec:
   selector:
     app: prowlarr-deployment
-  type: LoadBalancer
   ports:
     - name: shadowsocks-tcp
       protocol: TCP

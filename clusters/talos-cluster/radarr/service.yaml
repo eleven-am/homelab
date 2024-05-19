@@ -6,7 +6,6 @@ metadata:
 spec:
   selector:
     app: radarr-deployment
-  type: LoadBalancer
   ports:
     - name: shadowsocks-tcp
       protocol: TCP

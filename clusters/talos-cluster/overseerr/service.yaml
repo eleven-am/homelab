@@ -6,7 +6,6 @@ metadata:
 spec:
   selector:
     app: overseerr-server
-  type: LoadBalancer
   ports:
     - port: 5055
       targetPort: 5055
