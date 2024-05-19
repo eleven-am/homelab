@@ -63,8 +63,6 @@ spec:
           image: tailscale/tailscale:latest
           imagePullPolicy: Always
           securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
             capabilities:
               add: [ "NET_ADMIN", "NET_RAW", "SYS_MODULE" ]
           env:
