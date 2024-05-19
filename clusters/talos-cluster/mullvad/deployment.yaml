@@ -66,8 +66,6 @@ spec:
             runAsUser: 1000
             runAsGroup: 1000
           env:
-            - name: TS_KUBE_SECRET
-              value: mullvad-secret
             - name: TS_USERSPACE
               value: "true"
             - name: TS_EXTRA_ARGS
