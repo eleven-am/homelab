@@ -67,7 +67,7 @@ spec:
               name: deluge-web
               protocol: TCP
         - name: deluge
-          image: linuxserver/deluge:amd64-2.0.3-2201906121747ubuntu18.04.1-ls72
+          image: linuxserver/deluge:2.1.1
           imagePullPolicy: Always
           ports:
             - containerPort: 8112
