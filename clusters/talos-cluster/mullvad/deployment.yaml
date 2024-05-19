@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mullvad-deployment
+  namespace: mullvad
+  labels:
+    app: mullvad-deployment
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: mullvad-deployment
+  template:
+    metadata:
+      name: mullvad-deployment
+      labels:
+        app: mullvad-deployment
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: gluetun
+          image: qmcgaw/gluetun:latest
+          imagePullPolicy: Always
+          securityContext:
+            capabilities:
+              add: [ "NET_ADMIN" ]
+          env:
+            - name: TZ
+              value: "Europe/Paris"
+            - name: VPN_SERVICE_PROVIDER
+              value: "mullvad"
+            - name: VPN_TYPE
+              value: "wireguard"
+            - name: WIREGUARD_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mullvad-secret
+                  key: WIREGUARD_PRIVATE_KEY
+            - name: WIREGUARD_ADDRESSES
+              valueFrom:
+                secretKeyRef:
+                  name: mullvad-secret
+                  key: WIREGUARD_ADDRESSES
+            - name: SERVER_CITIES
+              value: "Paris"
+            - name: FIREWALL_DEBUG
+              value: "on"
+          volumeMounts:
+            - name: gluetun-config
+              mountPath: /gluetun
+          ports:
+            - containerPort: 8388
+              name: shadowsocks-tcp
+              protocol: TCP
+            - containerPort: 8388
+              name: shadowsocks-udp
+              protocol: UDP
+        - name: tailscale-vpn
+          image: tailscale/tailscale:latest
+          imagePullPolicy: Always
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+          env:
+            - name: TS_KUBE_SECRET
+              value: mullvad-secret
+            - name: TS_USERSPACE
+              value: "true"
+            - name: TS_EXTRA_ARGS
+              valueFrom:
+                secretKeyRef:
+                  name: mullvad-secret
+                  key: TS_EXTRA_ARGS
+            - name: TS_AUTHKEY
+              valueFrom:
+                secretKeyRef:
+                  name: mullvad-secret
+                  key: TS_AUTHKEY
+          volumeMounts:
+            - name: tailscale-var-lib
+              mountPath: /var/lib/tailscale
+      volumes:
+        - name: gluetun-config
+          persistentVolumeClaim:
+            claimName: gluetun-data
+        - name: tailscale-var-lib
+          persistentVolumeClaim:
+            claimName: tailscale-data
