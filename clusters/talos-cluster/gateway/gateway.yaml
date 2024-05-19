@@ -34,7 +34,7 @@ spec:
     - protocol: HTTPS
       port: 443
       name: https-gateway
-      hostname: "*.horus.ossai.dev"
+      hostname: "*.horus.maix.ovh"
       tls:
         mode: Terminate
         certificateRefs:
