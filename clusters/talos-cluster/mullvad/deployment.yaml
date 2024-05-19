@@ -22,43 +22,6 @@ spec:
     spec:
       restartPolicy: Always
       containers:
-        - name: gluetun
-          image: qmcgaw/gluetun:latest
-          imagePullPolicy: Always
-          securityContext:
-            capabilities:
-              add: [ "NET_ADMIN" ]
-          env:
-            - name: TZ
-              value: "Europe/Paris"
-            - name: VPN_SERVICE_PROVIDER
-              value: "mullvad"
-            - name: VPN_TYPE
-              value: "wireguard"
-            - name: WIREGUARD_PRIVATE_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: mullvad-secret
-                  key: WIREGUARD_PRIVATE_KEY
-            - name: WIREGUARD_ADDRESSES
-              valueFrom:
-                secretKeyRef:
-                  name: mullvad-secret
-                  key: WIREGUARD_ADDRESSES
-            - name: SERVER_CITIES
-              value: "Paris"
-            - name: FIREWALL_DEBUG
-              value: "on"
-          volumeMounts:
-            - name: gluetun-config
-              mountPath: /gluetun
-          ports:
-            - containerPort: 8388
-              name: shadowsocks-tcp
-              protocol: TCP
-            - containerPort: 8388
-              name: shadowsocks-udp
-              protocol: UDP
         - name: tailscale-vpn
           image: tailscale/tailscale:latest
           imagePullPolicy: Always
