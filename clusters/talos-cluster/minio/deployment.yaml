@@ -1,20 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: minio
+  name: minio-deployment
   labels:
-    app: minio
+    app: minio-deployment
   namespace: minio
 spec:
   replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
   selector:
     matchLabels:
-      app: minio
+      app: minio-deployment
   template:
     metadata:
-      name: minio
+      name: minio-deployment
       labels:
-        app: minio
+        app: minio-deployment
     spec:
       containers:
         - name: minio
