@@ -79,8 +79,8 @@ services:
       - NET_ADMIN
       - NET_RAW
     volumes:
-      - ./tailscale/var/lib:/var/lib
-      - ./tailscale/state:/state
+      - ./data/tailscale/var/lib:/var/lib
+      - ./data/tailscale/state:/state
       - /dev/net/tun:/dev/net/tun
     network_mode: "service:mullvad-paris"
     environment:
