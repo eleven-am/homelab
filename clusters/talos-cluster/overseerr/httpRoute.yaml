@@ -16,4 +16,4 @@ spec:
             value: /
       backendRefs:
         - name: overseerr-service
-          port: 32400
+          port: 5055
