@@ -27,6 +27,17 @@ spec:
           volumeMounts:
             - mountPath: /data
               name: minio-data
+          env:
+            - name: MINIO_ROOT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: minio-secret
+                  key: MINIO_ROOT_USER
+            - name: MINIO_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: minio-secret
+                  key: MINIO_ROOT_PASSWORD
       restartPolicy: Always
       volumes:
         - name: minio-data
