@@ -93,7 +93,7 @@ spec:
             - name: deluge-config
               mountPath: /config
             - name: deluge-media
-              mountPath: /downloads
+              mountPath: /media
       volumes:
         - name: gluetun-config
           persistentVolumeClaim:
