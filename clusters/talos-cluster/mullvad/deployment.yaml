@@ -31,6 +31,8 @@ spec:
             capabilities:
               add: [ "NET_ADMIN", "NET_RAW" ]
           env:
+            - name: TS_KUBE_SECRET
+              value: mullvad-secret
             - name: TS_USERSPACE
               value: "true"
             - name: TS_EXTRA_ARGS
