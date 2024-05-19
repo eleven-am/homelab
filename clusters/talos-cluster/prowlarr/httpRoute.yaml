@@ -16,4 +16,4 @@ spec:
             value: /
       backendRefs:
         - name: prowlarr-service
-          port: 7878
+          port: 9696
