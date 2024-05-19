@@ -84,7 +84,7 @@ services:
       - /dev/net/tun:/dev/net/tun
     network_mode: "service:mullvad-paris"
     environment:
-      - TS_HOSTNAME=airvpn-exit-node
+      - TS_HOSTNAME=khonsu
       - TS_AUTHKEY=xxxxxxxx
       - TS_EXTRA_ARGS=--login-server=https://example.com --advertise-exit-node
       - TS_NO_LOGS_NO_SUPPORT=true
