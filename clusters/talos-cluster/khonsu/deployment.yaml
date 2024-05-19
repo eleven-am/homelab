@@ -78,7 +78,7 @@ spec:
                   name: khonsu-secret
                   key: TAILSCALE_AUTHKEY
             - name: TS_HOSTNAME
-              value: "khonsu-2"
+              value: "khonsu"
             - name: TS_EXTRA_ARGS
               valueFrom:
                 secretKeyRef:
