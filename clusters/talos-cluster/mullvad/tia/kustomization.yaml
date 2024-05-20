@@ -2,7 +2,6 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - secret.yaml
   - ../base
 
 patches:
@@ -37,11 +36,11 @@ patches:
         path: /spec/template/spec/containers/1/name
         value: tia-tailscale
       - op: replace
-        path: /spec/template/spec/containers/0/env/3/valueFrom/secretKeyRef/name
-        value: tia-secret
+        path: /spec/template/spec/containers/0/env/0/value
+        value: "America/Los_Angeles"
       - op: replace
-        path: /spec/template/spec/containers/0/env/4/valueFrom/secretKeyRef/name
-        value: tia-secret
+        path: /spec/template/spec/containers/0/env/5/value
+        value: "Los Angeles"
   - target:
       kind: PersistentVolumeClaim
       name: base-data
