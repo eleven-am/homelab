@@ -40,7 +40,7 @@ patches:
         value: "America/Los_Angeles"
       - op: replace
         path: /spec/template/spec/containers/0/env/5/value
-        value: "Los Angeles"
+        value: "Los Angeles CA"
   - target:
       kind: PersistentVolumeClaim
       name: base-data
