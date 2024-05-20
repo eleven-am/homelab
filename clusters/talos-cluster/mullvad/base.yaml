@@ -1,0 +1,90 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+    name: mullvad
+    labels:
+        pod-security.kubernetes.io/enforce: privileged
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1vltshxxpzdfl5jge57nwvmq77fmva0y9p9slmknfjwd97kz5m9asmndj0t
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBhN2REaE55MnVhcTVwdEFt
+            SVpNVzRvOWkwbGpEMng4YU01V2E2VkxqUXdRClBweE9lQ3UxT3NNYlpGZXdSVmpj
+            M1pjcHZlc3dPVzZob0JIa1ZsSUp5QkEKLS0tIE40THdHL2F3OWJIaVljUmkwWnFZ
+            emxLalFFQStyTWxNRlJITlVSNFpTT1kKiswD+B1DGmjjn2Gd7szFTEM7HDFSgoNg
+            gCYzw1JI0dqpW9DAJpCdT+m8iv6SOIW0ds6MyPhuSCsIp9cU6cxtVg==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2024-05-20T09:36:17Z"
+    mac: ENC[AES256_GCM,data:4RhdS5rbaFBSVcb1r5EaIb20nO/qsNpK8+gYCGad8MruE91uiFfF6zsH4K4D0cfSv94X8HQ2ktKpbqv2sj8u3ArxhBI4BLcagU7/SGe/QkMUIarkucl4fMs/xe4xZ0ZTzp6n7F6PPAm5oJgFPz1KpKE5cFlL0J68rBuy1UgEBE0=,iv:EBTuFAmPUOn+lkcWmN18ejqGOt1EHz5omkMKlEiih/I=,tag:C/l2aV9HAiK4Q2k1aOhwBw==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData)$
+    version: 3.8.1
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: gluetun-data
+    namespace: mullvad
+spec:
+    accessModes:
+        - ReadWriteOnce
+    volumeMode: Filesystem
+    storageClassName: app-storage
+    resources:
+        requests:
+            storage: 100Mi
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1vltshxxpzdfl5jge57nwvmq77fmva0y9p9slmknfjwd97kz5m9asmndj0t
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBhN2REaE55MnVhcTVwdEFt
+            SVpNVzRvOWkwbGpEMng4YU01V2E2VkxqUXdRClBweE9lQ3UxT3NNYlpGZXdSVmpj
+            M1pjcHZlc3dPVzZob0JIa1ZsSUp5QkEKLS0tIE40THdHL2F3OWJIaVljUmkwWnFZ
+            emxLalFFQStyTWxNRlJITlVSNFpTT1kKiswD+B1DGmjjn2Gd7szFTEM7HDFSgoNg
+            gCYzw1JI0dqpW9DAJpCdT+m8iv6SOIW0ds6MyPhuSCsIp9cU6cxtVg==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2024-05-20T09:36:17Z"
+    mac: ENC[AES256_GCM,data:4RhdS5rbaFBSVcb1r5EaIb20nO/qsNpK8+gYCGad8MruE91uiFfF6zsH4K4D0cfSv94X8HQ2ktKpbqv2sj8u3ArxhBI4BLcagU7/SGe/QkMUIarkucl4fMs/xe4xZ0ZTzp6n7F6PPAm5oJgFPz1KpKE5cFlL0J68rBuy1UgEBE0=,iv:EBTuFAmPUOn+lkcWmN18ejqGOt1EHz5omkMKlEiih/I=,tag:C/l2aV9HAiK4Q2k1aOhwBw==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData)$
+    version: 3.8.1
+---
+apiVersion: v1
+kind: Secret
+metadata:
+    name: mullvad-secret
+    namespace: mullvad
+type: Opaque
+stringData:
+    TAILSCALE_AUTHKEY: ENC[AES256_GCM,data:B5w1HloJRQBCeZAv6HmMAGWhlziYYQHlGHshFmPAsAMBsr2k9624blgAVY0nZaeU,iv:PBTh6BjHGuMmQ+Ck8U4yuQhFxcOQLTOeI/4VJD7nbJc=,tag:l/6dzEdgvKkDxuXw8LL+TQ==,type:str]
+    TS_EXTRA_ARGS: ENC[AES256_GCM,data:6GDX5TGzBNw7yJ2F7HC3B69j0iEVZs4OjFuPYd7WnWyGWe7iw/duPc/iI+/9cDlNkE1Atqu3TVe+0XFK6ehHYU/3fu3vF2hMoDgJIm4Wtmgoxg==,iv:siGoIiCP9KbO83QGMn+OsKrViEP56TtqKxeFGbcueiU=,tag:K9nSroVCXpt5k49CWl98eg==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1vltshxxpzdfl5jge57nwvmq77fmva0y9p9slmknfjwd97kz5m9asmndj0t
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBhN2REaE55MnVhcTVwdEFt
+            SVpNVzRvOWkwbGpEMng4YU01V2E2VkxqUXdRClBweE9lQ3UxT3NNYlpGZXdSVmpj
+            M1pjcHZlc3dPVzZob0JIa1ZsSUp5QkEKLS0tIE40THdHL2F3OWJIaVljUmkwWnFZ
+            emxLalFFQStyTWxNRlJITlVSNFpTT1kKiswD+B1DGmjjn2Gd7szFTEM7HDFSgoNg
+            gCYzw1JI0dqpW9DAJpCdT+m8iv6SOIW0ds6MyPhuSCsIp9cU6cxtVg==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2024-05-20T09:36:17Z"
+    mac: ENC[AES256_GCM,data:4RhdS5rbaFBSVcb1r5EaIb20nO/qsNpK8+gYCGad8MruE91uiFfF6zsH4K4D0cfSv94X8HQ2ktKpbqv2sj8u3ArxhBI4BLcagU7/SGe/QkMUIarkucl4fMs/xe4xZ0ZTzp6n7F6PPAm5oJgFPz1KpKE5cFlL0J68rBuy1UgEBE0=,iv:EBTuFAmPUOn+lkcWmN18ejqGOt1EHz5omkMKlEiih/I=,tag:C/l2aV9HAiK4Q2k1aOhwBw==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData)$
+    version: 3.8.1

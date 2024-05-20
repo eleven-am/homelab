@@ -1,0 +1,58 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - secret.yaml
+  - ../base
+
+patches:
+  - target:
+      kind: Deployment
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: sedna-deployment
+      - op: replace
+        path: /metadata/labels/app
+        value: sedna-deployment
+      - op: replace
+        path: /spec/template/metadata/labels/app
+        value: sedna-deployment
+      - op: replace
+        path: /spec/template/metadata/name
+        value: sedna-deployment
+      - op: replace
+        path: /spec/selector/matchLabels/app
+        value: sedna-deployment
+      - op: replace
+        path: /spec/template/spec/volumes/1/persistentVolumeClaim/claimName
+        value: sedna-data
+      - op: replace
+        path: /spec/template/spec/volumes/2/persistentVolumeClaim/claimName
+        value: sedna-state
+      - op: replace
+        path: /spec/template/spec/containers/1/env/2/value
+        value: sedna
+      - op: replace
+        path: /spec/template/spec/containers/1/name
+        value: sedna-tailscale
+      - op: replace
+        path: /spec/template/spec/containers/0/env/3/valueFrom/secretKeyRef/name
+        value: sedna-secret
+      - op: replace
+        path: /spec/template/spec/containers/0/env/4/valueFrom/secretKeyRef/name
+        value: sedna-secret
+  - target:
+      kind: PersistentVolumeClaim
+      name: base-data
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: sedna-data
+  - target:
+      kind: PersistentVolumeClaim
+      name: base-state
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: sedna-state  

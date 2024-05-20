@@ -1,0 +1,64 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - secret.yaml
+  - ../base
+
+patches:
+  - target:
+      kind: Deployment
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: abeona-deployment
+      - op: replace
+        path: /metadata/labels/app
+        value: abeona-deployment
+      - op: replace
+        path: /spec/template/metadata/labels/app
+        value: abeona-deployment
+      - op: replace
+        path: /spec/template/metadata/name
+        value: abeona-deployment
+      - op: replace
+        path: /spec/selector/matchLabels/app
+        value: abeona-deployment
+      - op: replace
+        path: /spec/template/spec/volumes/1/persistentVolumeClaim/claimName
+        value: abeona-data
+      - op: replace
+        path: /spec/template/spec/volumes/2/persistentVolumeClaim/claimName
+        value: abeona-state
+      - op: replace
+        path: /spec/template/spec/containers/1/env/2/value
+        value: abeona
+      - op: replace
+        path: /spec/template/spec/containers/1/name
+        value: abeona-tailscale
+      - op: replace
+        path: /spec/template/spec/containers/0/env/3/valueFrom/secretKeyRef/name
+        value: abeona-secret
+      - op: replace
+        path: /spec/template/spec/containers/0/env/4/valueFrom/secretKeyRef/name
+        value: abeona-secret
+      - op: replace
+        path: /spec/template/spec/containers/0/env/0/value
+        value: "Europe/Zurich"
+      - op: replace
+        path: /spec/template/spec/containers/0/env/5/value
+        value: "Zurich"
+  - target:
+      kind: PersistentVolumeClaim
+      name: base-data
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: abeona-data
+  - target:
+      kind: PersistentVolumeClaim
+      name: base-state
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: abeona-state  
