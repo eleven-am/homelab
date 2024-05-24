@@ -24,6 +24,7 @@ machine:
   install:
     image: ${TALOS_IMAGE}
 cluster:
+  allowSchedulingOnControlPlanes: true
   network:
     cni:
       name: none
