@@ -266,7 +266,7 @@ resource "null_resource" "health_check" {
   depends_on = [talos_machine_bootstrap.bootstrap, local_file.config]
 
   provisioner "local-exec" {
-    command = "${path.module}/scripts/health_check.sh -p ${module.kubernetes-masters[0].node_ip} -t ${var.talos_directory} -c ${local.cluster_name} -u ${var.github_username} -r ${var.github_repository} -k ${var.github_token} -m ${join(",", module.kubernetes-masters.*.node_ip)} -w ${join(",", module.kubernetes-workers.*.node_name)}"
+    command = "${path.module}/scripts/health_check.sh -s ${var.sops_age_key} -p ${module.kubernetes-masters[0].node_ip} -t ${var.talos_directory} -c ${local.cluster_name} -u ${var.github_username} -r ${var.github_repository} -k ${var.github_token} -m ${join(",", module.kubernetes-masters.*.node_ip)} -w ${join(",", module.kubernetes-workers.*.node_name)}"
   }
 }
 

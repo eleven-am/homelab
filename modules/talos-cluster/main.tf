@@ -42,4 +42,5 @@ module "talos_cluster" {
   github_repository       = var.github_repository
   github_token            = var.github_token
   github_username         = var.github_username
+  sops_age_key            = var.sops_age_key
 }
