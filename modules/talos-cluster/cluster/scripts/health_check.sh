@@ -24,16 +24,14 @@ check_health() {
 
 # This function assumes that the first argument is an IP address, the second argument is the talos directory
 # The third argument is list of master node ips in format "master-0,master-1,master-2" and
-# The fourth argument is the list of worker node ips in format "worker-0,worker-1,worker-2"
+# the fourth argument is the sops age key
 # It updates the kubeconfig
 update_kubeconfig() {
   local primary_controller=$1
   local talos_dir=$2
   local master_nodes=$3
-  local worker_nodes_ips=$4
+  local sops_age_key=$4
 
-  # convert the worker nodes ips to a space separated string
-  worker_nodes_ips=$(echo "${worker_nodes_ips}" | tr ',' ' ')
   # convert the master nodes ips to a space separated string
   master_nodes=$(echo "${master_nodes}" | tr ',' ' ')
 
@@ -45,9 +43,14 @@ update_kubeconfig() {
 
   echo "[INFO] Setting the endpoint and node values for the talosctl command"
   talosctl config endpoint "${master_nodes}"
-  talosctl config node "${master_nodes} ${worker_nodes_ips}"
+  talosctl config node "${master_nodes}"
 
   echo "[INFO] Successfully retrieved the kubeconfig from the cluster"
+
+  echo "[INFO] Adding the sops age key to the cluster"
+  kubectl -n flux-system create secret generic sops-age --from-literal=keys.agekey="${sops_age_key}"
+
+  echo "[INFO] Successfully added the sops age key to the cluster"
 }
 
 # This function assumes that the first argument is a list of all the worker nodes names in format "worker-0,worker-1,worker-2"
@@ -91,44 +94,49 @@ initialize_fluxcd() {
 }
 
 # This function assumes that the first argument is an IP address, the second argument is the talos directory
-# the third argument is a list of all the worker nodes names
-# the fourth argument is the list of worker node ips in format
-# the fifth argument is the list of master node ips in format
-# the sixth argument is the github username
-# the seventh argument is the github token
-# the eighth argument is the github repository
-# the ninth argument is the cluster name
+# the third argument is the cluster name
+# the fourth argument is the list of master node ips in format
+# the fifth argument is the github username
+# the sixth argument is the github token
+# the seventh argument is the github repository
+# the eighth argument is the sops age key
+# the ninth argument is a list of all the worker nodes names
 main() {
   local primary_controller=$1
   local talos_dir=$2
-  local worker_nodes_names=$3
-  local worker_nodes_ips=$4
-  local master_nodes_ips=$5
-  local github_username=$6
-  local github_token=$7
-  local github_repository=$8
-  local cluster_name=$9
+  local cluster_name=$3
+  local master_nodes_ips=$4
+  local github_username=$5
+  local github_token=$6
+  local github_repository=$7
+  local sops_age_key=$8
+  local worker_nodes_names=$9
 
   # Sleep for 30 seconds to allow the cluster to come up
-  echo "[INFO] Sleeping for 30 seconds to allow the cluster to come up"
+  echo "[INFO] Sleeping for 60 seconds to allow the cluster to come up"
   sleep 60
 
   check_health "${primary_controller}" "${talos_dir}"
-  update_kubeconfig "${primary_controller}" "${talos_dir}" "${master_nodes_ips}" "${worker_nodes_ips}"
-  label_worker_nodes "${worker_nodes_names}"
+  update_kubeconfig "${primary_controller}" "${talos_dir}" "${master_nodes_ips}" "${sops_age_key}"
+
+  # if the worker nodes names are not empty, label the worker nodes
+  if [ -n "${worker_nodes_names}" ]; then
+    label_worker_nodes "${worker_nodes_names}"
+  fi
+
   initialize_fluxcd "${github_username}" "${github_repository}" "${github_token}" "${cluster_name}"
 }
 
 build_args() {
   local worker_nodes_names=""
   local master_nodes_ips=""
-  local worker_nodes_ips=""
   local primary_controller=""
   local talos_dir=""
   local cluster_name=""
   local username=""
   local token=""
   local repository=""
+  local sops_age_key=""
 
   while [ "$#" -gt 0 ]; do
     case "$1" in
@@ -152,11 +160,6 @@ build_args() {
         master_nodes_ips=$1
         shift
         ;;
-      -i|--worker-nodes-ips)
-        shift
-        worker_nodes_ips=$1
-        shift
-        ;;
       -c|--cluster-name)
         shift
         cluster_name=$1
@@ -177,6 +180,11 @@ build_args() {
         repository=$1
         shift
         ;;
+      -s|--sops-age-key)
+        shift
+        sops_age_key=$1
+        shift
+        ;;
       *)
         echo "Unknown parameter passed: $1"
         exit 1
@@ -184,7 +192,7 @@ build_args() {
     esac
   done
 
-  main "${primary_controller}" "${talos_dir}" "${worker_nodes_names}" "${worker_nodes_ips}" "${master_nodes_ips}" "${username}" "${token}" "${repository}" "${cluster_name}"
+  main "${primary_controller}" "${talos_dir}" "${cluster_name}" "${master_nodes_ips}" "${username}" "${token}" "${repository}" "${sops_age_key}" "${worker_nodes_names}"
 }
 
 build_args "$@"

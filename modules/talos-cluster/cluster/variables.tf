@@ -123,3 +123,8 @@ variable "github_repository" {
   description = "Github repository to use for the installation of flux"
   type        = string
 }
+
+variable "sops_age_key" {
+  description = "Age key to use for the installation of sops"
+  type        = string
+}
