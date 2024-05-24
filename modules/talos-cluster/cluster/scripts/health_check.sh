@@ -48,6 +48,7 @@ update_kubeconfig() {
   echo "[INFO] Successfully retrieved the kubeconfig from the cluster"
 
   echo "[INFO] Adding the sops age key to the cluster"
+  kubectl create ns flux-system
   kubectl -n flux-system create secret generic sops-age --from-literal=keys.agekey="${sops_age_key}"
 
   echo "[INFO] Successfully added the sops age key to the cluster"
