@@ -8,6 +8,7 @@ locals {
   primary_ip 	   = cidrhost(var.subnet, var.master_ip_offset)
   cluster_endpoint = "https://${local.cluster_ip}:6443"
   primary_endpoint = "https://${local.primary_ip}:6443"
+  crd_version 	   = "v1.0.0"
   installer 	   = "factory.talos.dev/installer/${var.schematic_id}:${var.talos_version}"
 }
 
@@ -68,6 +69,66 @@ locals {
   master_node_names = [for instance in module.kubernetes-masters : instance.node_name]
   worker_node_ips = [for instance in module.kubernetes-workers : instance.node_ip]
   worker_node_names = [for instance in module.kubernetes-workers : instance.node_name]
+}
+
+/*
+data "http" gateway_classes {
+  url = "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/${local.crd_version}/config/crd/standard/gateway.networking.k8s.io_gatewayclasses.yaml"
+}
+
+data "http" gateways {
+  url = "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/${local.crd_version}/config/crd/standard/gateway.networking.k8s.io_gateways.yaml"
+}
+
+data "http" http_routes {
+  url = "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/${local.crd_version}/config/crd/standard/gateway.networking.k8s.io_httproutes.yaml"
+}
+
+data "http" reference_grants {
+  url = "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/${local.crd_version}/config/crd/standard/gateway.networking.k8s.io_referencegrants.yaml"
+}
+
+data "http" grpc_routes {
+  url = "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/${local.crd_version}/config/crd/experimental/gateway.networking.k8s.io_grpcroutes.yaml"
+}
+
+data "http" tls_routes {
+  url = "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/${local.crd_version}/config/crd/experimental/gateway.networking.k8s.io_tlsroutes.yaml"
+}
+
+data "template_file" "crds" {
+  template = <<EOF
+{{- .gateway_classes.body }}
+{{- .gateways.body }}
+{{- .http_routes.body }}
+{{- .reference_grants.body }}
+{{- .grpc_routes.body }}
+{{- .tls_routes.body }}
+EOF
+
+  vars = {
+    gateway_classes = data.http.gateway_classes
+    gateways        = data.http.gateways
+    http_routes     = data.http.http_routes
+    reference_grants = data.http.reference_grants
+    grpc_routes     = data.http.grpc_routes
+    tls_routes      = data.http.tls_routes
+  }
+}*/
+
+data "external" "combined_crds" {
+  program = ["kubectl", "--flatten=true", "-f", "-"]
+
+  query = {
+    yaml_files = [
+      "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/${local.crd_version}/config/crd/standard/gateway.networking.k8s.io_gatewayclasses.yaml",
+      "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/${local.crd_version}/config/crd/standard/gateway.networking.k8s.io_gateways.yaml",
+      "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/${local.crd_version}/config/crd/standard/gateway.networking.k8s.io_httproutes.yaml",
+      "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/${local.crd_version}/config/crd/standard/gateway.networking.k8s.io_referencegrants.yaml",
+      "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/${local.crd_version}/config/crd/experimental/gateway.networking.k8s.io_grpcroutes.yaml",
+      "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/${local.crd_version}/config/crd/experimental/gateway.networking.k8s.io_tlsroutes.yaml",
+    ]
+  }
 }
 
 data "helm_template" "cilium_template" {
@@ -154,11 +215,15 @@ data "helm_template" "cilium_template" {
 }
 
 resource "talos_machine_secrets" "secrets" {
+  count         = length(module.kubernetes-masters) > 0 ? 1 : 0
+  depends_on    = [module.kubernetes-masters, module.kubernetes-workers]
   talos_version = var.talos_version
 }
 
 data "talos_client_configuration" "client_configuration" {
+  count      = length(module.kubernetes-masters) > 0 ? 1 : 0
   depends_on = [talos_machine_secrets.secrets, module.kubernetes-masters, module.kubernetes-workers]
+
   client_configuration = talos_machine_secrets.secrets.client_configuration
   cluster_name         = local.cluster_name
   nodes                = concat(local.master_node_ips, local.worker_node_ips)
@@ -176,6 +241,7 @@ data "talos_machine_configuration" "control_plane" {
   examples         = false
   cluster_name     = local.cluster_name
   machine_secrets  = talos_machine_secrets.secrets.machine_secrets
+
   config_patches = [
     templatefile("${path.module}/templates/master.yaml.tpl", {
       HOSTNAME        = local.master_node_names[count.index],
@@ -198,6 +264,7 @@ data "talos_machine_configuration" "worker" {
   examples         = false
   cluster_name     = local.cluster_name
   machine_secrets  = talos_machine_secrets.secrets.machine_secrets
+
   config_patches = [
     templatefile("${path.module}/templates/worker.yaml.tpl", {
       HOSTNAME    = local.worker_node_names[count.index],
@@ -255,8 +322,8 @@ resource "local_file" "config" {
 }
 
 resource "null_resource" "health_check" {
-  depends_on = [talos_machine_bootstrap.bootstrap, local_file.config]
   count      = length(module.kubernetes-masters) > 0 ? 1 : 0
+  depends_on = [talos_machine_bootstrap.bootstrap, local_file.config]
 
   provisioner "local-exec" {
     command = "${path.module}/scripts/health_check.sh -p ${module.kubernetes-masters[0].node_ip} -t ${var.talos_directory} -c ${local.cluster_name} -u ${var.github_username} -r ${var.github_repository} -k ${var.github_token} -w ${join(",", module.kubernetes-workers.*.node_name)} -m ${join(",", module.kubernetes-masters.*.node_ip)} -i ${join(",", module.kubernetes-workers.*.node_ip)}"
