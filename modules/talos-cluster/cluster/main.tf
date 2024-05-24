@@ -71,66 +71,6 @@ locals {
   worker_node_names = [for instance in module.kubernetes-workers : instance.node_name]
 }
 
-/*
-data "http" gateway_classes {
-  url = "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/${local.crd_version}/config/crd/standard/gateway.networking.k8s.io_gatewayclasses.yaml"
-}
-
-data "http" gateways {
-  url = "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/${local.crd_version}/config/crd/standard/gateway.networking.k8s.io_gateways.yaml"
-}
-
-data "http" http_routes {
-  url = "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/${local.crd_version}/config/crd/standard/gateway.networking.k8s.io_httproutes.yaml"
-}
-
-data "http" reference_grants {
-  url = "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/${local.crd_version}/config/crd/standard/gateway.networking.k8s.io_referencegrants.yaml"
-}
-
-data "http" grpc_routes {
-  url = "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/${local.crd_version}/config/crd/experimental/gateway.networking.k8s.io_grpcroutes.yaml"
-}
-
-data "http" tls_routes {
-  url = "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/${local.crd_version}/config/crd/experimental/gateway.networking.k8s.io_tlsroutes.yaml"
-}
-
-data "template_file" "crds" {
-  template = <<EOF
-{{- .gateway_classes.body }}
-{{- .gateways.body }}
-{{- .http_routes.body }}
-{{- .reference_grants.body }}
-{{- .grpc_routes.body }}
-{{- .tls_routes.body }}
-EOF
-
-  vars = {
-    gateway_classes = data.http.gateway_classes
-    gateways        = data.http.gateways
-    http_routes     = data.http.http_routes
-    reference_grants = data.http.reference_grants
-    grpc_routes     = data.http.grpc_routes
-    tls_routes      = data.http.tls_routes
-  }
-}*/
-
-data "external" "combined_crds" {
-  program = ["kubectl", "--flatten=true", "-f", "-"]
-
-  query = {
-    yaml_files = [
-      "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/${local.crd_version}/config/crd/standard/gateway.networking.k8s.io_gatewayclasses.yaml",
-      "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/${local.crd_version}/config/crd/standard/gateway.networking.k8s.io_gateways.yaml",
-      "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/${local.crd_version}/config/crd/standard/gateway.networking.k8s.io_httproutes.yaml",
-      "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/${local.crd_version}/config/crd/standard/gateway.networking.k8s.io_referencegrants.yaml",
-      "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/${local.crd_version}/config/crd/experimental/gateway.networking.k8s.io_grpcroutes.yaml",
-      "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/${local.crd_version}/config/crd/experimental/gateway.networking.k8s.io_tlsroutes.yaml",
-    ]
-  }
-}
-
 data "helm_template" "cilium_template" {
   name       = "cilium"
   namespace  = "kube-system"
@@ -224,7 +164,7 @@ data "talos_client_configuration" "client_configuration" {
   count      = length(module.kubernetes-masters) > 0 ? 1 : 0
   depends_on = [talos_machine_secrets.secrets, module.kubernetes-masters, module.kubernetes-workers]
 
-  client_configuration = talos_machine_secrets.secrets.client_configuration
+  client_configuration = talos_machine_secrets.secrets[0].client_configuration
   cluster_name         = local.cluster_name
   nodes                = concat(local.master_node_ips, local.worker_node_ips)
   endpoints            = local.master_node_ips
@@ -240,15 +180,15 @@ data "talos_machine_configuration" "control_plane" {
   docs             = false
   examples         = false
   cluster_name     = local.cluster_name
-  machine_secrets  = talos_machine_secrets.secrets.machine_secrets
+  machine_secrets  = talos_machine_secrets.secrets[0].machine_secrets
 
   config_patches = [
     templatefile("${path.module}/templates/master.yaml.tpl", {
-      HOSTNAME        = local.master_node_names[count.index],
-      NODE_IP         = local.master_node_ips[count.index],
-      VIP             = local.cluster_ip,
-      TALOS_IMAGE     = local.installer,
-      CILIUM_MANIFEST = yamlencode(data.helm_template.cilium_template.manifest),
+      HOSTNAME              = local.master_node_names[count.index],
+      NODE_IP               = local.master_node_ips[count.index],
+      VIP                   = local.cluster_ip,
+      TALOS_IMAGE           = local.installer,
+      CILIUM_MANIFEST       = yamlencode(data.helm_template.cilium_template.manifest),
     }),
   ]
 }
@@ -263,7 +203,7 @@ data "talos_machine_configuration" "worker" {
   docs             = false
   examples         = false
   cluster_name     = local.cluster_name
-  machine_secrets  = talos_machine_secrets.secrets.machine_secrets
+  machine_secrets  = talos_machine_secrets.secrets[0].machine_secrets
 
   config_patches = [
     templatefile("${path.module}/templates/worker.yaml.tpl", {
@@ -278,7 +218,7 @@ resource "talos_machine_configuration_apply" "control_plane" {
   count      = length(module.kubernetes-masters)
   depends_on = [talos_machine_secrets.secrets, module.kubernetes-masters, data.talos_machine_configuration.control_plane]
 
-  client_configuration        = talos_machine_secrets.secrets.client_configuration
+  client_configuration        = talos_machine_secrets.secrets[0].client_configuration
   machine_configuration_input = data.talos_machine_configuration.control_plane[count.index].machine_configuration
   node                        = module.kubernetes-masters[count.index].node_ip
 }
@@ -287,7 +227,7 @@ resource "talos_machine_configuration_apply" "worker" {
   count      = length(module.kubernetes-workers)
   depends_on = [talos_machine_secrets.secrets, module.kubernetes-workers, data.talos_machine_configuration.worker]
 
-  client_configuration        = talos_machine_secrets.secrets.client_configuration
+  client_configuration        = talos_machine_secrets.secrets[0].client_configuration
   machine_configuration_input = data.talos_machine_configuration.worker[count.index].machine_configuration
   node                        = module.kubernetes-workers[count.index].node_ip
 }
@@ -309,7 +249,7 @@ resource "talos_machine_bootstrap" "bootstrap" {
   count      = length(module.kubernetes-masters) > 0 ? 1 : 0
   depends_on = [talos_machine_configuration_apply.control_plane, talos_machine_configuration_apply.worker, null_resource.sleep_45]
 
-  client_configuration = talos_machine_secrets.secrets.client_configuration
+  client_configuration = talos_machine_secrets.secrets[0].client_configuration
   node = module.kubernetes-masters[0].node_ip
 }
 
@@ -317,7 +257,7 @@ resource "talos_machine_bootstrap" "bootstrap" {
 resource "local_file" "config" {
   depends_on = [talos_machine_bootstrap.bootstrap, data.talos_client_configuration.client_configuration]
   count    = length(module.kubernetes-masters) > 0 ? 1 : 0
-  content  = data.talos_client_configuration.client_configuration.talos_config
+  content  = data.talos_client_configuration.client_configuration[0].talos_config
   filename = "${var.talos_directory}/talosconfig"
 }
 

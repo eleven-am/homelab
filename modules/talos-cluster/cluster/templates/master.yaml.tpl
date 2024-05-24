@@ -32,3 +32,7 @@ cluster:
   inlineManifests:
     - name: cilium
       contents: ${CILIUM_MANIFEST}
+  externalCloudProvider:
+    enabled: true
+    manifests:
+      - https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.1.0/experimental-install.yaml
