@@ -18,15 +18,3 @@ spec:
   resources:
     requests:
       storage: 100Mi
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: mullvad-secret
-  namespace: mullvad
-type: Opaque
-stringData:
-  TAILSCALE_AUTHKEY: "f1e0111631e7e05cce0d53a36c450585e921fbf2e60ebabf"
-  TS_EXTRA_ARGS: "--login-server=https://headscale.maix.ovh --advertise-exit-node --accept-dns=false"
-  WIREGUARD_PRIVATE_KEY: "+A0ec57zgE/2ZLRJkpBL0JhdyOHmhz7JobLUzkB6N2g="
-  WIREGUARD_ADDRESSES: "10.70.133.181/32"
