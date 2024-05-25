@@ -3,6 +3,9 @@ kind: CiliumBGPPeeringPolicy
 metadata:
   name: bgp-peering-policy-worker
 spec:
+  nodeSelector:
+    matchLabels:
+      node-role.kubernetes.io/control-plane: ""
   virtualRouters:
     - localASN: 64512
       exportPodCIDR: true
