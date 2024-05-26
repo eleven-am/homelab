@@ -11,6 +11,7 @@ groups:
   group:horus:
     - maixperiyon
     - poncetcla
+    - "a.s.h.e.s.343"
 
   group:thebes:
     - thebes
@@ -47,3 +48,10 @@ acls:
       - group:clara
     dst:
       - group:clara:*
+
+  # Block access to everything else
+  - action: deny
+    src:
+      - group:horus
+    dst:
+      - "*:*"
