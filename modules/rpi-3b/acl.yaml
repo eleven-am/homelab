@@ -42,7 +42,6 @@ acls:
       - "172.198.1.1/32:*"
       - group:thebes:*
 
-  # Clara's devices
   - action: accept
     src:
       - group:clara
