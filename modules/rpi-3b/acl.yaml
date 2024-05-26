@@ -1,0 +1,49 @@
+groups:
+  group:olympus:
+    - maixperiyon
+
+  group:devs:
+    - maixperiyon
+
+  group:clara:
+    - poncetcla
+
+  group:horus:
+    - maixperiyon
+    - poncetcla
+
+  group:thebes:
+    - thebes
+
+hosts:
+  cilium-gateway: "172.198.1.1/32"
+  postgresql: "172.198.1.4/32"
+  redis: "172.198.1.5/32"
+
+acls:
+  - action: accept
+    src:
+      - group:olympus
+    dst:
+      - "*:*"
+
+  - action: accept
+    src:
+      - group:devs
+    dst:
+      - postgresql:5432
+      - redis:6379
+
+  - action: accept
+    src:
+      - group:horus
+    dst:
+      - cilium-gateway:443
+      - group:thebes:*
+
+  # Clara's devices
+  - action: accept
+    src:
+      - group:clara
+    dst:
+      - group:clara:*
