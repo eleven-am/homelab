@@ -27,7 +27,7 @@ metadata:
   name: cilium-gateway
   namespace: gateway
   annotations:
-    cert-manager.io/issuer: cloudflare-staging-issuer
+    cert-manager.io/issuer: cloudflare-issuer
 spec:
   gatewayClassName: cilium
   listeners:
