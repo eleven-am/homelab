@@ -16,10 +16,8 @@ groups:
   group:thebes:
     - thebes
 
-hosts:
-  cilium-gateway: "172.198.1.1/32"
-  postgresql: "172.198.1.4/32"
-  redis: "172.198.1.5/32"
+  group:routers:
+    - routers
 
 acls:
   - action: accept
@@ -39,7 +37,9 @@ acls:
     src:
       - group:horus
     dst:
-      - cilium-gateway:443
+      - "100.64.0.6/32:*"
+      - "100.64.0.4/32:*"
+      - "172.198.1.1/32:*"
       - group:thebes:*
 
   # Clara's devices
