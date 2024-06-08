@@ -37,10 +37,17 @@ acls:
     src:
       - group:horus
     dst:
-      - "100.64.0.6/32:*"
       - "100.64.0.4/32:*"
+      - "100.64.0.1/32:*"
       - "172.198.1.1/32:*"
       - group:thebes:*
+
+  - action: accept
+    src:
+      - group:routers
+    dst:
+      - "100.64.0.4/32:*"
+      - "192.168.101.100/32:*"
 
   - action: accept
     src:
