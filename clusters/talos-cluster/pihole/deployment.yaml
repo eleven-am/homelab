@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pi-hole-deployment
+  namespace: pi-hole
+  labels:
+    app: pi-hole-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pi-hole-deployment
+  template:
+    metadata:
+      name: pi-hole-deployment
+      labels:
+        app: pi-hole-deployment
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: pi-hole-deployment
+          image: pihole/pihole:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: TZ
+              value: "Europe/Paris"
+            - name: WEBPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pi-hole-secret
+                  key: WEBPASSWORD
+          volumeMounts:
+            - name: pi-hole-data
+              mountPath: /etc/pihole/
+            - name: pi-hole-dnsmasq
+              mountPath: /etc/dnsmasq.d/
+        - name: tailscale
+          image: tailscale/tailscale:latest
+          imagePullPolicy: Always
+          securityContext:
+            capabilities:
+              add: [ "NET_ADMIN" ]
+          env:
+            - name: TS_KUBE_SECRET
+              value: ""
+            - name: TS_AUTHKEY
+              valueFrom:
+                secretKeyRef:
+                  name: pi-hole-secret
+                  key: TAILSCALE_AUTHKEY
+            - name: TS_HOSTNAME
+              value: "pi-hole-dns"
+            - name: TS_EXTRA_ARGS
+              valueFrom:
+                secretKeyRef:
+                  name: pi-hole-secret
+                  key: TAILSCALE_EXTRA_ARGS
+            - name: TS_NO_LOGS_NO_SUPPORT
+              value: "true"
+            - name: TS_STATE_DIR
+              value: "/state"
+          ports:
+            - containerPort: 53
+              protocol: TCP
+            - containerPort: 53
+              protocol: UDP
+            - containerPort: 80
+              protocol: TCP
+          volumeMounts:
+            - name: tailscale-data
+              mountPath: /data
+            - name: tailscale-state
+              mountPath: /state
+      volumes:
+        - name: pi-hole-data
+          persistentVolumeClaim:
+            claimName: pi-hole-data
+        - name: pi-hole-dnsmasq
+          persistentVolumeClaim:
+            claimName: pi-hole-dnsmasq
+        - name: tailscale-data
+          persistentVolumeClaim:
+            claimName: tailscale-data
+        - name: tailscale-state
+          persistentVolumeClaim:
+            claimName: tailscale-state
