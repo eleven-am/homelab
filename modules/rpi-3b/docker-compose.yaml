@@ -13,6 +13,26 @@ services:
     networks:
       - backend
 
+  pi-hole:
+    image: pihole/pihole:latest
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "7070:80"
+    dns:
+      - 127.0.0.1
+      - 1.1.1.1
+      - 8.8.8.8
+    environment:
+      - TZ=Europe/Paris
+      - WEBPASSWORD=ziqpYw-katbup-kihzo6
+    volumes:
+      - ./data/pihole/pihole:/etc/pihole/
+      - ./data/pihole/dnsmasq.d:/etc/dnsmasq.d/
+    restart: unless-stopped
+    networks:
+      - backend
+
   headscale-admin:
     image: goodieshq/headscale-admin:latest
     container_name: headscale-admin
