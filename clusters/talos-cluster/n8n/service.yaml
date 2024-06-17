@@ -7,8 +7,7 @@ spec:
   selector:
     app: n8n-deployment
   ports:
-    - protocol: TCP
+    - name: n8n-tcp
+      protocol: TCP
       port: 5678
-      targetPort: 5678
-  type: ClusterIP
 
