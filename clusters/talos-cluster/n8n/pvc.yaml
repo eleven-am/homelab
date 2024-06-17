@@ -10,5 +10,5 @@ spec:
   storageClassName: app-storage
   resources:
     requests:
-      storage: 100Mi
+      storage: 2Gi
 

@@ -5,7 +5,7 @@ metadata:
   namespace: n8n
 spec:
   selector:
-    app: n8n-service
+    app: n8n-deployment
   ports:
     - protocol: TCP
       port: 5678
