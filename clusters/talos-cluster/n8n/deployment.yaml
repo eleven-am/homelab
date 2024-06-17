@@ -47,7 +47,7 @@ spec:
             - name: DB_POSTGRESDB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: postgres-secret
+                  name: n8n-secret
                   key: POSTGRES_PASSWORD
             - name: N8N_PROTOCOL
               value: http
