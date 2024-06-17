@@ -1,8 +1,8 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: pi-hole-data
-  namespace: pi-hole
+  name: gluetun-data
+  namespace: deluge
 spec:
   accessModes:
     - ReadWriteOnce
@@ -15,8 +15,8 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: pi-hole-dnsmasq
-  namespace: pi-hole
+  name: deluge-data
+  namespace: deluge
 spec:
   accessModes:
     - ReadWriteOnce
@@ -29,27 +29,13 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: tailscale-data
-  namespace: pi-hole
+  name: deluge-media
+  namespace: deluge
 spec:
   accessModes:
     - ReadWriteOnce
   volumeMode: Filesystem
-  storageClassName: app-storage
-  resources:
-    requests:
-      storage: 100Mi
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: tailscale-state
-  namespace: pi-hole
-spec:
-  accessModes:
-    - ReadWriteOnce
-  volumeMode: Filesystem
-  storageClassName: app-storage
+  storageClassName: media-storage
   resources:
     requests:
       storage: 100Mi

@@ -1,0 +1,106 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deluge-deployment
+  namespace: deluge
+  labels:
+    app: deluge-deployment
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: deluge-deployment
+  template:
+    metadata:
+      name: deluge-deployment
+      labels:
+        app: deluge-deployment
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: gluetun
+          image: qmcgaw/gluetun:latest
+          imagePullPolicy: Always
+          securityContext:
+            capabilities:
+              add: [ "NET_ADMIN" ]
+          env:
+            - name: TZ
+              value: "Europe/Paris"
+            - name: VPN_SERVICE_PROVIDER
+              value: "mullvad"
+            - name: VPN_TYPE
+              value: "wireguard"
+            - name: WIREGUARD_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: deluge-secret
+                  key: WIREGUARD_PRIVATE_KEY
+            - name: WIREGUARD_ADDRESSES
+              valueFrom:
+                secretKeyRef:
+                  name: deluge-secret
+                  key: WIREGUARD_ADDRESSES
+            - name: SERVER_CITIES
+              value: "Paris"
+            - name: FIREWALL_OUTBOUND_SUBNETS
+              value: "10.0.0.0/8,172.198.1.0/24,192.168.101.0/24"
+            - name: FIREWALL_DEBUG
+              value: "on"
+            - name: FIREWALL_INPUT_PORTS
+              value: "8388,8112"
+          volumeMounts:
+            - name: gluetun-config
+              mountPath: /gluetun
+          ports:
+            - containerPort: 8388
+              name: shadowsocks-tcp
+              protocol: TCP
+            - containerPort: 8388
+              name: shadowsocks-udp
+              protocol: UDP
+            - containerPort: 8112
+              name: deluge-web
+              protocol: TCP
+        - name: deluge
+          image: linuxserver/deluge:2.1.1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8112
+              name: deluge-web
+              protocol: TCP
+            - containerPort: 58846
+              name: deluge-daemon
+              protocol: TCP
+            - containerPort: 6881
+              name: deluge-tcp
+              protocol: TCP
+            - containerPort: 6881
+              name: deluge-udp
+              protocol: UDP
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Europe/Paris"
+          volumeMounts:
+            - name: deluge-config
+              mountPath: /config
+            - name: deluge-media
+              mountPath: /media
+      volumes:
+        - name: gluetun-config
+          persistentVolumeClaim:
+            claimName: gluetun-data
+        - name: deluge-config
+          persistentVolumeClaim:
+            claimName: deluge-data
+        - name: deluge-media
+          persistentVolumeClaim:
+            claimName: deluge-media

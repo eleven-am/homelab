@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: deluge-service
+  namespace: deluge
+spec:
+  selector:
+    app: deluge-deployment
+  ports:
+    - name: shadowsocks-tcp
+      protocol: TCP
+      port: 8388
+    - name: shadowsocks-udp
+      protocol: UDP
+      port: 8388
+    - name: deluge-web
+      protocol: TCP
+      port: 8112
