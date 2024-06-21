@@ -69,6 +69,14 @@ spec:
         - name: deluge
           image: linuxserver/deluge:2.1.1
           imagePullPolicy: Always
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - curl -s -f -o /dev/null https://www.google.com || exit 1
+            initialDelaySeconds: 10
+            periodSeconds: 10
           ports:
             - containerPort: 8112
               name: deluge-web
