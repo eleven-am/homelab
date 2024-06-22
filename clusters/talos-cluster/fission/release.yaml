@@ -21,6 +21,7 @@ spec:
   upgrade:
     disableWait: true
   values:
+    defaultNamespace: fission
     persistence:
       enabled: true
       storageClass: app-storage
