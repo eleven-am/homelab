@@ -6,7 +6,7 @@ metadata:
 spec:
   chart:
     spec:
-      chart: fission
+      chart: fission-all
       version: 1.20.1
       sourceRef:
         kind: HelmRepository
