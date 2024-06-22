@@ -23,6 +23,6 @@ spec:
   values:
     persistence:
       enabled: true
-      storageClassName: app-storage
+      storageClass: app-storage
       accessMode: ReadWriteOnce
       size: 1Gi
