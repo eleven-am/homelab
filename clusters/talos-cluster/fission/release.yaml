@@ -20,3 +20,9 @@ spec:
     disableWait: true
   upgrade:
     disableWait: true
+  values:
+    persistence:
+      enabled: true
+      storageClassName: app-storage
+      accessMode: ReadWriteOnce
+      size: 1Gi
