@@ -17,16 +17,16 @@ module "kubernetes-masters" {
 
   count  = var.master_count
 
-  cidr   		 = var.cidr
+  cidr           = var.cidr
   ip_offset 	 = var.master_ip_offset + count.index
   node_cores     = var.master_cores
   node_memory    = var.master_memory
   node_name      = "${var.cluster_prefix}-${local.master_tag}-${count.index}"
   proxmox_node   = var.proxmox_node
-  subnet 		 = var.subnet
-  tags   		 = "${local.kube_tag};${local.master_tag};${local.talos_tag}"
+  subnet         = var.subnet
+  tags           = "${local.kube_tag};${local.master_tag};${local.talos_tag}"
   template_name  = var.template_name
-  vm_id  		 = 600 + count.index
+  vm_id          = 600 + count.index
   node_disk_size = var.master_disk_size
 
   networks = [
