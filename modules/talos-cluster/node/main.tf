@@ -30,7 +30,7 @@ resource "proxmox_vm_qemu" "node" {
   cores  = var.node_cores
   cpu    = local.cpu
   scsihw = local.scsihw
-  boot = "order=scsi0"
+  boot 	 = "order=scsi0"
 
   # Disk configuration
   disks {

@@ -65,9 +65,9 @@ module "kubernetes-workers" {
 }
 
 locals {
-  master_node_ips = [for instance in module.kubernetes-masters : instance.node_ip]
+  master_node_ips   = [for instance in module.kubernetes-masters : instance.node_ip]
   master_node_names = [for instance in module.kubernetes-masters : instance.node_name]
-  worker_node_ips = [for instance in module.kubernetes-workers : instance.node_ip]
+  worker_node_ips   = [for instance in module.kubernetes-workers : instance.node_ip]
   worker_node_names = [for instance in module.kubernetes-workers : instance.node_name]
 }
 
@@ -250,15 +250,15 @@ resource "talos_machine_bootstrap" "bootstrap" {
   depends_on = [talos_machine_configuration_apply.control_plane, talos_machine_configuration_apply.worker, null_resource.sleep_45]
 
   client_configuration = talos_machine_secrets.secrets[0].client_configuration
-  node = module.kubernetes-masters[0].node_ip
+  node                 = module.kubernetes-masters[0].node_ip
 }
 
 # Save the configurations to disk
 resource "local_file" "config" {
   depends_on = [talos_machine_bootstrap.bootstrap, data.talos_client_configuration.client_configuration]
-  count    = length(module.kubernetes-masters) > 0 ? 1 : 0
-  content  = data.talos_client_configuration.client_configuration[0].talos_config
-  filename = "${var.talos_directory}/talosconfig"
+  count      = length(module.kubernetes-masters) > 0 ? 1 : 0
+  content    = data.talos_client_configuration.client_configuration[0].talos_config
+  filename   = "${var.talos_directory}/talosconfig"
 }
 
 resource "null_resource" "health_check" {
