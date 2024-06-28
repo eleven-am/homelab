@@ -4,7 +4,7 @@ metadata:
   name: sops-decrypt
   namespace: flux-system
 spec:
-  interval: 10m0s
+  interval: 1m0s
   path: ./clusters/talos-cluster
   prune: true
   sourceRef:
