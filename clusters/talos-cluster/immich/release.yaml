@@ -19,6 +19,8 @@ spec:
     immich:
       persistence:
         library:
+          enabled: true
+          type: persistentVolumeClaim
           existingClaim: immich-library
     machine-learning:
       persistence:
