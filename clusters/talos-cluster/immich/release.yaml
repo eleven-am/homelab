@@ -49,15 +49,6 @@ spec:
               CREATE EXTENSION cube;
               CREATE EXTENSION earthdistance;
               CREATE EXTENSION vectors;
-    redis:
-      enabled: true
-      architecture: standalone
-      auth:
-        enabled: false
-      persistence:
-        config:
-          storageClass: app-storage
-          type: pvc
     configuration:
       trash:
         enabled: true
@@ -68,6 +59,8 @@ spec:
       duplicateDetection:
         enabled: true
         maxDistance: 0.03
+    env:
+      REDIS_HOSTNAME: redis-service.redis.svc.cluster.local
 
 
 
