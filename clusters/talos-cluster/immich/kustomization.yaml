@@ -6,4 +6,5 @@ resources:
   - pvc.yaml
   - repo.yaml
   - release.yaml
+  - httpRoute.yaml
 
