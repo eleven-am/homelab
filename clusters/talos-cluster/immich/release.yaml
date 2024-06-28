@@ -45,19 +45,11 @@ spec:
               CREATE EXTENSION cube;
               CREATE EXTENSION earthdistance;
               CREATE EXTENSION vectors;
-      persistence:
-        enabled: true
-        storageClass: media-storage
-        size: 1Gi
     redis:
       enabled: true
       architecture: standalone
       auth:
         enabled: false
-      persistence:
-        enabled: true
-        storageClass: media-storage
-        size: 1Gi
     configuration:
       trash:
         enabled: true
