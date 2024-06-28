@@ -42,6 +42,7 @@ spec:
       DB_HOSTNAME: postgres-service.postgres.svc.cluster.local
       DB_PORT: 5432
       DB_DATABASE_NAME: immich
+      DB_VECTOR_EXTENSION: pgvector
       DB_USERNAME:
         valueFrom:
           secretKeyRef:
