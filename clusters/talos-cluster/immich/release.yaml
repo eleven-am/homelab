@@ -27,6 +27,37 @@ spec:
         cache:
           storageClass: media-storage
           type: pvc
+    postgresql:
+      enabled: true
+      image:
+        repository: tensorchord/pgvecto-rs
+        tag: pg14-v0.2.0
+      global:
+        postgresql:
+          auth:
+            username: immich
+            database: immich
+            password: immich
+      primary:
+        initdb:
+          scripts:
+            create-extensions.sql: |
+              CREATE EXTENSION cube;
+              CREATE EXTENSION earthdistance;
+              CREATE EXTENSION vectors;
+      persistence:
+        enabled: true
+        storageClass: media-storage
+        size: 1Gi
+    redis:
+      enabled: true
+      architecture: standalone
+      auth:
+        enabled: false
+      persistence:
+        enabled: true
+        storageClass: media-storage
+        size: 1Gi
     configuration:
       trash:
         enabled: true
@@ -37,12 +68,6 @@ spec:
       duplicateDetection:
         enabled: true
         maxDistance: 0.03
-    env:
-      REDIS_HOSTNAME: redis-service.redis.svc.cluster.local
-      DB_HOSTNAME: postgres-service.postgres.svc.cluster.local
-      DB_USERNAME: postgres
-      DB_PASSWORD: postgrespw
-      DB_DATABASE_NAME: immich
 
 
 
