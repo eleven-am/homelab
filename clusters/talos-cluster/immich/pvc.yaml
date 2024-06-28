@@ -7,7 +7,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   volumeMode: Filesystem
-  storageClassName: media-storage
+  storageClassName: app-storage
   resources:
     requests:
       storage: 10Gi
