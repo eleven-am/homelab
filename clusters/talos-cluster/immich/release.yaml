@@ -51,8 +51,3 @@ spec:
           secretKeyRef:
             key: POSTGRES_PASSWORD
             name: postgres-secret
-
-
-
-
-
