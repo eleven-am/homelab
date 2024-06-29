@@ -16,7 +16,11 @@ spec:
   timeout: 5m
   releaseName: authelia
   values:
-    redis:
+    configMap:
       enabled: true
-      enabledSecret: false
-      host: redis-service.redis.svc.cluster.local
+      session:
+        redis:
+          enabled: true
+          enabledSecret: false
+          host: 'redis-service.redis.svc.cluster.local'
+          port: 6379
