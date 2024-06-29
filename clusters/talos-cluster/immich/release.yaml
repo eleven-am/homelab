@@ -16,17 +16,22 @@ spec:
   timeout: 5m
   releaseName: immich
   values:
+    image:
+      tag: v1.106.4
+
     immich:
       persistence:
         library:
           enabled: true
           type: persistentVolumeClaim
           existingClaim: immich-library
+
     machine-learning:
       persistence:
         cache:
           storageClass: app-storage
           type: pvc
+
     configuration:
       trash:
         enabled: true
@@ -37,6 +42,7 @@ spec:
       duplicateDetection:
         enabled: true
         maxDistance: 0.03
+
     env:
       REDIS_HOSTNAME: redis-service.redis.svc.cluster.local
       DB_HOSTNAME: postgres-service.postgres.svc.cluster.local
