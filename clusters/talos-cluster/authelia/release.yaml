@@ -27,7 +27,7 @@ spec:
 
       storage:
         postgres:
-          enabled: false
+          enabled: true
           address: 'tcp://postgres-service.postgres.svc.cluster.local:5432'
           timeout: '5 seconds'
           database: 'authelia'
