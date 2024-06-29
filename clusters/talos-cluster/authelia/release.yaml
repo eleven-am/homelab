@@ -15,3 +15,16 @@ spec:
   interval: 15m
   timeout: 5m
   releaseName: authelia
+  values:
+    redis:
+      enabled: true
+      enabledSecret: false
+      host: 'redis-service.redis.svc.cluster.local'
+      port: 6379
+    postgres:
+      enabled: false
+      address: 'tcp://postgres.databases.svc.cluster.local:5432'
+      timeout: '5 seconds'
+      database: 'authelia'
+      schema: 'public'
+      username: 'authelia'
