@@ -24,3 +24,21 @@ spec:
           enabledSecret: false
           host: 'redis-service.redis.svc.cluster.local'
           port: 6379
+
+      storage:
+        postgres:
+          enabled: false
+          address: 'tcp://postgres-service.postgres.svc.cluster.local:5432'
+          timeout: '5 seconds'
+          database: 'authelia'
+          schema: 'public'
+          username:
+            valueFrom:
+              secretKeyRef:
+                key: POSTGRES_USER
+                name: postgres-secret
+          password:
+            valueFrom:
+              secretKeyRef:
+                key: POSTGRES_PASSWORD
+                name: postgres-secret
