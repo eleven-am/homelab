@@ -1,33 +1,21 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: DaemonSet
 metadata:
-  name: -deployment
-  namespace: tdarr
+  name: tdarr-node
   labels:
     app: tdarr-node
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: tdarr-node
   template:
     metadata:
-      name: tdarr-deployment
       labels:
         app: tdarr-node
     spec:
-      restartPolicy: Always
       containers:
-        - name: tdarr
-          image: ghcr.io/haveagitgat/tdarr:latest
-          imagePullPolicy: IfNotPresent
-          ports:
-            - containerPort: 8265
-              name: WebUI
-              protocol: TCP
-            - containerPort: 8266
-              name: API
-              protocol: TCP
+        - name: tdarr-node
+          image: ghcr.io/haveagitgat/tdarr_node:latest
           env:
             - name: PUID
               value: "1000"
@@ -38,13 +26,9 @@ spec:
             - name: UMASK_SET
               value: "022"
             - name: serverIP
-              value: "0.0.0.0"
+              value: tdarr-service
             - name: serverPort
               value: "8266"
-            - name: webUIPort
-              value: "8265"
-            - name: internalNode
-              value: "true"
             - name: inContainer
               value: "true"
             - name: ffmpegVersion
@@ -54,14 +38,23 @@ spec:
             - name: NVIDIA_DRIVER_CAPABILITIES
               value: "all"
             - name: nodeName
-              value: "khonsu"
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          resources:
+            limits:
+              cpu: "2"
+              memory: 4Gi
+            requests:
+              cpu: "1"
+              memory: 2Gi
           volumeMounts:
-            - name: tdarr-data
-              mountPath: /app
-            - name: tdarr-cache-data
-              mountPath: /temp
             - name: tdarr-media
               mountPath: /media
+            - name: tdarr-cache-data
+              mountPath: /temp
+            - name: tdarr-data
+              mountPath: /app
       volumes:
         - name: tdarr-data
           persistentVolumeClaim:
@@ -72,4 +65,3 @@ spec:
         - name: tdarr-media
           persistentVolumeClaim:
             claimName: tdarr-media
-
