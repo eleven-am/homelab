@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tdarr
+  namespace: tdarr
+  labels:
+    app: tdarr
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tdarr
+  template:
+    metadata:
+      name: tdarr
+      labels:
+        app: tdarr
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: tdarr
+          image: ghcr.io/haveagitgat/tdarr:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8265
+              name: WebUI
+              protocol: TCP
+            - containerPort: 8266
+              name: API
+              protocol: TCP
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Europe/Paris"
+            - name: UMASK_SET
+              value: "022"
+            - name: serverIP
+              value: "0.0.0.0"
+            - name: serverPort
+              value: "8266"
+            - name: webUIPort
+              value: "8265"
+            - name: internalNode
+              value: "true"
+            - name: inContainer
+              value: "true"
+            - name: ffmpegVersion
+              value: "6"
+            - name: NVIDIA_VISIBLE_DEVICES
+              value: "all"
+            - name: NVIDIA_DRIVER_CAPABILITIES
+              value: "all"
+            - name: nodeName
+              value: "khonsu"
+          volumeMounts:
+            - name: tdarr-data
+              mountPath: /app
+            - name: tdarr-cache-data
+              mountPath: /temp
+            - name: tdarr-media
+              mountPath: /media
+      volumes:
+        - name: tdarr-data
+          persistentVolumeClaim:
+            claimName: tdarr-data
+        - name: tdarr-cache-data
+          persistentVolumeClaim:
+            claimName: tdarr-cache-data
+        - name: tdarr-media
+          persistentVolumeClaim:
+            claimName: tdarr-media
+
