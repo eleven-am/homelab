@@ -5,7 +5,7 @@ metadata:
   namespace: tdarr
 spec:
   selector:
-    app: tdarr-node
+    app: tdarr-deployment
   ports:
     - name: webui
       port: 8265

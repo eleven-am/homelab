@@ -4,17 +4,17 @@ metadata:
   name: tdarr-deployment
   namespace: tdarr
   labels:
-    app: tdarr-node
+    app: tdarr-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: tdarr-node
+      app: tdarr-deployment
   template:
     metadata:
       name: tdarr-deployment
       labels:
-        app: tdarr-node
+        app: tdarr-deployment
     spec:
       restartPolicy: Always
       containers:

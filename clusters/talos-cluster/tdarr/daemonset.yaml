@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: tdarr-node
+  namespace: tdarr
   labels:
     app: tdarr-node
 spec:
