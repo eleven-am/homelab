@@ -5,5 +5,5 @@ resources:
   - pvc.yaml
   - deployment.yaml
   - service.yaml
-  - daemonset.yaml
+  - daemonSet.yaml
   - httpRoute.yaml
