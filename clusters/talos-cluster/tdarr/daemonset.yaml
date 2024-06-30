@@ -54,12 +54,17 @@ spec:
               mountPath: /media
             - name: tdarr-cache-data
               mountPath: /temp
-            - name: tdarr-data
-              mountPath: /app
+            - name: tdarr-logs
+              mountPath: /app/logs
+            - name: tdarr-configs
+              mountPath: /app/configs
       volumes:
-        - name: tdarr-data
+        - name: tdarr-configs
           persistentVolumeClaim:
-            claimName: tdarr-data
+            claimName: tdarr-configs
+        - name: tdarr-logs
+          persistentVolumeClaim:
+            claimName: tdarr-logs
         - name: tdarr-cache-data
           persistentVolumeClaim:
             claimName: tdarr-cache-data

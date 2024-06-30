@@ -56,16 +56,26 @@ spec:
             - name: nodeName
               value: "khonsu"
           volumeMounts:
-            - name: tdarr-data
-              mountPath: /app
+            - name: tdarr-logs
+              mountPath: /app/logs
+            - name: tdarr-server
+              mountPath: /app/server
+            - name: tdarr-configs
+              mountPath: /app/configs
             - name: tdarr-cache-data
               mountPath: /temp
             - name: tdarr-media
               mountPath: /media
       volumes:
-        - name: tdarr-data
+        - name: tdarr-server
           persistentVolumeClaim:
-            claimName: tdarr-data
+            claimName: tdarr-server
+        - name: tdarr-configs
+          persistentVolumeClaim:
+            claimName: tdarr-configs
+        - name: tdarr-logs
+          persistentVolumeClaim:
+            claimName: tdarr-logs
         - name: tdarr-cache-data
           persistentVolumeClaim:
             claimName: tdarr-cache-data
