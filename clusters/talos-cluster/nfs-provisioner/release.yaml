@@ -18,4 +18,4 @@ spec:
   values:
     controller:
       runOnControlPlane: true
-      replicas: 3
+      replicas: 1
