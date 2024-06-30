@@ -23,10 +23,10 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8265
-              name: WebUI
+              name: webui
               protocol: TCP
             - containerPort: 8266
-              name: API
+              name: api
               protocol: TCP
           env:
             - name: PUID
