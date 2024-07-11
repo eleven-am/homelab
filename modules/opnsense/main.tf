@@ -13,6 +13,7 @@ locals {
   firewall         = "1"
   LAN_bridge       = "LAN"
   WAN_bridge       = "WAN"
+  MULLVAD_bridge   = "MULLVAD"
   ubuntu_iso       = "local:iso/ubuntu-22.04.4-desktop-amd64.iso"
   opnsense_iso     = "local:iso/OPNsense-24.1-dvd-amd64.iso"
   opnsense_id      = 8000
@@ -36,6 +37,7 @@ resource "proxmox_vm_qemu" "ubuntu_desktop" {
   cores 		= 4
   cpu 			= local.cpu
   scsihw 		= local.scsihw
+  agent         = 1
 
   # Disk configuration
   disks {
@@ -68,6 +70,7 @@ resource "proxmox_vm_qemu" "opnsense_router" {
   onboot 		= true
   iso 			= local.opnsense_iso
   tags 			= "${local.opnsense_tag};${local.router_tag}"
+  agent         = 1
 
   # System
   memory 		= 4096
@@ -97,6 +100,12 @@ resource "proxmox_vm_qemu" "opnsense_router" {
   network {
     model    = local.model
     bridge   = local.LAN_bridge
+    firewall = local.firewall
+  }
+
+  network {
+    model    = local.model
+    bridge   = local.MULLVAD_bridge
     firewall = local.firewall
   }
 }
