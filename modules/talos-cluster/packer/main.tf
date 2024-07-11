@@ -24,8 +24,21 @@ resource "local_file" "values_pkr_json" {
   })
 }
 
-resource "null_resource" "packer_build" {
+resource "null_resource" "init_packer" {
   depends_on = [local_file.values_pkr_json]
+
+  triggers = {
+	talos_iso_url = local.talos_iso_url
+	iso_url       = var.iso_url
+  }
+
+  provisioner "local-exec" {
+	command = "packer init ${path.module}/packer.pkr.hcl"
+  }
+}
+
+resource "null_resource" "packer_build" {
+  depends_on = [null_resource.init_packer]
 
   triggers = {
 	talos_iso_url = local.talos_iso_url
