@@ -16,6 +16,8 @@ module "talos_image" {
 }
 
 module "talos_cluster" {
+  depends_on = [module.talos_image]
+
   source = "./cluster"
 
   cidr                    = var.cidr
