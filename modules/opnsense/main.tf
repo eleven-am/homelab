@@ -37,7 +37,6 @@ resource "proxmox_vm_qemu" "ubuntu_desktop" {
   cores 		= 4
   cpu 			= local.cpu
   scsihw 		= local.scsihw
-  agent         = 1
 
   # Disk configuration
   disks {
@@ -70,7 +69,6 @@ resource "proxmox_vm_qemu" "opnsense_router" {
   onboot 		= true
   iso 			= local.opnsense_iso
   tags 			= "${local.opnsense_tag};${local.router_tag}"
-  agent         = 1
 
   # System
   memory 		= 4096
