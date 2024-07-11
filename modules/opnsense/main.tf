@@ -27,7 +27,7 @@ resource "proxmox_vm_qemu" "ubuntu_desktop" {
   qemu_os 		= local.qemu_os
   os_type 		= local.os_type
 
-  onboot 		= true
+  onboot 		= false
   iso 			= local.ubuntu_iso
   tags 			= "${local.ubuntu_tag};${local.desktop_tag}"
 
