@@ -7,7 +7,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   volumeMode: Filesystem
-  storageClassName: app-storage
+  storageClassName: blizzard-storage
   resources:
     requests:
       storage: 10Gi
