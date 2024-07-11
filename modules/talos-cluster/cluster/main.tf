@@ -9,7 +9,7 @@ locals {
   cluster_endpoint = "https://${local.cluster_ip}:6443"
   primary_endpoint = "https://${local.primary_ip}:6443"
   crd_version 	   = "v1.0.0"
-  installer 	   = "factory.talos.dev/installer-secureboot/${var.schematic_id}:${var.talos_version}"
+  installer 	   = "factory.talos.dev/installer/${var.schematic_id}:${var.talos_version}"
 }
 
 module "kubernetes-masters" {
