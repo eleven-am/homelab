@@ -49,7 +49,7 @@ spec:
             - name: LOG_HTML
               value: "false"
             - name: CAPTCHA_SOLVER
-              value: "none"
+              value: "hcaptcha"
             - name: TZ
               value: "Europe/Paris"
           ports:
