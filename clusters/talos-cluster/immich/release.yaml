@@ -29,7 +29,7 @@ spec:
     machine-learning:
       persistence:
         cache:
-          storageClass: app-storage
+          storageClass: blizzard-storage
           type: pvc
 
     configuration:
