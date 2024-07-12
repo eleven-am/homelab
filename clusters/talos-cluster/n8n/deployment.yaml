@@ -43,7 +43,11 @@ spec:
                   key: POSTGRES_PASSWORD
             - name: POSTGRES_DB
               value: n8n
-          command: [ "sh", "-c", "psql -h postgres-service.postgres.svc.cluster.local -U $POSTGRES_USER -d $POSTGRES_DB -c 'CREATE EXTENSION IF NOT EXISTS pgcrypto;'" ]
+          command:
+            - sh
+            - -c
+            - |
+              PGPASSWORD=$POSTGRES_PASSWORD psql -h postgres-service.postgres.svc.cluster.local -U $POSTGRES_USER -d $POSTGRES_DB -c 'CREATE EXTENSION IF NOT EXISTS pgcrypto;'
       containers:
         - command:
             - /bin/sh
