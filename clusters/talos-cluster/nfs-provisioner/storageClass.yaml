@@ -54,7 +54,7 @@ provisioner: nfs.csi.k8s.io
 parameters:
   server: 192.168.101.100
   share: /mnt/blizzard
-  subDir: /apps/${pvc.metadata.namespace}/${pvc.metadata.name}
+  subDir: /folders/${pvc.metadata.namespace}/${pvc.metadata.name}
   onDelete: retain
 reclaimPolicy: Delete
 volumeBindingMode: Immediate
