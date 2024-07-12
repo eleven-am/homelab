@@ -28,6 +28,22 @@ spec:
           volumeMounts:
             - name: n8n-data
               mountPath: /data
+        - name: init-db
+          image: postgres:14
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: n8n-secret
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: n8n-secret
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DB
+              value: n8n
+          command: [ "sh", "-c", "psql -h postgres-service.postgres.svc.cluster.local -U $POSTGRES_USER -d $POSTGRES_DB -c 'CREATE EXTENSION IF NOT EXISTS pgcrypto;'" ]
       containers:
         - command:
             - /bin/sh
