@@ -8,7 +8,7 @@ spec:
     - name: cilium-gateway
       namespace: gateway
   hostnames:
-    - "sonarr.horus.maix.ovh"
+    - "sonarr.horus.ossai.dev"
   rules:
     - matches:
         - path:

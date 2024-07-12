@@ -8,7 +8,7 @@ spec:
     - name: cilium-gateway
       namespace: gateway
   hostnames:
-    - "minio.horus.maix.ovh"
+    - "minio.horus.ossai.dev"
   rules:
     - matches:
         - path:
@@ -28,7 +28,7 @@ spec:
     - name: cilium-gateway
       namespace: gateway
   hostnames:
-    - "s3.horus.maix.ovh"
+    - "s3.horus.ossai.dev"
   rules:
     - matches:
         - path:
