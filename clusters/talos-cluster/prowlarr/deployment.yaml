@@ -45,7 +45,7 @@ spec:
           image: ghcr.io/flaresolverr/flaresolverr:latest
           env:
             - name: LOG_LEVEL
-              value: "info"
+              value: "debug"
             - name: LOG_HTML
               value: "false"
             - name: CAPTCHA_SOLVER
