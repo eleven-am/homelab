@@ -16,3 +16,6 @@ spec:
     - name: prowlarr
       protocol: TCP
       port: 9696
+    - name: flaresolverr
+      protocol: TCP
+      port: 8191
