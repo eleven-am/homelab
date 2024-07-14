@@ -28,7 +28,7 @@ spec:
     - name: cilium-gateway
       namespace: gateway
   hostnames:
-    - "flare.horus.ossai.dev"
+    - "flare.horus.maix.ovh"
   rules:
     - matches:
         - path:

@@ -8,7 +8,7 @@ spec:
     - name: cilium-gateway
       namespace: gateway
   hostnames:
-    - "immich.horus.ossai.dev"
+    - "immich.horus.maix.ovh"
   rules:
     - matches:
         - path:
