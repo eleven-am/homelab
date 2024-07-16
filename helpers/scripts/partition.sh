@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Create 3 partitions of 500GiB each
 sgdisk -n 1:+0:+500GiB /dev/nvme0n1
 sgdisk -n 2:+0:+500GiB /dev/nvme0n1

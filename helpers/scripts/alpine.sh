@@ -1,3 +1,5 @@
+#!/bin/bash
+
 apk search openssh
 apk add openssh
 rc-update add sshd
