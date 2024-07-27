@@ -19,7 +19,7 @@ spec:
       restartPolicy: Always
       containers:
         - name: tdarr
-          image: ghcr.io/haveagitgat/tdarr:latest
+          image: ghcr.io/haveagitgat/tdarr:2.23.01
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8265

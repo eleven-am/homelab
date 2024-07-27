@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: tdarr-node
-          image: ghcr.io/haveagitgat/tdarr_node:latest
+          image: ghcr.io/haveagitgat/tdarr_node:2.23.01
           env:
             - name: PUID
               value: "1000"
