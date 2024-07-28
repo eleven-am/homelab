@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: authentik-library
+  namespace: authentik
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  storageClassName: app-storage
+  resources:
+    requests:
+      storage: 10Gi
+
