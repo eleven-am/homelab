@@ -21,13 +21,33 @@ spec:
       error_reporting:
         enabled: true
       postgresql:
-        password: "ThisIsNotASecurePassword"
+        host: postgres-service.postgres.svc.cluster.local
+        password:
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_PASSWORD
+              name: postgres-secret
+        user:
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_USER
+              name: postgres-secret
+      redis:
+        host: redis-service.redis.svc.cluster.local
 
     postgresql:
-      enabled: true
-      auth:
-        password: "ThisIsNotASecurePassword"
+      host: postgres-service.postgres.svc.cluster.local
+      password:
+        valueFrom:
+          secretKeyRef:
+            key: POSTGRES_PASSWORD
+            name: postgres-secret
+      user:
+        valueFrom:
+          secretKeyRef:
+            key: POSTGRES_USER
+            name: postgres-secret
 
     redis:
-      enabled: true
+      host: redis-service.redis.svc.cluster.local
 
