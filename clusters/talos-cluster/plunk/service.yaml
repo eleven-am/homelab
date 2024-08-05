@@ -10,4 +10,4 @@ spec:
     - name: plunk-tcp
       protocol: TCP
       port: 3000
-
+  type: LoadBalancer
