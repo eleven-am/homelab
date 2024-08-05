@@ -17,31 +17,17 @@ spec:
   releaseName: authentik
   values:
     authentik:
+      secret_key: "PleaseGenerateA50CharKey"
       error_reporting:
         enabled: true
-      secret_key:
-        valueFrom:
-          secretKeyRef:
-            key: SECRET_KEY
-            name: postgres-secret
-
       postgresql:
-        host: postgres-service.postgres.svc.cluster.local
-        port: 5432
-        name: authentik
-        user:
-          valueFrom:
-            secretKeyRef:
-              key: POSTGRES_USER
-              name: postgres-secret
-        password:
-          valueFrom:
-            secretKeyRef:
-              key: POSTGRES_PASSWORD
-              name: postgres-secret
+        password: "ThisIsNotASecurePassword"
 
-      redis:
-        host: redis-service.redis.svc.cluster.local
-        port: 6379
+    postgresql:
+      enabled: true
+      auth:
+        password: "ThisIsNotASecurePassword"
 
+    redis:
+      enabled: true
 
