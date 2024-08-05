@@ -22,6 +22,8 @@ spec:
         enabled: true
       postgresql:
         host: postgres-service.postgres.svc.cluster.local
+        name: authentik
+        port: 5432
         password:
           valueFrom:
             secretKeyRef:
@@ -34,20 +36,11 @@ spec:
               name: postgres-secret
       redis:
         host: redis-service.redis.svc.cluster.local
+        password: ""
 
     postgresql:
-      host: postgres-service.postgres.svc.cluster.local
-      password:
-        valueFrom:
-          secretKeyRef:
-            key: POSTGRES_PASSWORD
-            name: postgres-secret
-      user:
-        valueFrom:
-          secretKeyRef:
-            key: POSTGRES_USER
-            name: postgres-secret
+      enabled: false
 
     redis:
-      host: redis-service.redis.svc.cluster.local
+      enabled: false
 
