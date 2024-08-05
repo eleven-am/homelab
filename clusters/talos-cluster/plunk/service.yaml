@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: plunk-service
+  namespace: plunk
+spec:
+  selector:
+    app: plunk-deployment
+  ports:
+    - name: plunk-tcp
+      protocol: TCP
+      port: 3000
+
