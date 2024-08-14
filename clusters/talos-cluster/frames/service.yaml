@@ -7,11 +7,6 @@ spec:
   selector:
     app: frames-deployment
   ports:
-    - protocol: TCP
-      port: 9000
-      targetPort: 9000
-      name: api
-    - protocol: TCP
-      port: 9090
-      targetPort: 9090
-      name: console
+    - name: frames-tcp
+      protocol: TCP
+      port: 3000
