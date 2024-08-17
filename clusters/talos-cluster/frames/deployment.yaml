@@ -58,6 +58,8 @@ spec:
               value: "6379"
             - name: REDIS_TTL
               value: "86400"
+            - name: REDIS_DB
+              value: "2"
       restartPolicy: Always
       volumes:
         - name: frames-data
@@ -126,6 +128,8 @@ spec:
               value: "6379"
             - name: REDIS_TTL
               value: "86400"
+            - name: REDIS_DB
+              value: "2"
             - name: NODE_ENV
               value: "demo"
       restartPolicy: Always
