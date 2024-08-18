@@ -115,6 +115,26 @@ spec:
           image: elevenam/frames:latest
           ports:
             - containerPort: 3000
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            failureThreshold: 3
+          startupProbe:
+            httpGet:
+              path: /health/critical
+              port: 3000
+            failureThreshold: 30
+            periodSeconds: 10
           volumeMounts:
             - name: frames-data
               mountPath: /media
