@@ -55,6 +55,9 @@ spec:
               mountPath: /media
             - name: custom-templates
               mountPath: /templates
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
       volumes:
         - name: media
           persistentVolumeClaim:
@@ -123,6 +126,9 @@ spec:
               mountPath: /templates
             - name: docker-socket
               mountPath: /var/run/docker.sock
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
       volumes:
         - name: media
           persistentVolumeClaim:
