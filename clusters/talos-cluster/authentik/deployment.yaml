@@ -1,0 +1,139 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authentik-server
+  namespace: authentik
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: authentik-server
+  template:
+    metadata:
+      labels:
+        app: authentik-server
+    spec:
+      initContainers:
+        - name: init-db
+          image: postgres:14
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: authentik-config
+                  key: AUTHENTIK_POSTGRESQL__USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: authentik-secret
+                  key: AUTHENTIK_POSTGRESQL__PASSWORD
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: authentik-config
+                  key: AUTHENTIK_POSTGRESQL__NAME
+            - name: POSTGRES_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: authentik-config
+                  key: AUTHENTIK_POSTGRESQL__HOST
+          command: [ 'sh', '-c', 'PGPASSWORD=$POSTGRES_PASSWORD psql -h $POSTGRES_HOST -U $POSTGRES_USER -d postgres -c "SELECT 1 FROM pg_database WHERE datname = ''$DB_NAME''" | grep -q 1 || PGPASSWORD=$POSTGRES_PASSWORD psql -h $POSTGRES_HOST -U $POSTGRES_USER -d postgres -c "CREATE DATABASE $DB_NAME;"' ]
+      containers:
+        - name: server
+          image: ghcr.io/goauthentik/server:2024.8.0
+          command: ["server"]
+          ports:
+            - containerPort: 9000
+            - containerPort: 9443
+          envFrom:
+            - configMapRef:
+                name: authentik-config
+            - secretRef:
+                name: authentik-secret
+          volumeMounts:
+            - name: media
+              mountPath: /media
+            - name: custom-templates
+              mountPath: /templates
+      volumes:
+        - name: media
+          persistentVolumeClaim:
+            claimName: authentik-media-pvc
+        - name: custom-templates
+          persistentVolumeClaim:
+            claimName: authentik-templates-pvc
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authentik-worker
+  namespace: authentik
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: authentik-worker
+  template:
+    metadata:
+      labels:
+        app: authentik-worker
+    spec:
+      initContainers:
+        - name: wait-for-db
+          image: postgres:14
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: authentik-config
+                  key: AUTHENTIK_POSTGRESQL__USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: authentik-secret
+                  key: AUTHENTIK_POSTGRESQL__PASSWORD
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: authentik-config
+                  key: AUTHENTIK_POSTGRESQL__NAME
+            - name: POSTGRES_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: authentik-config
+                  key: AUTHENTIK_POSTGRESQL__HOST
+          command: [ 'sh', '-c', 'until PGPASSWORD=$POSTGRES_PASSWORD psql -h $POSTGRES_HOST -U $POSTGRES_USER -d $DB_NAME -c "SELECT 1" &> /dev/null; do sleep 1; done' ]
+      containers:
+        - name: worker
+          image: ghcr.io/goauthentik/server:2024.8.0
+          command: ["worker"]
+          envFrom:
+            - configMapRef:
+                name: authentik-config
+            - secretRef:
+                name: authentik-secret
+          volumeMounts:
+            - name: media
+              mountPath: /media
+            - name: certs
+              mountPath: /certs
+            - name: custom-templates
+              mountPath: /templates
+            - name: docker-socket
+              mountPath: /var/run/docker.sock
+      volumes:
+        - name: media
+          persistentVolumeClaim:
+            claimName: authentik-media-pvc
+        - name: certs
+          persistentVolumeClaim:
+            claimName: authentik-certs-pvc
+        - name: custom-templates
+          persistentVolumeClaim:
+            claimName: authentik-templates-pvc
+        - name: docker-socket
+          hostPath:
+            path: /var/run/docker.sock
+            type: Socket
