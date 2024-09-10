@@ -16,6 +16,7 @@ CRF=23
 PRESET="medium"
 CLEANUP=false
 MAX_RETRIES=3
+LOG_LEVEL="INFO"
 
 # Logging function with colors
 log() {
@@ -23,14 +24,43 @@ log() {
     local message="$2"
     local color="$RESET"
 
-    case "$level" in
-        "INFO")  color="$GREEN" ;;
-        "WARN")  color="$YELLOW" ;;
-        "ERROR") color="$RED" ;;
-        "DEBUG") color="$BLUE" ;;
+    # Define log levels
+    local -r DEBUG=0
+    local -r INFO=1
+    local -r WARN=2
+    local -r ERROR=3
+
+    # Get numeric priority of current log level
+    local log_priority
+    case "$LOG_LEVEL" in
+        DEBUG) log_priority=$DEBUG ;;
+        INFO)  log_priority=$INFO ;;
+        WARN)  log_priority=$WARN ;;
+        ERROR) log_priority=$ERROR ;;
+        *)     log_priority=$INFO ;;  # Default to INFO if invalid level
     esac
 
-    echo -e "${color}[$(date +'%Y-%m-%d %H:%M:%S')] [$level] $message${RESET}"
+    # Get numeric priority of message level
+    local message_priority
+    case "$level" in
+        DEBUG) message_priority=$DEBUG ;;
+        INFO)  message_priority=$INFO ;;
+        WARN)  message_priority=$WARN ;;
+        ERROR) message_priority=$ERROR ;;
+        *)     message_priority=$INFO ;;  # Default to INFO if invalid level
+    esac
+
+    # Check if the log level is high enough to be printed
+    if [ $message_priority -ge $log_priority ]; then
+        case "$level" in
+            INFO)  color="$GREEN" ;;
+            WARN)  color="$YELLOW" ;;
+            ERROR) color="$RED" ;;
+            DEBUG) color="$BLUE" ;;
+        esac
+
+        echo -e "${color}[$(date +'%Y-%m-%d %H:%M:%S')] [$level] $message${RESET}"
+    fi
 }
 
 # Function to display help
@@ -40,6 +70,7 @@ show_help() {
     echo "  -h, --help             Show this help message"
     echo "  -d, --dry-run          Perform a dry run without actual conversion"
     echo "  -j, --jobs <n>         Number of parallel jobs (default: number of CPU cores)"
+    echo "  -l, --log-level <level> Set log level (DEBUG, INFO, WARN, ERROR) (default: INFO)"
     echo "  -q, --quality <n>      Set CRF value for quality (0-51, lower is better, default: 23)"
     echo "  -p, --preset <preset>  Set ffmpeg preset (default: medium)"
     echo "  -c, --cleanup          Remove original files after successful conversion"
@@ -67,6 +98,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         -j|--jobs)
             PARALLEL_JOBS="$2"
+            shift 2
+            ;;
+        -l|--log-level)
+            LOG_LEVEL="${2^^}"
             shift 2
             ;;
         -q|--quality)
@@ -251,7 +286,7 @@ if [ "$DRY_RUN" = true ]; then
 fi
 
 export -f log is_video is_html5_compatible convert_to_html5 process_video
-export DRY_RUN CLEANUP CRF PRESET MAX_RETRIES
+export DRY_RUN CLEANUP CRF PRESET MAX_RETRIES LOG_LEVEL
 
 find "$DIR" -type f -print0 | parallel -0 -j "$PARALLEL_JOBS" process_video
 
