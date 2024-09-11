@@ -1,0 +1,40 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: video_processor-cronjob
+  namespace: transcode
+spec:
+  schedule: "0 2 * * *"
+  startingDeadlineSeconds: 1800
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      parallelism: 4
+      completions: 4
+      template:
+        spec:
+          containers:
+            - name: video_processor
+              image: elevenam/video_processor:latest
+              command: ["/bin/bash"]
+              args:
+                - "-c"
+                - |
+                  SHARD_INDEX=$((${JOB_COMPLETION_INDEX} % 4))
+                  /usr/local/bin/process_videos.sh -c --log-level INFO --total-shards 4 --shard-index $SHARD_INDEX /data
+              volumeMounts:
+                - name: video-volume
+                  mountPath: /data
+              resources:
+                requests:
+                  cpu: "1"
+                  memory: "1Gi"
+                limits:
+                  cpu: "2"
+                  memory: "2Gi"
+          restartPolicy: Never
+          volumes:
+            - name: video-volume
+              persistentVolumeClaim:
+                claimName: transcode-media

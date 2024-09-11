@@ -11,12 +11,13 @@ BLUE='\033[0;34m'
 
 # Default values
 DRY_RUN=false
-PARALLEL_JOBS=$(sysctl -n hw.ncpu 2>/dev/null || nproc)
 CRF=23
 PRESET="medium"
 CLEANUP=false
 MAX_RETRIES=3
 LOG_LEVEL="INFO"
+TOTAL_SHARDS=1
+SHARD_INDEX=0
 
 # Logging function with colors
 log() {
@@ -69,16 +70,25 @@ show_help() {
     echo "Options:"
     echo "  -h, --help             Show this help message"
     echo "  -d, --dry-run          Perform a dry run without actual conversion"
-    echo "  -j, --jobs <n>         Number of parallel jobs (default: number of CPU cores)"
     echo "  -l, --log-level <level> Set log level (DEBUG, INFO, WARN, ERROR) (default: INFO)"
     echo "  -q, --quality <n>      Set CRF value for quality (0-51, lower is better, default: 23)"
     echo "  -p, --preset <preset>  Set ffmpeg preset (default: medium)"
     echo "  -c, --cleanup          Remove original files after successful conversion"
     echo "  -r, --retries <n>      Maximum number of retries for failed conversions (default: 3)"
+    echo "  --total-shards <n>     Total number of shards for parallel processing (default: 1)"
+    echo "  --shard-index <n>      Index of this shard (0-based, default: 0)"
+}
+
+# Function to check the exit status of the last command
+check_status() {
+    if [ $? -ne 0 ]; then
+        log "ERROR" "$1"
+        exit 1
+    fi
 }
 
 # Check for required commands
-for cmd in ffmpeg ffprobe file parallel; do
+for cmd in ffmpeg ffprobe file; do
     if ! command -v "$cmd" &> /dev/null; then
         log "ERROR" "$cmd is required but not installed. Please install it and try again."
         exit 1
@@ -95,10 +105,6 @@ while [[ $# -gt 0 ]]; do
         -d|--dry-run)
             DRY_RUN=true
             shift
-            ;;
-        -j|--jobs)
-            PARALLEL_JOBS="$2"
-            shift 2
             ;;
         -l|--log-level)
             LOG_LEVEL="${2^^}"
@@ -118,6 +124,14 @@ while [[ $# -gt 0 ]]; do
             ;;
         -r|--retries)
             MAX_RETRIES="$2"
+            shift 2
+            ;;
+        --total-shards)
+            TOTAL_SHARDS="$2"
+            shift 2
+            ;;
+        --shard-index)
+            SHARD_INDEX="$2"
             shift 2
             ;;
         *)
@@ -144,6 +158,22 @@ fi
 DIR=$(cd "$DIR" && pwd)
 log "INFO" "Processing directory: $DIR"
 
+# Function to parse stream indexes from a string
+parse_stream_indexes() {
+    local input_string="$1"
+    local result=""
+    local separator=""
+
+    while IFS= read -r line; do
+        if [[ "$line" =~ ^[0-9]+$ ]]; then
+            result="${result}${separator}${line}"
+            separator=","
+        fi
+    done <<< "$input_string"
+
+    echo "$result"
+}
+
 # Function to check if a file is a video
 is_video() {
     local mime_type
@@ -162,7 +192,7 @@ is_html5_compatible() {
     video_codec=$(ffprobe -v error -select_streams v:0 -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 "$file")
 
     # Check container format
-    if [[ "$container" != *"mp4"* && "$container" != *"webm"* ]]; then
+    if [[ ! "$container" =~ mp4 ]]; then
         log "WARN" "Container format $container is not HTML5 compatible for file: $file"
         return 1
     fi
@@ -178,12 +208,14 @@ is_html5_compatible() {
 
     local stream
     local audio_codec
+    local audio_stream_index=0
     for stream in $audio_streams; do
-        audio_codec=$(ffprobe -v error -select_streams a:"$stream" -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 "$file")
-        if [[ "$audio_codec" != "eac3" && "$audio_codec" != "aac" && "$audio_codec" != "ac3" ]]; then
+        audio_codec=$(ffprobe -v error -select_streams a:"$audio_stream_index" -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 "$file")
+        if [[ ! "$audio_codec" =~ ^(eac3|aac|ac3)$ ]]; then
             log "WARN" "Audio stream $stream codec $audio_codec is not compatible for file: $file"
             return 1
         fi
+        audio_stream_index=$((audio_stream_index + 1))
     done
 
     log "INFO" "Video is HTML5 compatible (MP4/WebM container, h264 video, all audio streams are eac3/aac/ac3) for file: $file"
@@ -198,42 +230,80 @@ convert_to_html5() {
     local output_path
     local container
     local video_codec
-    local audio_streams
     local ffmpeg_cmd
 
     input_filename=$(basename "$input")
-    output_filename="${input_filename%.*}_converted.mp4"
-    output_path="$(dirname "$input")/$output_filename"
+    if [ "$CLEANUP" = true ]; then
+        output_filename="${input_filename}"
+        output_path="${input%.*}.mp4"
+    else
+        output_filename="${input_filename%.*}_converted.mp4"
+        output_path="$(dirname "$input")/$output_filename"
+    fi
 
     container=$(ffprobe -v error -show_entries format=format_name -of default=noprint_wrappers=1:nokey=1 "$input")
     video_codec=$(ffprobe -v error -select_streams v:0 -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 "$input")
-    audio_streams=$(ffprobe -v error -select_streams a -show_entries stream=index -of csv=p=0 "$input")
 
     # Prepare ffmpeg command
-    ffmpeg_cmd=(ffmpeg -i "$input")
+    ffmpeg_cmd=(ffmpeg -loglevel error -hide_banner -i "$input")
 
     # Determine video encoding settings
     if [[ "$container" == *"mp4"* && "$video_codec" == "h264" ]]; then
         ffmpeg_cmd+=(-c:v copy)
-        log "INFO" "Copying video stream for file: $input"
+        log "DEBUG" "Copying video stream for file: $input"
     else
         ffmpeg_cmd+=(-c:v libx264 -preset "$PRESET" -crf "$CRF")
-        log "INFO" "Transcoding video stream to h264 for file: $input"
+        log "DEBUG" "Transcoding video stream to h264 for file: $input"
     fi
 
-    # Process each audio stream
-    local stream
+    # Process audio streams
     local audio_codec
-    for stream in $audio_streams; do
-        audio_codec=$(ffprobe -v error -select_streams a:"$stream" -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 "$input")
-        if [[ "$audio_codec" == "eac3" || "$audio_codec" == "aac" || "$audio_codec" == "ac3" ]]; then
-            ffmpeg_cmd+=(-c:a:"$stream" copy)
-            log "INFO" "Copying audio stream $stream for file: $input"
+    local audio_streams
+    local parsed_audio_streams
+    local ffmpeg_audio_index=0
+
+    audio_streams=$(ffprobe -v error -select_streams a -show_entries stream=index -of csv=p=0 "$input")
+    parsed_audio_streams=$(parse_stream_indexes "$audio_streams")
+
+    IFS=',' read -ra audio_stream_array <<< "$parsed_audio_streams"
+
+    for stream in "${audio_stream_array[@]}"; do
+         audio_codec=$(ffprobe -v error -select_streams a:"$ffmpeg_audio_index" -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 "$input")
+        if [[ "$audio_codec" =~ ^(eac3|aac|ac3)$ ]]; then
+            ffmpeg_cmd+=(-c:a:"$ffmpeg_audio_index" copy)
+            log "DEBUG" "Copying audio stream $stream for file: $input"
         else
-            ffmpeg_cmd+=(-c:a:"$stream" aac -b:a:"$stream" 192k)
-            log "INFO" "Transcoding audio stream $stream to AAC for file: $input"
+            ffmpeg_cmd+=(-c:a:"$ffmpeg_audio_index" aac)
+            log "DEBUG" "Transcoding audio stream $stream to AAC for file: $input"
         fi
+        ffmpeg_audio_index=$((ffmpeg_audio_index + 1))
     done
+
+    # Process subtitle streams
+    local subtitle_codec
+    local subtitle_streams
+    local parsed_subtitle_streams
+    local ffmpeg_subtitle_index=0
+
+    subtitle_streams=$(ffprobe -v error -select_streams s -show_entries stream=index -of csv=p=0 "$input")
+    parsed_subtitle_streams=$(parse_stream_indexes "$subtitle_streams")
+
+    IFS=',' read -ra subtitle_stream_array <<< "$parsed_subtitle_streams"
+
+    for stream in "${subtitle_stream_array[@]}"; do
+        subtitle_codec=$(ffprobe -v error -select_streams s:"$ffmpeg_subtitle_index" -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 "$input")
+        if [[ "$subtitle_codec" == "mov_text" ]]; then
+            ffmpeg_cmd+=(-c:s:"$ffmpeg_subtitle_index" copy)
+            log "DEBUG" "Copying subtitle stream $stream (codec: $subtitle_codec) for file: $input"
+        else
+            ffmpeg_cmd+=(-c:s:"$ffmpeg_subtitle_index" mov_text)
+            log "DEBUG" "Transcoding subtitle stream $stream from $subtitle_codec to mov_text for file: $input"
+        fi
+        ffmpeg_subtitle_index=$((ffmpeg_subtitle_index + 1))
+    done
+
+    # Add movflags for better streaming
+    ffmpeg_cmd+=(-movflags +faststart)
 
     # Add output file to command
     ffmpeg_cmd+=(-f mp4 "$output_path")
@@ -241,9 +311,10 @@ convert_to_html5() {
     # Execute ffmpeg command
     log "INFO" "Starting conversion for file: $input"
     if [ "$DRY_RUN" = true ]; then
-        log "DEBUG" "Dry run: ${ffmpeg_cmd[*]}"
+        log "INFO" "Dry run: ${ffmpeg_cmd[*]}"
     else
-        if "${ffmpeg_cmd[@]}"; then
+        "${ffmpeg_cmd[@]}" </dev/null
+        if check_status "Conversion failed for file: $input"; then
             log "INFO" "Conversion completed successfully: $output_path"
             if [ "$CLEANUP" = true ]; then
                 rm "$input"
@@ -262,22 +333,42 @@ process_video() {
     local retries=0
 
     while [ $retries -lt "$MAX_RETRIES" ]; do
-        if is_html5_compatible "$file"; then
-            log "INFO" "File is already HTML5 compatible: $file"
+        if convert_to_html5 "$file"; then
             return 0
         else
-            log "INFO" "Converting to HTML5 compatible format: $file"
-            if convert_to_html5 "$file"; then
-                return 0
-            else
-                retries=$((retries + 1))
-                log "WARN" "Conversion failed. Retry $retries of $MAX_RETRIES for file: $file"
-            fi
+            retries=$((retries + 1))
+            log "WARN" "Conversion failed. Retry $retries of $MAX_RETRIES for file: $file"
+            sleep 5
         fi
     done
 
     log "ERROR" "Max retries reached. Failed to convert file: $file"
     return 1
+}
+
+# Function to process all video files in a directory recursively
+process_directory() {
+    local dir="$1"
+    local file_index=0
+
+    find "$dir" -type f | while read -r file; do
+        if is_video "$file"; then
+            if [ $((file_index % TOTAL_SHARDS)) -eq "$SHARD_INDEX" ]; then
+                log "INFO" "Processing video: $file"
+                if is_html5_compatible "$file"; then
+                    log "INFO" "File is already HTML5 compatible: $file"
+                else
+                    log "INFO" "Converting to HTML5 compatible format: $file"
+                    process_video "$file"
+                fi
+            else
+                log "DEBUG" "Skipping file (not in this shard): $file"
+            fi
+            file_index=$((file_index + 1))
+        else
+            log "DEBUG" "Skipping non-video file: $file"
+        fi
+    done
 }
 
 # Main processing loop
@@ -288,6 +379,6 @@ fi
 export -f log is_video is_html5_compatible convert_to_html5 process_video
 export DRY_RUN CLEANUP CRF PRESET MAX_RETRIES LOG_LEVEL
 
-find "$DIR" -type f -print0 | parallel -0 -j "$PARALLEL_JOBS" process_video
+process_directory "$DIR"
 
 log "INFO" "Video processing complete."

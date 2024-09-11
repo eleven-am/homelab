@@ -1,12 +1,10 @@
-FROM ubuntu:20.04
-
-ENV DEBIAN_FRONTEND=noninteractive
+FROM alpine:3.20
 
 # Install required packages
-RUN apt-get update && apt-get install -y \
+RUN apk add --no-cache \
     ffmpeg \
-    parallel \
-    && rm -rf /var/lib/apt/lists/*
+    file \
+    bash
 
 # Copy the script into the container
 COPY process_videos.sh /usr/local/bin/process_videos.sh
