@@ -83,7 +83,17 @@ show_help() {
 check_status() {
     if [ $? -ne 0 ]; then
         log "ERROR" "$1"
+        return 1
     fi
+
+    return 0
+}
+
+# Function to create a temporary directory
+create_temp_dir() {
+    TEMP_DIR=$(mktemp -d)
+    log "DEBUG" "Created temporary directory: $TEMP_DIR"
+    trap 'rm -rf "$TEMP_DIR"' EXIT
 }
 
 # Check for required commands
@@ -217,7 +227,7 @@ is_html5_compatible() {
         audio_stream_index=$((audio_stream_index + 1))
     done
 
-    log "INFO" "Video is HTML5 compatible (MP4/WebM container, h264 video, all audio streams are eac3/aac/ac3) for file: $file"
+    log "DEBUG" "Video is HTML5 compatible (MP4/WebM container, h264 video, all audio streams are eac3/aac/ac3) for file: $file"
     return 0
 }
 
@@ -226,28 +236,23 @@ convert_to_html5() {
     local input="$1"
     local input_filename
     local output_filename
-    local output_path
-    local container
+    local temp_output_path
+    local final_output_path
     local video_codec
     local ffmpeg_cmd
 
     input_filename=$(basename "$input")
-    if [ "$CLEANUP" = true ]; then
-        output_filename="${input_filename}"
-        output_path="${input%.*}.mp4"
-    else
-        output_filename="${input_filename%.*}_converted.mp4"
-        output_path="$(dirname "$input")/$output_filename"
-    fi
+    output_filename="${input_filename%.*}.mp4"
+    temp_output_path="${TEMP_DIR}/${output_filename}"
+    final_output_path="$(dirname "$input")/${output_filename}"
 
-    container=$(ffprobe -v error -show_entries format=format_name -of default=noprint_wrappers=1:nokey=1 "$input")
     video_codec=$(ffprobe -v error -select_streams v:0 -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 "$input")
 
     # Prepare ffmpeg command
     ffmpeg_cmd=(ffmpeg -loglevel error -hide_banner -i "$input")
 
     # Determine video encoding settings
-    if [[ "$container" == *"mp4"* && "$video_codec" == "h264" ]]; then
+    if [[ "$video_codec" == "h264" ]]; then
         ffmpeg_cmd+=(-c:v copy)
         log "DEBUG" "Copying video stream for file: $input"
     else
@@ -260,6 +265,7 @@ convert_to_html5() {
     local audio_streams
     local parsed_audio_streams
     local ffmpeg_audio_index=0
+    local subtitle_stream_array
 
     audio_streams=$(ffprobe -v error -select_streams a -show_entries stream=index -of csv=p=0 "$input")
     parsed_audio_streams=$(parse_stream_indexes "$audio_streams")
@@ -287,25 +293,29 @@ convert_to_html5() {
     subtitle_streams=$(ffprobe -v error -select_streams s -show_entries stream=index -of csv=p=0 "$input")
     parsed_subtitle_streams=$(parse_stream_indexes "$subtitle_streams")
 
-    IFS=',' read -ra subtitle_stream_array <<< "$parsed_subtitle_streams"
+    if [ -n "$parsed_subtitle_streams" ]; then
+        IFS=',' read -ra subtitle_stream_array <<< "$parsed_subtitle_streams"
 
-    for stream in "${subtitle_stream_array[@]}"; do
-        subtitle_codec=$(ffprobe -v error -select_streams s:"$ffmpeg_subtitle_index" -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 "$input")
-        if [[ "$subtitle_codec" == "mov_text" ]]; then
-            ffmpeg_cmd+=(-c:s:"$ffmpeg_subtitle_index" copy)
-            log "DEBUG" "Copying subtitle stream $stream (codec: $subtitle_codec) for file: $input"
-        else
-            ffmpeg_cmd+=(-c:s:"$ffmpeg_subtitle_index" mov_text)
-            log "DEBUG" "Transcoding subtitle stream $stream from $subtitle_codec to mov_text for file: $input"
-        fi
-        ffmpeg_subtitle_index=$((ffmpeg_subtitle_index + 1))
-    done
+        for stream in "${subtitle_stream_array[@]}"; do
+            subtitle_codec=$(ffprobe -v error -select_streams s:"$ffmpeg_subtitle_index" -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 "$input")
+            if [[ "$subtitle_codec" == "mov_text" ]]; then
+                ffmpeg_cmd+=(-c:s:"$ffmpeg_subtitle_index" copy)
+                log "DEBUG" "Copying subtitle stream $stream (codec: $subtitle_codec) for file: $input"
+            else
+                ffmpeg_cmd+=(-c:s:"$ffmpeg_subtitle_index" mov_text)
+                log "DEBUG" "Transcoding subtitle stream $stream from $subtitle_codec to mov_text for file: $input"
+            fi
+            ffmpeg_subtitle_index=$((ffmpeg_subtitle_index + 1))
+        done
+    else
+        log "DEBUG" "No subtitle streams found for file: $input"
+    fi
 
     # Add movflags for better streaming
     ffmpeg_cmd+=(-movflags +faststart)
 
     # Add output file to command
-    ffmpeg_cmd+=(-f mp4 "$output_path")
+    ffmpeg_cmd+=(-f mp4 "$temp_output_path")
 
     # Execute ffmpeg command
     log "INFO" "Starting conversion for file: $input"
@@ -314,10 +324,21 @@ convert_to_html5() {
     else
         "${ffmpeg_cmd[@]}" </dev/null
         if check_status "Conversion failed for file: $input"; then
-            log "INFO" "Conversion completed successfully: $output_path"
+            log "INFO" "Conversion completed successfully: $temp_output_path"
+
             if [ "$CLEANUP" = true ]; then
                 rm "$input"
-                log "INFO" "Removed original file: $input"
+                log "DEBUG" "Removed original file: $input"
+                mv "$temp_output_path" "$final_output_path"
+                log "DEBUG" "Moved converted file to replace original: $final_output_path"
+            else
+                if [ -f "$final_output_path" ]; then
+                    log "WARN" "File already exists: $final_output_path"
+                    final_output_path="$(dirname "$input")/${input_filename%.*}_converted.mp4"
+                    log "DEBUG" "Renaming output to: $final_output_path"
+                fi
+                mv "$temp_output_path" "$final_output_path"
+                log "DEBUG" "Moved converted file to: $final_output_path"
             fi
         else
             log "ERROR" "Conversion failed for file: $input"
@@ -355,9 +376,9 @@ process_directory() {
             if [ $((file_index % TOTAL_SHARDS)) -eq "$SHARD_INDEX" ]; then
                 log "INFO" "Processing video: $file"
                 if is_html5_compatible "$file"; then
-                    log "INFO" "File is already HTML5 compatible: $file"
+                    log "DEBUG" "File is already HTML5 compatible: $file"
                 else
-                    log "INFO" "Converting to HTML5 compatible format: $file"
+                    log "DEBUG" "Converting to HTML5 compatible format: $file"
                     process_video "$file"
                 fi
             else
@@ -370,13 +391,16 @@ process_directory() {
     done
 }
 
+# Create a temporary directory
+create_temp_dir
+
 # Main processing loop
 if [ "$DRY_RUN" = true ]; then
     log "INFO" "Performing dry run..."
 fi
 
 export -f log is_video is_html5_compatible convert_to_html5 process_video
-export DRY_RUN CLEANUP CRF PRESET MAX_RETRIES LOG_LEVEL
+export DRY_RUN CLEANUP CRF PRESET MAX_RETRIES LOG_LEVEL TEMP_DIR TOTAL_SHARDS SHARD_INDEX
 
 process_directory "$DIR"
 
