@@ -83,7 +83,6 @@ show_help() {
 check_status() {
     if [ $? -ne 0 ]; then
         log "ERROR" "$1"
-        exit 1
     fi
 }
 
