@@ -211,7 +211,7 @@ is_html5_compatible() {
     local audio_stream_index=0
     for stream in $audio_streams; do
         audio_codec=$(ffprobe -v error -select_streams a:"$audio_stream_index" -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 "$file")
-        if [[ ! "$audio_codec" =~ ^(eac3|aac|ac3)$ ]]; then
+        if [[ ! "$audio_codec" =~ ^(eac3|aac|ac3|mp3)$ ]]; then
             log "WARN" "Audio stream $stream codec $audio_codec is not compatible for file: $file"
             return 1
         fi
@@ -269,7 +269,7 @@ convert_to_html5() {
 
     for stream in "${audio_stream_array[@]}"; do
          audio_codec=$(ffprobe -v error -select_streams a:"$ffmpeg_audio_index" -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 "$input")
-        if [[ "$audio_codec" =~ ^(eac3|aac|ac3)$ ]]; then
+        if [[ "$audio_codec" =~ ^(eac3|aac|ac3|mp3)$ ]]; then
             ffmpeg_cmd+=(-c:a:"$ffmpeg_audio_index" copy)
             log "DEBUG" "Copying audio stream $stream for file: $input"
         else
