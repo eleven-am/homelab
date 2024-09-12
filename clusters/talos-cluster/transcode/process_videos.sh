@@ -170,6 +170,12 @@ if [ -z "${DIR:-}" ]; then
     exit 1
 fi
 
+# Check if JOB_COMPLETION_INDEX is set and use it for SHARD_INDEX
+if [[ -n "${JOB_COMPLETION_INDEX:-}" ]]; then
+    SHARD_INDEX="$JOB_COMPLETION_INDEX"
+    log "DEBUG" "Using JOB_COMPLETION_INDEX for SHARD_INDEX: $SHARD_INDEX"
+fi
+
 # Check if the directory exists and is accessible
 if [ ! -d "$DIR" ]; then
     log "ERROR" "Directory not found or not accessible: $DIR"
