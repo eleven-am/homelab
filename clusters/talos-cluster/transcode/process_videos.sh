@@ -303,7 +303,10 @@ convert_to_html5() {
             ffmpeg_cmd+=(-c:a:"$ffmpeg_audio_index" copy)
             log "DEBUG" "Copying AAC audio stream $stream_index for file: $input"
         else
-            ffmpeg_cmd+=(-c:a:"$ffmpeg_audio_index" aac_at -b:a:"$ffmpeg_audio_index" 192k)
+            ffmpeg_cmd+=(-c:a:"$ffmpeg_audio_index" aac -b:a:"$ffmpeg_audio_index" 192k)
+            ffmpeg_cmd+=(-ac 2)
+            ffmpeg_cmd+=(-ar 44100)
+            ffmpeg_cmd+=(-af "aresample=async=1:min_hard_comp=0.100000:first_pts=0")
             log "DEBUG" "Transcoding audio stream $stream_index from $audio_codec to AAC for file: $input"
         fi
         ffmpeg_audio_index=$((ffmpeg_audio_index + 1))
