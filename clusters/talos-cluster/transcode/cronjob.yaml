@@ -54,6 +54,7 @@ metadata:
 spec:
   backoffLimit: 0
   completions: 2
+  parallelism: 2
   template:
     spec:
       containers:
