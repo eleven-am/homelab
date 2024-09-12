@@ -79,6 +79,3 @@ spec:
         - name: transcode-volume
           persistentVolumeClaim:
             claimName: transcode-temp-dir
-
-
----
