@@ -45,7 +45,6 @@ spec:
                 claimName: transcode-temp-dir
 
 ---
-# A normal job to run immediately
 
 apiVersion: batch/v1
 kind: Job
