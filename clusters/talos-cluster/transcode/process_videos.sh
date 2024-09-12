@@ -232,7 +232,7 @@ is_html5_compatible() {
     fi
 
     # Check video codec and bit depth
-    if [[ "$video_codec" != "h264" || "$video_bit_depth" == "10" ]]; then
+    if [[ "$video_codec" != "h264" ]]; then
         log "WARN" "Video codec $video_codec or bit depth $video_bit_depth is not compatible for file: $file"
         return 1
     fi
@@ -298,11 +298,12 @@ convert_to_html5() {
     for stream in "${audio_stream_array[@]}"; do
         stream_index=$(echo "$stream" | cut -d':' -f1)
         audio_codec=$(echo "$stream" | cut -d':' -f2)
-        if [[ "$audio_codec" == "aac" ]]; then
+        log "INFO" "Found audio stream $stream_index with codec: $audio_codec for file: $input"
+        if [[ "$audio_codec" =~ ^(eac3|aac|ac3|mp3)$ ]]; then
             ffmpeg_cmd+=(-c:a:"$ffmpeg_audio_index" copy)
             log "DEBUG" "Copying AAC audio stream $stream_index for file: $input"
         else
-            ffmpeg_cmd+=(-c:a:"$ffmpeg_audio_index" aac -b:a:"$ffmpeg_audio_index" 192k)
+            ffmpeg_cmd+=(-c:a:"$ffmpeg_audio_index" aac_at -b:a:"$ffmpeg_audio_index" 192k)
             log "DEBUG" "Transcoding audio stream $stream_index from $audio_codec to AAC for file: $input"
         fi
         ffmpeg_audio_index=$((ffmpeg_audio_index + 1))
@@ -329,7 +330,7 @@ convert_to_html5() {
                     log "DEBUG" "Copying subtitle stream $stream_index (codec: $subtitle_codec) for file: $input"
                     ;;
                 subrip|srt|ass|ssa)
-                    ffmpeg_cmd+=(-c:s:"$ffmpeg_subtitle_index" mov_text)
+                    #ffmpeg_cmd+=(-c:s:"$ffmpeg_subtitle_index" mov_text)
                     log "DEBUG" "Converting subtitle stream $stream_index from $subtitle_codec to mov_text for file: $input"
                     ;;
                 *)
