@@ -43,3 +43,47 @@ spec:
             - name: transcode-volume
               persistentVolumeClaim:
                 claimName: transcode-temp-dir
+
+---
+# A normal job to run immediately
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: video-processor-job
+  namespace: transcode
+spec:
+  backoffLimit: 0
+  parallelism: 2
+  completions: 2
+  template:
+    spec:
+      containers:
+        - name: video-processor
+          image: elevenam/video_processor:latest
+          command: ["/bin/bash"]
+          args:
+            - "-c"
+            - |
+              SHARD_INDEX=$((${JOB_COMPLETION_INDEX} % 2))
+              /usr/local/bin/process_videos.sh -c --log-level INFO --total-shards 2 --shard-index $SHARD_INDEX -t /transcode /data
+          volumeMounts:
+            - name: video-volume
+              mountPath: /data
+            - name: transcode-volume
+              mountPath: /transcode
+          resources:
+            requests:
+              cpu: "1"
+              memory: "1Gi"
+            limits:
+              cpu: "2"
+              memory: "2Gi"
+          restartPolicy: Never
+      volumes:
+        - name: video-volume
+          persistentVolumeClaim:
+            claimName: transcode-media
+        - name: transcode-volume
+          persistentVolumeClaim:
+            claimName: transcode-temp-dir
