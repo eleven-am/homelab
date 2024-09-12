@@ -11,3 +11,19 @@ spec:
   resources:
     requests:
       storage: 100Mi
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: transcode-transcode
+  namespace: transcode
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  storageClassName: blizzard-storage
+  resources:
+    requests:
+      storage: 100Mi
