@@ -18,6 +18,7 @@ MAX_RETRIES=3
 LOG_LEVEL="INFO"
 TOTAL_SHARDS=1
 SHARD_INDEX=0
+TEMP_DIR=""
 
 # Logging function with colors
 log() {
@@ -77,6 +78,7 @@ show_help() {
     echo "  -r, --retries <n>      Maximum number of retries for failed conversions (default: 3)"
     echo "  --total-shards <n>     Total number of shards for parallel processing (default: 1)"
     echo "  --shard-index <n>      Index of this shard (0-based, default: 0)"
+    echo "  -t, --temp-dir <path>  Specify the temporary directory to use(default: system default)"
 }
 
 # Function to check the exit status of the last command
@@ -89,11 +91,18 @@ check_status() {
     return 0
 }
 
-# Function to create a temporary directory
+# Function to create or use the specified temporary directory
 create_temp_dir() {
-    TEMP_DIR=$(mktemp -d)
-    log "DEBUG" "Created temporary directory: $TEMP_DIR"
-    trap 'rm -rf "$TEMP_DIR"' EXIT
+    if [ -z "${TEMP_DIR:-}" ]; then
+        TEMP_DIR=$(mktemp -d)
+        log "DEBUG" "Created temporary directory: $TEMP_DIR"
+        trap 'rm -rf "$TEMP_DIR"' EXIT
+    elif [ ! -d "$TEMP_DIR" ]; then
+        mkdir -p "$TEMP_DIR"
+        log "DEBUG" "Created specified temporary directory: $TEMP_DIR"
+    else
+        log "DEBUG" "Using existing temporary directory: $TEMP_DIR"
+    fi
 }
 
 # Check for required commands
@@ -141,6 +150,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         --shard-index)
             SHARD_INDEX="$2"
+            shift 2
+            ;;
+        -t|--temp-dir)
+            TEMP_DIR="$2"
             shift 2
             ;;
         *)

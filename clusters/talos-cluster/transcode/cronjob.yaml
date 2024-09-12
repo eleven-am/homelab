@@ -22,10 +22,12 @@ spec:
                 - "-c"
                 - |
                   SHARD_INDEX=$((${JOB_COMPLETION_INDEX} % 2))
-                  /usr/local/bin/process_videos.sh -c --log-level INFO --total-shards 2 --shard-index $SHARD_INDEX /data
+                  /usr/local/bin/process_videos.sh -c --log-level INFO --total-shards 2 --shard-index $SHARD_INDEX --temp-dir /data/tmp /data
               volumeMounts:
                 - name: video-volume
                   mountPath: /data
+                - name: transcode-volume
+                  mountPath: /transcode
               resources:
                 requests:
                   cpu: "1"
