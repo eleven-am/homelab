@@ -42,4 +42,4 @@ spec:
                 claimName: transcode-media
             - name: transcode-volume
               persistentVolumeClaim:
-                claimName: transcode-transcode
+                claimName: transcode-tempDir
