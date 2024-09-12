@@ -53,19 +53,13 @@ metadata:
   namespace: transcode
 spec:
   backoffLimit: 0
-  parallelism: 2
   completions: 2
   template:
     spec:
       containers:
         - name: video-processor
           image: elevenam/video_processor:latest
-          command: [ "/bin/bash" ]
-          args:
-            - "-c"
-            - |
-              SHARD_INDEX=$((${JOB_COMPLETION_INDEX} % 2))
-              /usr/local/bin/process_videos.sh -c --log-level INFO --total-shards 2 --shard-index $SHARD_INDEX -t /transcode /data
+          args: ["-c", "--log-level", "INFO", "--total-shards", "2", "--shard-index", JobCompletionIndex, "-t", "/transcode", "/data"]
           volumeMounts:
             - name: video-volume
               mountPath: /data
