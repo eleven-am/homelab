@@ -4,7 +4,7 @@ metadata:
   name: video-processor-cronjob
   namespace: transcode
 spec:
-  schedule: "0 10 * * *"
+  schedule: "0 1 * * *"
   startingDeadlineSeconds: 1800
   concurrencyPolicy: Forbid
   jobTemplate:
@@ -17,12 +17,7 @@ spec:
           containers:
             - name: video-processor
               image: elevenam/video_processor:latest
-              command: ["/bin/bash"]
-              args:
-                - "-c"
-                - |
-                  SHARD_INDEX=$((${JOB_COMPLETION_INDEX} % 2))
-                  /usr/local/bin/process_videos.sh -c --log-level INFO --total-shards 2 --shard-index $SHARD_INDEX -t /transcode /data
+              args: ["-c", "--log-level", "INFO", "--total-shards", "2", "-t", "/transcode", "/data"]
               volumeMounts:
                 - name: video-volume
                   mountPath: /data
