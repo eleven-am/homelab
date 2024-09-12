@@ -186,9 +186,13 @@ parse_stream_indexes() {
     local result=""
     local separator=""
 
-    while IFS= read -r line; do
-        if [[ "$line" =~ ^[0-9]+$ ]]; then
-            result="${result}${separator}${line}"
+    while IFS=',' read -r index codec; do
+        if [[ -n "$index" ]]; then
+            if [[ -n "$codec" ]]; then
+                result="${result}${separator}${index}:${codec}"
+            else
+                result="${result}${separator}${index}"
+            fi
             separator=","
         fi
     done <<< "$input_string"
@@ -208,10 +212,12 @@ is_html5_compatible() {
     local file="$1"
     local container
     local video_codec
+    local video_bit_depth
     local audio_streams
 
     container=$(ffprobe -v error -show_entries format=format_name -of default=noprint_wrappers=1:nokey=1 "$file")
     video_codec=$(ffprobe -v error -select_streams v:0 -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 "$file")
+    video_bit_depth=$(ffprobe -v error -select_streams v:0 -show_entries stream=bits_per_raw_sample -of default=noprint_wrappers=1:nokey=1 "$file")
 
     # Check container format
     if [[ ! "$container" =~ mp4 ]]; then
@@ -219,28 +225,26 @@ is_html5_compatible() {
         return 1
     fi
 
-    # Check video codec
-    if [[ "$video_codec" != "h264" ]]; then
-        log "WARN" "Video codec $video_codec is not h264 for file: $file"
+    # Check video codec and bit depth
+    if [[ "$video_codec" != "h264" || "$video_bit_depth" == "10" ]]; then
+        log "WARN" "Video codec $video_codec or bit depth $video_bit_depth is not compatible for file: $file"
         return 1
     fi
 
     # Check all audio streams
-    audio_streams=$(ffprobe -v error -select_streams a -show_entries stream=index -of csv=p=0 "$file")
+    audio_streams=$(ffprobe -v error -select_streams a -show_entries stream=index,codec_name -of csv=p=0 "$file")
+    parsed_audio_streams=$(parse_stream_indexes "$audio_streams")
 
-    local stream
-    local audio_codec
-    local audio_stream_index=0
-    for stream in $audio_streams; do
-        audio_codec=$(ffprobe -v error -select_streams a:"$audio_stream_index" -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 "$file")
+    IFS=',' read -ra audio_stream_array <<< "$parsed_audio_streams"
+    for stream in "${audio_stream_array[@]}"; do
+        audio_codec=$(echo "$stream" | cut -d':' -f2)
         if [[ ! "$audio_codec" =~ ^(eac3|aac|ac3|mp3)$ ]]; then
-            log "WARN" "Audio stream $stream codec $audio_codec is not compatible for file: $file"
+            log "WARN" "Audio codec $audio_codec is not compatible for file: $file"
             return 1
         fi
-        audio_stream_index=$((audio_stream_index + 1))
     done
 
-    log "DEBUG" "Video is HTML5 compatible (MP4/WebM container, h264 video, all audio streams are eac3/aac/ac3) for file: $file"
+    log "DEBUG" "Video is HTML5 compatible (MP4 container, h264 8-bit video, compatible audio) for file: $file"
     return 0
 }
 
@@ -252,6 +256,7 @@ convert_to_html5() {
     local temp_output_path
     local final_output_path
     local video_codec
+    local video_bit_depth
     local ffmpeg_cmd
 
     input_filename=$(basename "$input")
@@ -260,64 +265,72 @@ convert_to_html5() {
     final_output_path="$(dirname "$input")/${output_filename}"
 
     video_codec=$(ffprobe -v error -select_streams v:0 -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 "$input")
+    video_bit_depth=$(ffprobe -v error -select_streams v:0 -show_entries stream=bits_per_raw_sample -of default=noprint_wrappers=1:nokey=1 "$input")
 
     # Prepare ffmpeg command
     ffmpeg_cmd=(ffmpeg -loglevel error -hide_banner -i "$input")
 
     # Determine video encoding settings
-    if [[ "$video_codec" == "h264" ]]; then
+    if [[ "$video_codec" == "h264" && "$video_bit_depth" != "10" ]]; then
         ffmpeg_cmd+=(-c:v copy)
         log "DEBUG" "Copying video stream for file: $input"
     else
-        ffmpeg_cmd+=(-c:v libx264 -preset "$PRESET" -crf "$CRF")
-        log "DEBUG" "Transcoding video stream to h264 for file: $input"
+        ffmpeg_cmd+=(-c:v libx264 -preset "$PRESET" -crf "$CRF" -profile:v high -pix_fmt yuv420p)
+        log "DEBUG" "Transcoding video stream to h264 (8-bit) for file: $input"
     fi
 
     # Process audio streams
-    local audio_codec
     local audio_streams
     local parsed_audio_streams
     local ffmpeg_audio_index=0
-    local subtitle_stream_array
 
-    audio_streams=$(ffprobe -v error -select_streams a -show_entries stream=index -of csv=p=0 "$input")
+    audio_streams=$(ffprobe -v error -select_streams a -show_entries stream=index,codec_name -of csv=p=0 "$input")
     parsed_audio_streams=$(parse_stream_indexes "$audio_streams")
 
     IFS=',' read -ra audio_stream_array <<< "$parsed_audio_streams"
 
     for stream in "${audio_stream_array[@]}"; do
-         audio_codec=$(ffprobe -v error -select_streams a:"$ffmpeg_audio_index" -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 "$input")
-        if [[ "$audio_codec" =~ ^(eac3|aac|ac3|mp3)$ ]]; then
+        stream_index=$(echo "$stream" | cut -d':' -f1)
+        audio_codec=$(echo "$stream" | cut -d':' -f2)
+        if [[ "$audio_codec" == "aac" ]]; then
             ffmpeg_cmd+=(-c:a:"$ffmpeg_audio_index" copy)
-            log "DEBUG" "Copying audio stream $stream for file: $input"
+            log "DEBUG" "Copying AAC audio stream $stream_index for file: $input"
         else
-            ffmpeg_cmd+=(-c:a:"$ffmpeg_audio_index" aac)
-            log "DEBUG" "Transcoding audio stream $stream to AAC for file: $input"
+            ffmpeg_cmd+=(-c:a:"$ffmpeg_audio_index" aac -b:a:"$ffmpeg_audio_index" 192k)
+            log "DEBUG" "Transcoding audio stream $stream_index from $audio_codec to AAC for file: $input"
         fi
         ffmpeg_audio_index=$((ffmpeg_audio_index + 1))
     done
 
     # Process subtitle streams
-    local subtitle_codec
     local subtitle_streams
     local parsed_subtitle_streams
     local ffmpeg_subtitle_index=0
 
-    subtitle_streams=$(ffprobe -v error -select_streams s -show_entries stream=index -of csv=p=0 "$input")
+    subtitle_streams=$(ffprobe -v error -select_streams s -show_entries stream=index,codec_name -of csv=p=0 "$input")
     parsed_subtitle_streams=$(parse_stream_indexes "$subtitle_streams")
 
     if [ -n "$parsed_subtitle_streams" ]; then
         IFS=',' read -ra subtitle_stream_array <<< "$parsed_subtitle_streams"
 
         for stream in "${subtitle_stream_array[@]}"; do
-            subtitle_codec=$(ffprobe -v error -select_streams s:"$ffmpeg_subtitle_index" -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 "$input")
-            if [[ "$subtitle_codec" == "mov_text" ]]; then
-                ffmpeg_cmd+=(-c:s:"$ffmpeg_subtitle_index" copy)
-                log "DEBUG" "Copying subtitle stream $stream (codec: $subtitle_codec) for file: $input"
-            else
-                ffmpeg_cmd+=(-c:s:"$ffmpeg_subtitle_index" mov_text)
-                log "DEBUG" "Transcoding subtitle stream $stream from $subtitle_codec to mov_text for file: $input"
-            fi
+            stream_index=$(echo "$stream" | cut -d':' -f1)
+            subtitle_codec=$(echo "$stream" | cut -d':' -f2)
+
+            case "$subtitle_codec" in
+                mov_text|tx3g)
+                    ffmpeg_cmd+=(-c:s:"$ffmpeg_subtitle_index" copy)
+                    log "DEBUG" "Copying subtitle stream $stream_index (codec: $subtitle_codec) for file: $input"
+                    ;;
+                subrip|srt|ass|ssa)
+                    ffmpeg_cmd+=(-c:s:"$ffmpeg_subtitle_index" mov_text)
+                    log "DEBUG" "Converting subtitle stream $stream_index from $subtitle_codec to mov_text for file: $input"
+                    ;;
+                *)
+                    log "WARN" "Unsupported subtitle codec $subtitle_codec for stream $stream_index, skipping this subtitle stream for file: $input"
+                    continue
+                    ;;
+            esac
             ffmpeg_subtitle_index=$((ffmpeg_subtitle_index + 1))
         done
     else
@@ -355,6 +368,7 @@ convert_to_html5() {
             fi
         else
             log "ERROR" "Conversion failed for file: $input"
+            rm -f "$temp_output_path"
             return 1
         fi
     fi
