@@ -78,7 +78,6 @@ spec:
             limits:
               cpu: "2"
               memory: "2Gi"
-      restartPolicy: Never
       volumes:
         - name: video-volume
           persistentVolumeClaim:
