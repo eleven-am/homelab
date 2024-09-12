@@ -59,7 +59,7 @@ spec:
       containers:
         - name: video-processor
           image: elevenam/video_processor:latest
-          args: ["-c", "--log-level", "INFO", "-t", "/transcode", "/data"]
+          args: ["-c", "--log-level", "INFO", "--total-shards", "2", "--shard-index", JobCompletionIndex, "-t", "/transcode", "/data"]
           volumeMounts:
             - name: video-volume
               mountPath: /data
@@ -72,6 +72,7 @@ spec:
             limits:
               cpu: "2"
               memory: "2Gi"
+      restartPolicy: OnFailure
       volumes:
         - name: video-volume
           persistentVolumeClaim:
