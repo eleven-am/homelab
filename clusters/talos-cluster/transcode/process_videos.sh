@@ -360,7 +360,7 @@ convert_to_html5() {
     else
         "${ffmpeg_cmd[@]}" </dev/null
         if check_status "Conversion failed for file: $input"; then
-            log "INFO" "Conversion completed successfully: $temp_output_path"
+            log "INFO" "Conversion completed successfully: $final_output_path"
 
             if [ "$CLEANUP" = true ]; then
                 rm "$input"
@@ -400,7 +400,7 @@ process_video() {
     done
 
     log "ERROR" "Max retries reached. Failed to convert file: $file"
-    return 1
+    return 0
 }
 
 # Function to process all video files in a directory recursively
