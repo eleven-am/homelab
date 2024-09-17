@@ -4,20 +4,20 @@ metadata:
   name: video-processor-cronjob
   namespace: transcode
 spec:
-  schedule: "0 2 * * *"
+  schedule: "0 6 * * *"
   startingDeadlineSeconds: 1800
   concurrencyPolicy: Forbid
   jobTemplate:
     spec:
       backoffLimit: 0
-      parallelism: 2
-      completions: 2
+      parallelism: 1
+      completions: 1
       template:
         spec:
           containers:
             - name: video-processor
               image: elevenam/video_processor:latest
-              args: ["-c", "--log-level", "INFO", "--total-shards", "2", "-t", "/transcode", "/data"]
+              args: ["-c", "--log-level", "INFO", "-t", "/transcode", "/data"]
               volumeMounts:
                 - name: video-volume
                   mountPath: /data
