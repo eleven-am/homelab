@@ -23,13 +23,6 @@ spec:
                   mountPath: /data
                 - name: transcode-volume
                   mountPath: /transcode
-              resources:
-                requests:
-                  cpu: "1"
-                  memory: "1Gi"
-                limits:
-                  cpu: "2"
-                  memory: "2Gi"
           restartPolicy: Never
           volumes:
             - name: video-volume
@@ -61,13 +54,6 @@ spec:
               mountPath: /data
             - name: transcode-volume
               mountPath: /transcode
-          resources:
-            requests:
-              cpu: "1"
-              memory: "1Gi"
-            limits:
-              cpu: "2"
-              memory: "2Gi"
       restartPolicy: OnFailure
       volumes:
         - name: video-volume
