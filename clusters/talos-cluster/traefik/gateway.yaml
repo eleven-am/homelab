@@ -19,8 +19,8 @@ spec:
       tls:
         mode: Terminate
         certificateRefs:
-          - name: secret-tls
-            namespace: default
+          - kind: Secret
+            name: cloudflare-staging-certificate
       allowedRoutes:
         namespaces:
           from: All
