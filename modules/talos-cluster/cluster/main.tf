@@ -74,7 +74,7 @@ locals {
 data "helm_template" "cilium_template" {
   name       = "cilium"
   namespace  = "kube-system"
-  version    = "1.15.5"
+  version    = "1.16.2"
   repository = "https://helm.cilium.io/"
   chart      = "cilium"
 
@@ -130,11 +130,6 @@ data "helm_template" "cilium_template" {
 
   set {
       name  = "hubble.ui.enabled"
-      value = "true"
-  }
-
-  set {
-      name  = "gatewayAPI.enabled"
       value = "true"
   }
 

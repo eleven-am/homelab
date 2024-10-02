@@ -3,5 +3,7 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - issuer.yaml
+  - repo.yaml
+  - release.yaml
+  - gatewayClass.yaml
   - gateway.yaml
-
