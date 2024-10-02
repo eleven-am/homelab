@@ -5,4 +5,3 @@ resources:
   - https://github.com/pl4nty/cloudflare-kubernetes-gateway//config/default?ref=v0.6.0
   - gatewayClass.yaml
   - gateway.yaml
-
