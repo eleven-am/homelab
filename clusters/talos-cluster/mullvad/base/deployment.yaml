@@ -27,6 +27,7 @@ spec:
           imagePullPolicy: Always
           securityContext:
             capabilities:
+              drop: [ "ALL" ]
               add: [ "NET_ADMIN" ]
           env:
             - name: TZ
