@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - https://github.com/pl4nty/cloudflare-kubernetes-gateway//config/default?ref=v0.6.0
   - namespace.yaml
+  - gatewayClass.yaml
   - issuer.yaml
   - gateway.yaml
 
