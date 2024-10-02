@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - base.yaml
   - secret.yaml
+  - tun-device-plugin.yaml
   - abeona
   - ankou
   - hermes
