@@ -134,6 +134,11 @@ data "helm_template" "cilium_template" {
   }
 
   set {
+      name  = "gatewayAPI.enabled"
+      value = "true"
+  }
+
+  set {
       name  = "bgpControlPlane.enabled"
       value = "true"
   }
