@@ -72,15 +72,6 @@ spec:
             kind: Middleware
             name: addprefix
 ---
-apiVersion: traefik.io/v1alpha1
-kind: Middleware
-metadata:
-  name: addprefix
-  namespace: whoami
-spec:
-  addPrefix:
-    prefix: /gatewayapi
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
