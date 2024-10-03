@@ -35,6 +35,11 @@ spec:
     gateway:
       namespacePolicy: All
 ---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: whoami
+---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
