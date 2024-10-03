@@ -60,17 +60,6 @@ spec:
         - name: whoami
           namespace: whoami
           port: 80
-      filters:
-        - type: RequestHeaderModifier
-          requestHeaderModifier:
-            add:
-              - name: x-post-topic
-                value: GatewayAPI
-        - type: ExtensionRef
-          extensionRef:
-            group: traefik.io
-            kind: Middleware
-            name: addprefix
 ---
 apiVersion: apps/v1
 kind: Deployment
