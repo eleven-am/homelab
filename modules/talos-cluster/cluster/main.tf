@@ -135,7 +135,7 @@ data "helm_template" "cilium_template" {
 
   set {
       name  = "gatewayAPI.enabled"
-      value = "false"
+      value = "true"
   }
 
   set {
