@@ -21,6 +21,26 @@ spec:
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
+  name: frames-route
+  namespace: frames
+spec:
+  parentRefs:
+    - name: cloudflare-gateway
+      namespace: cloudflare-gateway
+  hostnames:
+    - "frames.open.maix.ovh"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: frames-service
+          port: 3000
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
   name: frames-demo-route
   namespace: frames
 spec:
@@ -28,7 +48,7 @@ spec:
     - name: cloudflare-gateway
       namespace: cloudflare-gateway
   hostnames:
-    - "frames.demo.maix.ovh"
+    - "frames-demo.horus.maix.ovh"
   rules:
     - matches:
         - path:

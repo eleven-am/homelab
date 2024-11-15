@@ -28,7 +28,7 @@ spec:
     - name: cloudflare-gateway
       namespace: cloudflare-gateway
   hostnames:
-    - "plex.v2.maix.ovh"
+    - "plex.open.maix.ovh"
   rules:
     - matches:
         - path:
