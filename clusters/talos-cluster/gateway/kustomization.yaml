@@ -4,4 +4,7 @@ resources:
   - namespace.yaml
   - issuer.yaml
   - gateway.yaml
+  - secret.yaml
+  - repository.yaml
+  - gatewayClass.yaml
 
