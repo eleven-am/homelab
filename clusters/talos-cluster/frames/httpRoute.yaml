@@ -27,10 +27,10 @@ metadata:
   namespace: frames
 spec:
   parentRefs:
-    - name: cilium-gateway
+    - name: cloudflare-gateway
       namespace: gateway
   hostnames:
-    - "frames-demo.horus.maix.ovh"
+    - "frames.demo.maix.ovh"
   rules:
     - matches:
         - path:
