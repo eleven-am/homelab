@@ -262,7 +262,13 @@ resource "local_file" "config" {
 
 resource "null_resource" "health_check" {
   count      = length(module.kubernetes-masters) > 0 ? 1 : 0
-  depends_on = [talos_machine_bootstrap.bootstrap, local_file.config]
+  depends_on = [talos_machine_bootstrap.bootstrap, local_file.config, module.kubernetes-masters, module.kubernetes-workers]
+
+  triggers = {
+    master_ips = join(",", module.kubernetes-masters.*.node_ip)
+    worker_names = join(",", module.kubernetes-workers.*.node_name)
+    cluster_name = local.cluster_name
+  }
 
   provisioner "local-exec" {
     command = "${path.module}/scripts/health_check.sh -s ${var.sops_age_key} -p ${module.kubernetes-masters[0].node_ip} -t ${var.talos_directory} -c ${local.cluster_name} -u ${var.github_username} -r ${var.github_repository} -k ${var.github_token} -m ${join(",", module.kubernetes-masters.*.node_ip)} -w ${join(",", module.kubernetes-workers.*.node_name)}"
