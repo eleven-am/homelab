@@ -27,12 +27,9 @@ spec:
             - --label-filter=io.cilium.gateway/owning-gateway=cilium-gateway
           env:
             - name: CF_API_EMAIL
-              valueFrom:
-                secretKeyRef:
-                  name: cloudflare-api-token
-                  key: ACCOUNT_ID
+              value: "maixperiyon@gmail.com"
             - name: CF_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: cloudflare-api-token
-                  key: TOKEN
+                  key: api-token
