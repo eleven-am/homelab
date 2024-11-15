@@ -21,7 +21,7 @@ spec:
           args:
             - --source=gateway
             - --provider=cloudflare
-            - --cloudflare-proxied=true
+            - --cloudflare-proxied
             - --registry=txt
             - --txt-owner-id=external-dns
           env:
