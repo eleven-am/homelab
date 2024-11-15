@@ -17,9 +17,7 @@ spec:
       backendRefs:
         - name: frames-service
           port: 3000
-
 ---
-
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
@@ -28,7 +26,7 @@ metadata:
 spec:
   parentRefs:
     - name: cloudflare-gateway
-      namespace: gateway
+      namespace: cloudflare-gateway
   hostnames:
     - "frames.demo.maix.ovh"
   rules:
