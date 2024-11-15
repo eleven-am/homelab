@@ -5,5 +5,4 @@ resources:
   - secret.yaml
   - repository.yaml
   - gatewayClass.yaml
-  - issuer.yaml
   - gateway.yaml
