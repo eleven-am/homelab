@@ -25,7 +25,12 @@ spec:
             - --registry=txt
             - --txt-owner-id=external-dns
           env:
-            - name: CF_API_TOKEN
+            - name: CF_API_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: cloudflare-api-token
+                  key: ACCOUNT_ID
+            - name: CF_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: cloudflare-api-token
