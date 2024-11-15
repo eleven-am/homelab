@@ -25,7 +25,7 @@ metadata:
   namespace: plex
 spec:
   parentRefs:
-    - name: cilium-gateway
+    - name: cloudflare-gateway
       namespace: gateway
   hostnames:
     - "plex.v2.maix.ovh"
