@@ -1,7 +1,7 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
-  name: cilium-gateway
+  name: cilium-staging-gateway
   namespace: gateway
   annotations:
     cert-manager.io/issuer: cloudflare-staging-issuer
@@ -24,10 +24,10 @@ spec:
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
-  name: cilium-staging-gateway
+  name: cilium-gateway
   namespace: gateway
   annotations:
-    cert-manager.io/issuer: cloudflare-staging-issuer
+    cert-manager.io/issuer: cloudflare-issuer
 spec:
   gatewayClassName: cilium
   listeners:
@@ -56,6 +56,33 @@ spec:
       port: 80
       name: http-gateway
       hostname: "*.staging.ossai.dev"
+      allowedRoutes:
+        namespaces:
+          from: All
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: cilium-tcp-gateway
+  namespace: gateway
+spec:
+  gatewayClassName: cilium
+  listeners:
+    - protocol: TCP
+      port: 6379
+      name: redis-listener
+      allowedRoutes:
+        namespaces:
+          from: All
+    - protocol: TCP
+      port: 3306
+      name: mysql-listener
+      allowedRoutes:
+        namespaces:
+          from: All
+    - protocol: TCP
+      port: 5432
+      name: postgres-listener
       allowedRoutes:
         namespaces:
           from: All
