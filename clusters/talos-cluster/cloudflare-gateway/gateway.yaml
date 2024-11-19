@@ -3,10 +3,20 @@ kind: Gateway
 metadata:
   name: cloudflare-gateway
   namespace: cloudflare-gateway
+  annotations:
+    cert-manager.io/issuer: cloudflare-staging-issuer
 spec:
   gatewayClassName: cloudflare
   listeners:
-    - protocol: HTTP
-      port: 80
-      name: http
+    - protocol: HTTPS
+      port: 443
+      name: https-gateway
       hostname: "*.maix.ovh"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: cloudflare-staging-certificate
+      allowedRoutes:
+        namespaces:
+          from: All
