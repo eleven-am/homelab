@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: readarr-deployment
+  namespace: readarr
+  labels:
+    app: readarr-deployment
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: readarr-deployment
+  template:
+    metadata:
+      name: readarr-deployment
+      labels:
+        app: readarr-deployment
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: readarr
+          image: lscr.io/linuxserver/readarr:develop
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8787
+              name: readarr
+              protocol: TCP
+          env:
+            - name: PUID
+              value: "1005"
+            - name: PGID
+              value: "1005"
+            - name: TZ
+              value: "Europe/Paris"
+          volumeMounts:
+            - name: readarr-config
+              mountPath: /config
+            - name: readarr-media
+              mountPath: /media
+      volumes:
+        - name: gluetun-config
+          persistentVolumeClaim:
+            claimName: gluetun-data
+        - name: readarr-config
+          persistentVolumeClaim:
+            claimName: readarr-data
+        - name: readarr-media
+          persistentVolumeClaim:
+            claimName: readarr-media
