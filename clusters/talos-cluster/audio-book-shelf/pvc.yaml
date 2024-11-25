@@ -15,6 +15,20 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  name: abs-metadata
+  namespace: abs
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  storageClassName: app-storage
+  resources:
+    requests:
+      storage: 100Mi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
   name: abs-media
   namespace: abs
 spec:

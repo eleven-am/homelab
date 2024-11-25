@@ -39,10 +39,15 @@ spec:
           volumeMounts:
             - name: abs-config
               mountPath: /config
+            - name: abs-metadata
+              mountPath: /metadata
             - name: abs-media
               mountPath: /media
       volumes:
         - name: abs-config
+          persistentVolumeClaim:
+            claimName: abs-data
+        - name: abs-metadata
           persistentVolumeClaim:
             claimName: abs-data
         - name: abs-media
