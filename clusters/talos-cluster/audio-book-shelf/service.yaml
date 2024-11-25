@@ -9,4 +9,4 @@ spec:
   ports:
     - name: abs
       protocol: TCP
-      port: 13378
+      port: 80
