@@ -16,4 +16,4 @@ spec:
             value: /
       backendRefs:
         - name: abs-service
-          port: 13378
+          port: 80
