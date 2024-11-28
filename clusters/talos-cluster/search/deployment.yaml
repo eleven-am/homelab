@@ -89,6 +89,9 @@ spec:
               mountPath: /home/perplexica/data
             - name: uploads
               mountPath: /home/perplexica/uploads
+            - name: config
+              mountPath: /home/perplexica/config.toml
+              subPath: config.toml
       volumes:
         - name: backend-dbstore
           persistentVolumeClaim:
