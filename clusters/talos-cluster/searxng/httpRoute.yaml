@@ -16,4 +16,4 @@ spec:
             value: /
       backendRefs:
         - name: searxng-service
-          port: 8787
+          port: 8080
