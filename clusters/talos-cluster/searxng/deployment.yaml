@@ -23,7 +23,7 @@ spec:
       restartPolicy: Always
       containers:
         - name: searxng
-          image: lscr.io/linuxserver/searxng:develop
+          image: searxng/searxng:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
