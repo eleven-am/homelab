@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: perplexica-config
+  namespace: search
+data:
+  config.toml: |
+    [general]
+    # The address to listen on
+    host = ""
