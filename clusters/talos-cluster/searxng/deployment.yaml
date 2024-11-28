@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: searxng-deployment
+  namespace: searxng
+  labels:
+    app: searxng-deployment
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: searxng-deployment
+  template:
+    metadata:
+      name: searxng-deployment
+      labels:
+        app: searxng-deployment
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: searxng
+          image: lscr.io/linuxserver/searxng:develop
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              name: searxng
+              protocol: TCP
+          env:
+            - name: PUID
+              value: "1005"
+            - name: PGID
+              value: "1005"
+            - name: TZ
+              value: "Europe/Paris"
+          volumeMounts:
+            - name: searxng-config
+              mountPath: /etc/searxng
+      volumes:
+        - name: searxng-config
+          persistentVolumeClaim:
+            claimName: searxng-data
