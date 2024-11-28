@@ -5,6 +5,17 @@ metadata:
   namespace: search
 data:
   config.toml: |
-    [general]
-    # The address to listen on
-    host = ""
+    [GENERAL]
+    PORT = 3001
+    SIMILARITY_MEASURE = "cosine"
+    KEEP_ALIVE = "5m"
+    
+    [API_KEYS]
+    OPENAI = ""
+    GROQ = ""
+    ANTHROPIC = ""
+    GEMINI = ""
+    
+    [API_ENDPOINTS]
+    SEARXNG = ""  # Updated to use k8s service name
+    OLLAMA = ""   # You'll need to set up Ollama service
