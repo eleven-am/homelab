@@ -13,6 +13,16 @@ services:
     networks:
       - backend
 
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared
+    restart: unless-stopped
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN=${TUNNEL_TOKEN}
+    networks:
+      - backend
+
   pi-hole:
     image: pihole/pihole:latest
     ports:
