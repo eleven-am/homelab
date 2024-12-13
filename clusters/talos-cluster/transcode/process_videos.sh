@@ -19,6 +19,7 @@ LOG_LEVEL="INFO"
 TOTAL_SHARDS=1
 SHARD_INDEX=0
 TEMP_DIR=""
+IGNORE_PATTERN=""
 
 # Logging function with colors
 log() {
@@ -76,6 +77,7 @@ show_help() {
     echo "  -p, --preset <preset>  Set ffmpeg preset (default: medium)"
     echo "  -c, --cleanup          Remove original files after successful conversion"
     echo "  -r, --retries <n>      Maximum number of retries for failed conversions (default: 3)"
+    echo "  -i, --ignore <pattern> Ignore files matching the specified pattern"
     echo "  --total-shards <n>     Total number of shards for parallel processing (default: 1)"
     echo "  --shard-index <n>      Index of this shard (0-based, default: 0)"
     echo "  -t, --temp-dir <path>  Specify the temporary directory to use(default: system default)"
@@ -134,6 +136,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         -p|--preset)
             PRESET="$2"
+            shift 2
+            ;;
+        -i|--ignore)
+            IGNORE_PATTERN="$2"
             shift 2
             ;;
         -c|--cleanup)
@@ -206,11 +212,18 @@ parse_stream_indexes() {
     echo "$result"
 }
 
-# Function to check if a file is a video
-is_video() {
+# Function to check if a file is a video and it does not match the ignore pattern
+is_video_and_not_ignored() {
+    if [[ -n "$IGNORE_PATTERN" ]]; then
+        if [[ "$1" =~ $IGNORE_PATTERN ]]; then
+            log "DEBUG" "Ignoring file: $1"
+            return 1
+        fi
+    fi
+
     local mime_type
     mime_type=$(file -b --mime-type "$1")
-    [[ $mime_type == video/* ]]
+    [[ "$mime_type" == video/* ]]
 }
 
 # Function to check if a video is HTML5 compatible
@@ -437,7 +450,7 @@ if [ "$DRY_RUN" = true ]; then
 fi
 
 export -f log is_video is_html5_compatible convert_to_html5 process_video
-export DRY_RUN CLEANUP CRF PRESET MAX_RETRIES LOG_LEVEL TEMP_DIR TOTAL_SHARDS SHARD_INDEX
+export DRY_RUN CLEANUP CRF PRESET MAX_RETRIES LOG_LEVEL TEMP_DIR TOTAL_SHARDS SHARD_INDEX IGNORE_PATTERN
 
 process_directory "$DIR"
 

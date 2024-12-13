@@ -17,7 +17,15 @@ spec:
           containers:
             - name: video-processor
               image: elevenam/video_processor:latest
-              args: ["-c", "--log-level", "INFO", "-t", "/transcode", "/data"]
+              args:
+                - "-c"
+                - "--log-level"
+                - "INFO"
+                - "-t"
+                - "/transcode"
+                - "-i"
+                - "^\/data\/download\/.*"
+                - "/data"
               volumeMounts:
                 - name: video-volume
                   mountPath: /data
