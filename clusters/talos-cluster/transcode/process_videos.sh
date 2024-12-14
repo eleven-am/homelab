@@ -422,7 +422,7 @@ process_directory() {
     local file_index=0
 
     find "$dir" -type f | while read -r file; do
-        if is_video "$file"; then
+        if is_video_and_not_ignored "$file"; then
             if [ $((file_index % TOTAL_SHARDS)) -eq "$SHARD_INDEX" ]; then
                 log "INFO" "Processing video: $file"
                 if is_html5_compatible "$file"; then
@@ -449,7 +449,7 @@ if [ "$DRY_RUN" = true ]; then
     log "INFO" "Performing dry run..."
 fi
 
-export -f log is_video is_html5_compatible convert_to_html5 process_video
+export -f log is_video_and_not_ignored is_html5_compatible convert_to_html5 process_video
 export DRY_RUN CLEANUP CRF PRESET MAX_RETRIES LOG_LEVEL TEMP_DIR TOTAL_SHARDS SHARD_INDEX IGNORE_PATTERN
 
 process_directory "$DIR"
