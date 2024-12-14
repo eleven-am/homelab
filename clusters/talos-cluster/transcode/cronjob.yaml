@@ -4,7 +4,7 @@ metadata:
   name: video-processor-cronjob
   namespace: transcode
 spec:
-  schedule: "0 2 * * *"
+  schedule: "0 9 * * *"
   startingDeadlineSeconds: 1800
   concurrencyPolicy: Forbid
   jobTemplate:
