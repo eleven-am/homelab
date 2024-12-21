@@ -10,7 +10,6 @@ spec:
     - name: frames-tcp
       protocol: TCP
       port: 3000
-  type: LoadBalancer
 ---
 apiVersion: v1
 kind: Service
@@ -24,4 +23,3 @@ spec:
     - name: frames-tcp
       protocol: TCP
       port: 3000
-  type: LoadBalancer
