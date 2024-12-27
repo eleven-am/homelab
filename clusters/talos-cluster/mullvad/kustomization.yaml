@@ -11,3 +11,4 @@ resources:
   - sedna
   - shurdh
   - tia
+  - deployment.yaml

@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: horus-deployment
+  labels:
+    app: horus-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: horus-deployment
+  template:
+    metadata:
+      name: horus-deployment
+      labels:
+        app: horus-deployment
+    spec:
+      containers:
+        - name: horus
+          image: tailscale/tailscale:latest
+          imagePullPolicy: Always
+          env:
+            - name: TS_KUBE_SECRET
+              value: ""
+            - name: TS_AUTHKEY
+              valueFrom:
+                secretKeyRef:
+                  name: mullvad-secret
+                  key: TAILSCALE_AUTHKEY
+            - name: TS_HOSTNAME
+              value: "horus"
+            - name: TS_EXTRA_ARGS
+              valueFrom:
+                secretKeyRef:
+                  name: mullvad-secret
+                  key: TS_EXTRA_ARGS
+            - name: TS_NO_LOGS_NO_SUPPORT
+              value: "true"
+            - name: TS_STATE_DIR
+              value: "/state"
+          volumeMounts:
+            - name: horus-config
+              mountPath: /var/lib
+            - name: horus-state
+              mountPath: /state
+      restartPolicy: Always
+      volumes:
+        - name: horus-config
+          persistentVolumeClaim:
+            claimName: horus-data
+        - name: horus-state
+          persistentVolumeClaim:
+            claimName: horus-state
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: horus-data
+  namespace: mullvad
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  storageClassName: app-storage
+  resources:
+    requests:
+      storage: 100Mi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: horus-state
+  namespace: mullvad
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  storageClassName: app-storage
+  resources:
+    requests:
+      storage: 100Mi
