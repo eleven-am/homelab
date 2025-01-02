@@ -23,25 +23,48 @@ spec:
       restartPolicy: Always
       containers:
         - name: nextcloud
-          image: lscr.io/linuxserver/nextcloud:latest
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 443
-              name: nextcloud
-              protocol: TCP
+          image: nextcloud:apache
           env:
-            - name: PUID
-              value: "1005"
-            - name: PGID
-              value: "1005"
-            - name: TZ
-              value: "Europe/Paris"
+            - name: POSTGRES_DB
+              value: "nextcloud"
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: nextcloud-secret
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nextcloud-secret
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_HOST
+              value: postgres-service.postgres.svc.cluster.local
+            - name: NEXTCLOUD_ADMIN_USER
+              valueFrom:
+                secretKeyRef:
+                  name: nextcloud-secret
+                  key: NEXTCLOUD_ADMIN_USER
+            - name: NEXTCLOUD_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nextcloud-secret
+                  key: NEXTCLOUD_ADMIN_PASSWORD
+            - name: NEXTCLOUD_TRUSTED_DOMAINS
+              value: "nextcloud.horus.maix.ovh"
+            - name: PHP_MEMORY_LIMIT
+              value: "512M"
+            - name: PHP_UPLOAD_LIMIT
+              value: "512M"
+            - name: APACHE_DISABLE_REWRITE_IP
+              value: "1"
             - name: TRUSTED_PROXIES
               value: "*"
-            - name: OVERWRITEPROTOCOL
-              value: "https"
-            - name: OVERWRITEHOST
-              value: "nextcloud.horus.maix.ovh"
+          ports:
+            - containerPort: 80
+              name: http
+          volumeMounts:
+            - mountPath: /var/www/html
+              name: nextcloud-data
           resources:
             requests:
               memory: "512Mi"
@@ -51,27 +74,17 @@ spec:
               cpu: "1"
           livenessProbe:
             httpGet:
-              path: /
-              port: 443
-              scheme: HTTPS
-            initialDelaySeconds: 30
-            timeoutSeconds: 5
+              path: /status.php
+              port: 80
+            initialDelaySeconds: 60
+            periodSeconds: 10
           readinessProbe:
             httpGet:
-              path: /
-              port: 443
-              scheme: HTTPS
+              path: /status.php
+              port: 80
             initialDelaySeconds: 30
-            timeoutSeconds: 5
-          volumeMounts:
-            - name: nextcloud-config
-              mountPath: /config
-            - name: nextcloud-media
-              mountPath: /data
+            periodSeconds: 10
       volumes:
-        - name: nextcloud-config
+        - name: nextcloud-data
           persistentVolumeClaim:
             claimName: nextcloud-data
-        - name: nextcloud-media
-          persistentVolumeClaim:
-            claimName: nextcloud-media

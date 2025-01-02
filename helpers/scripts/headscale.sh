@@ -12,6 +12,8 @@ CONTAINER_ID="100"
 STORAGE="local-lvm"
 PASSWORD="yourpassword"
 TUNNEL_NAME="headscale-tunnel"
+CONFIG_FILE=""
+ACL_FILE=""
 
 # Required dependencies with their package names
 declare -A DEPENDENCIES=(
@@ -19,6 +21,8 @@ declare -A DEPENDENCIES=(
     ["jq"]="jq"
     ["openssl"]="openssl"
     ["pct"]="pve-container"  # Already installed on Proxmox
+    ["python3"]="python3"    # Added for YAML validation
+    ["python3-yaml"]="python3-yaml"  # Added for YAML validation
 )
 
 # Logging functions
@@ -80,7 +84,8 @@ install_host_dependencies() {
     # Install missing dependencies if any
     if [ ${#to_install[@]} -ne 0 ]; then
         log "INFO" "Installing missing dependencies: ${to_install[*]}"
-        if ! DEBIAN_FRONTEND=noninteractive apt-get install -y "${to_install[@]}"; then
+        if ! DEBIAN_FRONTEND=noninteractive apt-get update && \
+           DEBIAN_FRONTEND=noninteractive apt-get install -y "${to_install[@]}"; then
             error_exit "Failed to install dependencies"
         fi
     fi
@@ -100,7 +105,7 @@ validate_params() {
 
     # Validate API token format
     if [[ -n "$API_TOKEN" && ! "$API_TOKEN" =~ ^[A-Za-z0-9_-]{40,}$ ]]; then
-        errors+=("Invalid API token format. Should be at least 40 characters of letters, numbers, underscores, or hyphens")
+        errors+=("Invalid API token format")
     fi
 
     # Validate domain format - must be a subdomain
@@ -118,6 +123,26 @@ validate_params() {
         HOSTNAME=$(get_hostname_from_domain "$DOMAIN")
         if [[ -z "$HOSTNAME" ]]; then
             errors+=("Failed to extract hostname from domain")
+        fi
+    fi
+
+    if [[ -n "$CONFIG_FILE" ]]; then
+        if [[ ! -f "$CONFIG_FILE" ]]; then
+            errors+=("Config file does not exist: $CONFIG_FILE")
+        else
+            if ! python3 -c "import yaml; yaml.safe_load(open('$CONFIG_FILE'))" 2>/dev/null; then
+                errors+=("Invalid YAML format in config file: $CONFIG_FILE")
+            fi
+        fi
+    fi
+
+    if [[ -n "$ACL_FILE" ]]; then
+        if [[ ! -f "$ACL_FILE" ]]; then
+            errors+=("ACL file does not exist: $ACL_FILE")
+        else
+            if ! python3 -c "import yaml; yaml.safe_load(open('$ACL_FILE'))" 2>/dev/null; then
+                errors+=("Invalid YAML format in ACL file: $ACL_FILE")
+            fi
         fi
     fi
 
@@ -176,7 +201,6 @@ validate_params() {
     log "DEBUG" "Extracted hostname: $HOSTNAME"
 }
 
-# Function to display usage
 # Function to display detailed usage
 show_usage() {
     cat << 'EOF'
@@ -197,6 +221,8 @@ Optional Parameters:
     -s, --storage NAME      Storage name (default: local-lvm)
     -p, --password PASS     Container root password (default: yourpassword)
     -n, --name NAME         Tunnel name (default: headscale-tunnel)
+    -c, --config FILE       Path to Headscale config file (optional)
+    -l, --acl FILE         Path to ACL policy file (optional)
     -h, --help             Display this help message
 
 How to Get Required Data:
@@ -279,6 +305,14 @@ parse_arguments() {
                 ;;
             -n|--name)
                 TUNNEL_NAME="$2"
+                shift 2
+                ;;
+            -c|--config)
+                CONFIG_FILE="$2"
+                shift 2
+                ;;
+            -l|--acl)
+                ACL_FILE="$2"
                 shift 2
                 ;;
             -h|--help)
@@ -595,9 +629,19 @@ networks:
     name: headscale-net
 EOL" || error_exit "Failed to create docker-compose configuration"
 
-    # Create Headscale config
-    pct exec "$CONTAINER_ID" -- bash -c "cat > /opt/headscale/config/config.yaml << EOL
-server_url: https://headscale.maix.ovh
+    # Handle Headscale config
+    if [[ -n "$CONFIG_FILE" ]]; then
+        # Copy provided config file
+        log "INFO" "Using provided config file..."
+        cp "$CONFIG_FILE" /tmp/headscale_config.yaml
+        pct push "$CONTAINER_ID" /tmp/headscale_config.yaml /opt/headscale/config/config.yaml
+        rm /tmp/headscale_config.yaml
+    else
+        # Create minimal default config
+        log "INFO" "Creating minimal default config..."
+        pct exec "$CONTAINER_ID" -- bash -c "cat > /opt/headscale/config/config.yaml << EOL
+# Minimal Headscale Configuration
+server_url: https://${DOMAIN}
 listen_addr: 0.0.0.0:8080
 metrics_listen_addr: 127.0.0.1:9090
 grpc_listen_addr: 0.0.0.0:50443
@@ -606,10 +650,14 @@ grpc_allow_insecure: false
 noise:
   private_key_path: /var/lib/headscale/noise_private.key
 
+database:
+  type: sqlite
+  sqlite:
+    path: /var/lib/headscale/db.sqlite
+
 prefixes:
-  v6: fd7a:115c:a1e0::/48
   v4: 100.64.0.0/10
-  allocation: sequential
+  v6: fd7a:115c:a1e0::/48
 
 derp:
   server:
@@ -653,24 +701,36 @@ log:
 dns:
   nameservers:
     global:
-      - 100.64.0.1
-  magic_dns: true
-  base_domain: maix.ovh
+      - 1.1.1.1
+      - 8.8.8.8
+  magic_dns: false
+  base_domain: ${DOMAIN}
+
+log:
+  level: info
 
 unix_socket: /var/run/headscale/headscale.sock
 unix_socket_permission: \"0770\"
-
-oidc:
-   issuer: \"https://accounts.google.com\"
-   client_id: \"597362188949-e1jch1ahjldsn4act97fkel4971bo8rp.apps.googleusercontent.com\"
-   client_secret: \"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\"
-   scope: [\"openid\", \"profile\", \"email\"]
-
-logtail:
-  enabled: false
-
-randomize_client_port: false
 EOL" || error_exit "Failed to create Headscale configuration"
+    fi
+
+    # Handle ACL file
+    if [[ -n "$ACL_FILE" ]]; then
+        # Copy provided ACL file
+        log "INFO" "Using provided ACL file..."
+        cp "$ACL_FILE" /tmp/acl.yaml
+        pct push "$CONTAINER_ID" /tmp/acl.yaml /opt/headscale/config/acl.yaml
+        rm /tmp/acl.yaml
+    else
+        # Create default empty ACL file
+        log "INFO" "Creating default empty ACL file..."
+        pct exec "$CONTAINER_ID" -- bash -c "cat > /opt/headscale/config/acl.yaml << EOL
+# Default empty ACL
+groups: {}
+hosts: {}
+acls: []
+EOL"
+    fi
 
     # Create required directories
     pct exec "$CONTAINER_ID" -- bash -c "mkdir -p /var/run/headscale && chmod 770 /var/run/headscale" || \
@@ -715,9 +775,8 @@ main() {
     check_proxmox
     install_host_dependencies
 
-    # Store zone ID in variable and validate it
+    # Get zone ID
     ZONE_ID=$(get_zone_id)
-    log "DEBUG" "Zone ID: $ZONE_ID"
     if [[ -z "$ZONE_ID" ]]; then
         error_exit "Failed to get zone ID"
     fi
@@ -743,7 +802,7 @@ main() {
         error_exit "Failed to extract tunnel token from response"
     fi
 
-    # Create DNS records for the domain itself
+    # Create DNS records
     local subdomain="${DOMAIN%%.*}"
 
     # Create DNS record
