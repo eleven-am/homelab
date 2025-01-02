@@ -23,7 +23,7 @@ spec:
       restartPolicy: Always
       containers:
         - name: nextcloud
-          image: nextcloud:apache
+          image: nextcloud:stable
           env:
             - name: POSTGRES_DB
               value: "nextcloud"
