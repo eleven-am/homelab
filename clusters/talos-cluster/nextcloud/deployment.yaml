@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nextcloud-deployment
+  namespace: nextcloud
+  labels:
+    app: nextcloud-deployment
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: nextcloud-deployment
+  template:
+    metadata:
+      name: nextcloud-deployment
+      labels:
+        app: nextcloud-deployment
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: nextcloud
+          image: lscr.io/linuxserver/nextcloud:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 443
+              name: nextcloud
+              protocol: TCP
+          env:
+            - name: PUID
+              value: "1005"
+            - name: PGID
+              value: "1005"
+            - name: TZ
+              value: "Europe/Paris"
+          volumeMounts:
+            - name: nextcloud-config
+              mountPath: /config
+            - name: nextcloud-media
+              mountPath: /media
+      volumes:
+        - name: nextcloud-config
+          persistentVolumeClaim:
+            claimName: nextcloud-data
+        - name: nextcloud-media
+          persistentVolumeClaim:
+            claimName: nextcloud-media
