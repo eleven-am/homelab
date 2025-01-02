@@ -20,10 +20,6 @@ spec:
       labels:
         app: nextcloud-deployment
     spec:
-      securityContext:
-        runAsUser: 1005
-        runAsGroup: 1005
-        fsGroup: 1005
       restartPolicy: Always
       containers:
         - name: nextcloud
