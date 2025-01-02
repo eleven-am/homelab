@@ -20,6 +20,10 @@ spec:
       labels:
         app: nextcloud-deployment
     spec:
+      securityContext:
+        runAsUser: 1005
+        runAsGroup: 1005
+        fsGroup: 1005
       restartPolicy: Always
       containers:
         - name: nextcloud
@@ -36,11 +40,38 @@ spec:
               value: "1005"
             - name: TZ
               value: "Europe/Paris"
+            - name: TRUSTED_PROXIES
+              value: "*"
+            - name: OVERWRITEPROTOCOL
+              value: "https"
+            - name: OVERWRITEHOST
+              value: "nextcloud.horus.maix.ovh"
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "2Gi"
+              cpu: "1"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 443
+              scheme: HTTPS
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 443
+              scheme: HTTPS
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
           volumeMounts:
             - name: nextcloud-config
               mountPath: /config
             - name: nextcloud-media
-              mountPath: /media
+              mountPath: /data
       volumes:
         - name: nextcloud-config
           persistentVolumeClaim:

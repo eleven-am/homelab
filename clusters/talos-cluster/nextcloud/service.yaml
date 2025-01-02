@@ -9,4 +9,5 @@ spec:
   ports:
     - name: nextcloud
       protocol: TCP
-      port: 443
+      port: 80
+      targetPort: 443

@@ -16,4 +16,4 @@ spec:
             value: /
       backendRefs:
         - name: nextcloud-service
-          port: 443
+          port: 80
