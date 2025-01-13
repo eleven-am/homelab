@@ -25,7 +25,7 @@ spec:
           image: jlesage/jdownloader-2
           imagePullPolicy: Always
           ports:
-            - containerPort: 5800  # Changed from 5000 to 5800 as per docker docs
+            - containerPort: 5800
               name: web-interface
               protocol: TCP
           env:
@@ -39,7 +39,7 @@ spec:
             - name: jdownloader-config
               mountPath: /config
             - name: jdownloader-media
-              mountPath: /output  # Changed from /media to /output as per docker docs
+              mountPath: /output
       volumes:
         - name: jdownloader-config
           persistentVolumeClaim:
