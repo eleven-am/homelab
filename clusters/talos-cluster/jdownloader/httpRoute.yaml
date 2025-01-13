@@ -16,4 +16,4 @@ spec:
             value: /
       backendRefs:
         - name: jdownloader-service
-          port: 5000
+          port: 5800
