@@ -16,7 +16,6 @@ spec:
       app: jdownloader-deployment
   template:
     metadata:
-      name: jdownloader-deployment
       labels:
         app: jdownloader-deployment
     spec:
@@ -26,8 +25,8 @@ spec:
           image: jlesage/jdownloader-2
           imagePullPolicy: Always
           ports:
-            - containerPort: 5000
-              name: jdownloader
+            - containerPort: 5800  # Changed from 5000 to 5800 as per docker docs
+              name: web-interface
               protocol: TCP
           env:
             - name: PUID
@@ -40,7 +39,7 @@ spec:
             - name: jdownloader-config
               mountPath: /config
             - name: jdownloader-media
-              mountPath: /media
+              mountPath: /output  # Changed from /media to /output as per docker docs
       volumes:
         - name: jdownloader-config
           persistentVolumeClaim:
