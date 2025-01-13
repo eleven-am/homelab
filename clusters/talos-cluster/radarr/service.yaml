@@ -7,12 +7,6 @@ spec:
   selector:
     app: radarr-deployment
   ports:
-    - name: shadowsocks-tcp
-      protocol: TCP
-      port: 8388
-    - name: shadowsocks-udp
-      protocol: UDP
-      port: 8388
     - name: radarr
       protocol: TCP
       port: 7878

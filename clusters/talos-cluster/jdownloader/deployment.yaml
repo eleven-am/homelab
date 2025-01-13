@@ -1,10 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: radarr-deployment
-  namespace: radarr
+  name: jdownloader-deployment
+  namespace: jdownloader
   labels:
-    app: radarr-deployment
+    app: jdownloader-deployment
 spec:
   replicas: 1
   strategy:
@@ -13,21 +13,21 @@ spec:
       maxSurge: 1
   selector:
     matchLabels:
-      app: radarr-deployment
+      app: jdownloader-deployment
   template:
     metadata:
-      name: radarr-deployment
+      name: jdownloader-deployment
       labels:
-        app: radarr-deployment
+        app: jdownloader-deployment
     spec:
       restartPolicy: Always
       containers:
-        - name: radarr
-          image: lscr.io/linuxserver/radarr:latest
+        - name: jdownloader
+          image: jlesage/jdownloader-2
           imagePullPolicy: Always
           ports:
-            - containerPort: 7878
-              name: radarr
+            - containerPort: 5000
+              name: jdownloader
               protocol: TCP
           env:
             - name: PUID
@@ -37,14 +37,14 @@ spec:
             - name: TZ
               value: "Europe/Paris"
           volumeMounts:
-            - name: radarr-config
+            - name: jdownloader-config
               mountPath: /config
-            - name: radarr-media
+            - name: jdownloader-media
               mountPath: /media
       volumes:
-        - name: radarr-config
+        - name: jdownloader-config
           persistentVolumeClaim:
-            claimName: radarr-data
-        - name: radarr-media
+            claimName: jdownloader-data
+        - name: jdownloader-media
           persistentVolumeClaim:
-            claimName: radarr-media
+            claimName: jdownloader-media

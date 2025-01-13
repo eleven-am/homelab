@@ -1,8 +1,8 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: radarr-data
-  namespace: radarr
+  name: jdownloader-data
+  namespace: jdownloader
 spec:
   accessModes:
     - ReadWriteOnce
@@ -15,8 +15,8 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: radarr-media
-  namespace: radarr
+  name: jdownloader-media
+  namespace: jdownloader
 spec:
   accessModes:
     - ReadWriteOnce
