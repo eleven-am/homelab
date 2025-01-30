@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudflare-ddns
+  namespace: ddns
+  labels:
+    app: cloudflare-ddns
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cloudflare-ddns
+  template:
+    metadata:
+      name: cloudflare-ddns
+      labels:
+        app: cloudflare-ddns
+    spec:
+      containers:
+        - name: cloudflare-ddns
+          image: timothyjmiller/cloudflare-ddns:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: CF_DDNS_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: cloudflare-api-token
+                  key: api-token
+          volumeMounts:
+            - name: config
+              mountPath: /config.json
+              subPath: config.json
+      volumes:
+        - name: config
+          configMap:
+            name: cloudflare-ddns-config

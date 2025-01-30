@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloudflare-ddns-config
+  namespace: ddns
+data:
+  config.json: |
+    {
+      "cloudflare": [
+        {
+          "authentication": {
+            "api_token": "${CF_DDNS_API_TOKEN}"
+          },
+          "zone_id": "your_zone_id",
+          "subdomains": [
+            {
+              "name": "maple",
+              "proxied": false
+            }
+          ]
+        }
+      ],
+      "a": true,
+      "aaaa": false,
+      "purgeUnknownRecords": false,
+      "ttl": 300
+    }
