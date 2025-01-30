@@ -11,7 +11,7 @@ data:
           "authentication": {
             "api_token": "${CF_DDNS_API_TOKEN}"
           },
-          "zone_id": "your_zone_id",
+          "zone_id": "${CF_DDNS_ZONE_ID}",
           "subdomains": [
             {
               "name": "maple",

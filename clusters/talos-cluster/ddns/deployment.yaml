@@ -26,6 +26,11 @@ spec:
                 secretKeyRef:
                   name: cloudflare-api-token
                   key: api-token
+            - name: CF_DDNS_ZONE_ID
+              valueFrom:
+                secretKeyRef:
+                  name: cloudflare-api-token
+                  key: zone-id
           volumeMounts:
             - name: config
               mountPath: /config.json
