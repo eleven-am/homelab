@@ -22,9 +22,7 @@ spec:
             - name: data
               mountPath: /srv
             - name: database
-              mountPath: /database.db
-            - name: config
-              mountPath: /config.json
+              mountPath: /data
           resources:
             requests:
               memory: "128Mi"
@@ -51,6 +49,3 @@ spec:
         - name: database
           persistentVolumeClaim:
             claimName: filebrowser-db
-        - name: config
-          configMap:
-            name: filebrowser-config
