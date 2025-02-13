@@ -4,6 +4,7 @@ metadata:
   name: filebrowser-data
   namespace: filebrowser
 spec:
+  storageClassName: media-storage
   accessModes:
     - ReadWriteOnce
   resources:
@@ -16,6 +17,7 @@ metadata:
   name: filebrowser-db
   namespace: filebrowser
 spec:
+  storageClassName: app-storage
   accessModes:
     - ReadWriteOnce
   resources:
