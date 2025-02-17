@@ -19,10 +19,10 @@ spec:
         valueFrom:
           secretKeyRef:
             key: clientId
-            name: tailscale-secret
+            name: tailscale-credentials
 
       clientSecret:
         valueFrom:
           secretKeyRef:
             key: clientSecret
-            name: tailscale-secret
+            name: tailscale-credentials
