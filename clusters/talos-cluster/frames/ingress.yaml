@@ -3,6 +3,8 @@ kind: Ingress
 metadata:
   name: frames-ingress
   namespace: frames
+  annotations:
+    tailscale.com/funnel: "true"
 spec:
   defaultBackend:
     service:
