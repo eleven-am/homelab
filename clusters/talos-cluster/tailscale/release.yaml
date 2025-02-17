@@ -18,11 +18,13 @@ spec:
   values:
     oauth:
       clientId:
-        secretKeyRef:
-          name: tailscale-credentials
-          key: clientId
+        valueFrom:
+          secretKeyRef:
+            name: tailscale-credentials
+            key: clientId
 
       clientSecret:
-        secretKeyRef:
-          name: tailscale-credentials
-          key: clientSecret
+        valueFrom:
+          secretKeyRef:
+            name: tailscale-credentials
+            key: clientSecret
