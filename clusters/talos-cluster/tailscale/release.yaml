@@ -1,18 +1,18 @@
-apiVersion: helm.toolkit.fluxcd.io/v2beta1
+apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: tailscale-operator
   namespace: tailscale
 spec:
-  interval: 1h
   chart:
     spec:
       chart: tailscale-operator
-      version: "1.80.0"
+      reconcileStrategy: ChartVersion
       sourceRef:
         kind: HelmRepository
         name: tailscale
-        namespace: flux-system
+      version: 1.80.0
+  interval: 1h0m0s
   values:
     oauth:
       clientId:
