@@ -3,5 +3,4 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - secret.yaml
-  - repository.yaml
-  - release.yaml
+  - manifest.yaml
