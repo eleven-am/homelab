@@ -22,7 +22,7 @@ spec:
             - name: data
               mountPath: /srv
             - name: database
-              mountPath: /database.db
+              mountPath: /filebrowser.db
               subPath: database.db
           resources:
             requests:
