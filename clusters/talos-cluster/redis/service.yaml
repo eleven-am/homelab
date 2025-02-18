@@ -4,7 +4,7 @@ metadata:
   name: redis-service
   namespace: redis
   annotations:
-    io.cilium.service/lb-ipam-ips: "172.198.1.10"
+    lbipam.cilium.io/ips: "172.198.1.10"
 spec:
   selector:
     app: redis-deployment
