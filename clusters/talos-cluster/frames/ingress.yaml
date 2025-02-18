@@ -8,7 +8,7 @@ metadata:
 spec:
   defaultBackend:
     service:
-      name: frames-service
+      name: frames-tailscale-service
       port:
         number: 3000
   ingressClassName: tailscale
