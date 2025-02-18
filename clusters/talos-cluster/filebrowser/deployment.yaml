@@ -22,7 +22,8 @@ spec:
             - name: data
               mountPath: /srv
             - name: database
-              mountPath: /data
+              mountPath: /database.db
+              subPath: database.db
           resources:
             requests:
               memory: "128Mi"
