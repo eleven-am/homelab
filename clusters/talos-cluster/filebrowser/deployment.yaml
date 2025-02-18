@@ -22,7 +22,7 @@ spec:
             - name: data
               mountPath: /srv
             - name: database
-              mountPath: /data/database.db
+              mountPath: /data
           resources:
             requests:
               memory: "128Mi"
