@@ -6,7 +6,7 @@ metadata:
     app: frames-deployment
   namespace: frames
 spec:
-  replicas: 1
+  replicas: 2
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -85,9 +85,7 @@ spec:
         - name: frames-data
           persistentVolumeClaim:
             claimName: frames-data
-
 ---
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
