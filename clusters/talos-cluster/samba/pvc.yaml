@@ -21,7 +21,7 @@ spec:
   accessModes:
     - ReadWriteMany
   volumeMode: Filesystem
-  storageClassName: media-storage
+  storageClassName: snow-storage
   resources:
     requests:
       storage: 100Mi
