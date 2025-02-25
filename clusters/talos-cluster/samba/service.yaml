@@ -28,3 +28,21 @@ spec:
       port: 5355
       targetPort: 5355
       name: llmnr-udp
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webdav-service
+  namespace: samba
+spec:
+  selector:
+    app: webdav-deployment
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      name: http
+    - protocol: TCP
+      port: 443
+      targetPort: 443
+      name: https

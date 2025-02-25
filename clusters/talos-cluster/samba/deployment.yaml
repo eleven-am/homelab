@@ -95,3 +95,55 @@ spec:
         - name: samba-media-dir
           persistentVolumeClaim:
             claimName: samba-media
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webdav-deployment
+  labels:
+    app: webdav-deployment
+  namespace: samba
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: webdav-deployment
+  template:
+    metadata:
+      name: webdav-deployment
+      labels:
+        app: webdav-deployment
+    spec:
+      containers:
+        - name: webdav
+          image: bytemark/webdav:latest
+          ports:
+            - containerPort: 80
+              name: http
+            - containerPort: 443
+              name: https
+          env:
+            - name: AUTH_TYPE
+              value: "Digest"
+            - name: USERNAME
+              value: "royossai"
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: samba-secret
+                  key: password
+            - name: REALM
+              value: "WebDAV"
+            - name: SERVER_NAMES
+              value: "webdav.horus.maix.ovh"
+          volumeMounts:
+            - mountPath: /var/lib/dav
+              name: webdav-media-dir
+      volumes:
+        - name: webdav-media-dir
+          persistentVolumeClaim:
+            claimName: samba-media

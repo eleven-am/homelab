@@ -1,0 +1,19 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: webdav-route
+  namespace: samba
+spec:
+  parentRefs:
+    - name: cilium-gateway
+      namespace: gateway
+  hostnames:
+    - "webdav.horus.maix.ovh"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: webdav-service
+          port: 80
