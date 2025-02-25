@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: samba-service
+  namespace: samba
+spec:
+  type: LoadBalancer
+  selector:
+    app: samba-deployment
+  ports:
+    - protocol: TCP
+      port: 445
+      targetPort: 445
+      name: smb
+    - protocol: TCP
+      port: 3702
+      targetPort: 3702
+      name: wsdd-tcp
+    - protocol: UDP
+      port: 3702
+      targetPort: 3702
+      name: wsdd-udp
+    - protocol: TCP
+      port: 5355
+      targetPort: 5355
+      name: llmnr-tcp
+    - protocol: UDP
+      port: 5355
+      targetPort: 5355
+      name: llmnr-udp

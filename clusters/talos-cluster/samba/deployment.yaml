@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: samba-deployment
+  labels:
+    app: samba-deployment
+  namespace: samba
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: samba-deployment
+  template:
+    metadata:
+      name: samba-deployment
+      labels:
+        app: samba-deployment
+    spec:
+      containers:
+        - name: samba
+          image: crazymax/samba:latest
+          # Assuming privileged mode needed for Samba
+          securityContext:
+            privileged: true
+            capabilities:
+              add:
+                - NET_ADMIN
+                - NET_RAW
+          ports:
+            - containerPort: 445
+              name: smb
+            - containerPort: 3702
+              protocol: TCP
+              name: wsdd-tcp
+            - containerPort: 3702
+              protocol: UDP
+              name: wsdd-udp
+            - containerPort: 5355
+              protocol: TCP
+              name: llmnr-tcp
+            - containerPort: 5355
+              protocol: UDP
+              name: llmnr-udp
+          env:
+            - name: TZ
+              value: "Europe/Paris"
+            - name: SAMBA_LOG_LEVEL
+              value: "0"
+            - name: CONFIG_FILE
+              value: "/data/config.yml"
+            - name: SAMBA_WORKGROUP
+              value: "WORKGROUP"
+            - name: SAMBA_SERVER_STRING
+              value: "Kubernetes Samba Server"
+            - name: SAMBA_FOLLOW_SYMLINKS
+              value: "yes"
+            - name: SAMBA_WIDE_LINKS
+              value: "yes"
+            - name: SAMBA_HOSTS_ALLOW
+              value: "127.0.0.0/8 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16"
+            - name: WSDD2_ENABLE
+              value: "1"
+            - name: PUID
+              value: "1005"
+            - name: PGID
+              value: "1005"
+          volumeMounts:
+            - mountPath: /data
+              name: samba-data-volume
+            - mountPath: /samba/media
+              name: samba-media-dir
+            - mountPath: /data/config.yml
+              name: samba-config-volume
+              subPath: config.yml
+      initContainers:
+        - name: init-config
+          image: busybox:latest
+          command: ['sh', '-c', 'cp /config-source/config.yml /data/ && chmod 644 /data/config.yml']
+          volumeMounts:
+            - mountPath: /config-source
+              name: samba-config-volume
+            - mountPath: /data
+              name: samba-data-volume
+      volumes:
+        - name: samba-config-volume
+          secret:
+            secretName: samba-secret
+        - name: samba-data-volume
+          persistentVolumeClaim:
+            claimName: samba-data
+        - name: samba-media-dir
+          persistentVolumeClaim:
+            claimName: samba-media
