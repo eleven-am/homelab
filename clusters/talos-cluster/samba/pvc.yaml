@@ -21,7 +21,7 @@ spec:
   accessModes:
     - ReadWriteMany
   volumeMode: Filesystem
-  storageClassName: snow-storage
+  storageClassName: smb-storage
   resources:
     requests:
       storage: 100Mi
@@ -35,7 +35,7 @@ spec:
   accessModes:
     - ReadWriteMany
   volumeMode: Filesystem
-  storageClassName: snow-storage
+  storageClassName: smb-storage
   resources:
     requests:
       storage: 100Mi
