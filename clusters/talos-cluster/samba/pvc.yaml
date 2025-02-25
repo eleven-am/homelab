@@ -25,3 +25,17 @@ spec:
   resources:
     requests:
       storage: 100Mi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: webdav-media
+  namespace: samba
+spec:
+  accessModes:
+    - ReadWriteMany
+  volumeMode: Filesystem
+  storageClassName: snow-storage
+  resources:
+    requests:
+      storage: 100Mi
