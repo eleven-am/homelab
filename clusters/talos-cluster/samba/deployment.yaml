@@ -73,6 +73,7 @@ spec:
               name: samba-data-volume
             - mountPath: /samba/media
               name: samba-media-dir
+              subPath: royossai
             - mountPath: /data/config.yml
               name: samba-config-volume
               subPath: config.yml
@@ -85,6 +86,7 @@ spec:
               name: samba-config-volume
             - mountPath: /data
               name: samba-data-volume
+              subPath: royossai
       volumes:
         - name: samba-config-volume
           secret:
@@ -141,8 +143,9 @@ spec:
             - name: SERVER_NAMES
               value: "webdav.horus.maix.ovh"
           volumeMounts:
-            - mountPath: /var/lib/dav
+            - mountPath: /var/lib/dav/data
               name: webdav-media-dir
+              subPath: royossai
       volumes:
         - name: webdav-media-dir
           persistentVolumeClaim:
