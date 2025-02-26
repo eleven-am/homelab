@@ -71,9 +71,7 @@ spec:
         - name: custom-templates
           persistentVolumeClaim:
             claimName: authentik-templates-pvc
-
 ---
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
