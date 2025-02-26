@@ -5,4 +5,5 @@ resources:
   - secret.yaml
   - pvc.yaml
   - deployment.yaml
+  - autoscaling.yaml
   - service.yaml
