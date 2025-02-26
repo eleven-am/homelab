@@ -135,29 +135,3 @@ spec:
             limits:
               cpu: 500m
               memory: 256Mi
-          livenessProbe:
-            exec:
-              command:
-                - pg_isready
-                - -h
-                - 127.0.0.1
-                - -p
-                - "5432"
-                - -U
-                - "postgres"
-                - -q
-            initialDelaySeconds: 30
-            periodSeconds: 10
-          readinessProbe:
-            exec:
-              command:
-                - pg_isready
-                - -h
-                - 127.0.0.1
-                - -p
-                - "5432"
-                - -U
-                - "postgres"
-                - -q
-            initialDelaySeconds: 15
-            periodSeconds: 10
