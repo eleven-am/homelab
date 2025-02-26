@@ -12,3 +12,18 @@ spec:
       name: postgres
       protocol: TCP
   type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pgbouncer-service
+  namespace: postgres
+spec:
+  selector:
+    app: pgbouncer
+  ports:
+    - port: 5432
+      targetPort: 5432
+      name: postgres
+      protocol: TCP
+  type: LoadBalancer
