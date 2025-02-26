@@ -142,6 +142,8 @@ spec:
               mountPath: /media
           env:
             - name: DATABASE_HOST
+              value: pgbouncer-service.postgres.svc.cluster.local
+            - name: DIRECT_DATABASE_HOST
               value: postgres-service.postgres.svc.cluster.local
             - name: DATABASE_PORT
               value: "5432"
@@ -159,6 +161,8 @@ spec:
                   key: POSTGRES_PASSWORD
             - name: DATABASE_URL
               value: "postgres://$(DATABASE_USER):$(DATABASE_PASSWORD)@$(DATABASE_HOST):$(DATABASE_PORT)/$(DATABASE_NAME)"
+            - name: DIRECT_DATABASE_URL
+              value: "postgres://$(DATABASE_USER):$(DATABASE_PASSWORD)@$(DIRECT_DATABASE_HOST):$(DATABASE_PORT)/$(DATABASE_NAME)"
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
