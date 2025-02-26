@@ -45,7 +45,7 @@ spec:
 
     env:
       REDIS_HOSTNAME: redis-service.redis.svc.cluster.local
-      DB_HOSTNAME: postgres-service.postgres.svc.cluster.local
+      DB_HOSTNAME: pgbouncer-service.postgres.svc.cluster.local
       DB_PORT: 5432
       DB_DATABASE_NAME: immich
       DB_VECTOR_EXTENSION: pgvector
