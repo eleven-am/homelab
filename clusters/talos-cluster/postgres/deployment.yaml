@@ -143,6 +143,9 @@ spec:
                 - 127.0.0.1
                 - -p
                 - "5432"
+                - -U
+                - "postgres"
+                - -q
             initialDelaySeconds: 30
             periodSeconds: 10
           readinessProbe:
@@ -153,5 +156,8 @@ spec:
                 - 127.0.0.1
                 - -p
                 - "5432"
-            initialDelaySeconds: 5
-            periodSeconds: 5
+                - -U
+                - "postgres"
+                - -q
+            initialDelaySeconds: 15
+            periodSeconds: 10
