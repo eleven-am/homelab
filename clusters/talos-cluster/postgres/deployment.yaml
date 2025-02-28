@@ -126,6 +126,8 @@ spec:
               value: "postgres"
             - name: PGBOUNCER_PORT
               value: "5432"
+            - name: PGBOUNCER_DATABASE
+              value: "*"
           resources:
             requests:
               cpu: 100m
