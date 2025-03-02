@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: frames
-          image: elevenam/frames:2025-03-02-08-15
+          image: elevenam/frames:latest
           ports:
             - containerPort: 3000
           livenessProbe:
@@ -114,7 +114,7 @@ spec:
     spec:
       containers:
         - name: frames
-          image: elevenam/frames:2025-03-02-08-15
+          image: elevenam/frames:latest
           ports:
             - containerPort: 3000
           livenessProbe:
