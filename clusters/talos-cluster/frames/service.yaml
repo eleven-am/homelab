@@ -6,6 +6,7 @@ metadata:
 spec:
   selector:
     app: frames-deployment
+  type: LoadBalancer
   ports:
     - name: frames-tcp
       protocol: TCP
