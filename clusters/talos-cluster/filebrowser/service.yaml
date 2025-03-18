@@ -4,6 +4,7 @@ metadata:
   name: filebrowser
   namespace: filebrowser
 spec:
+  type: LoadBalancer
   selector:
     app: filebrowser
   ports:
