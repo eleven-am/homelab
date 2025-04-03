@@ -10,7 +10,7 @@ spec:
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxSurge: 1
+      maxSurge: 2
   selector:
     matchLabels:
       app: frames-deployment
@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: frames
-          image: elevenam/frames:dev-2025-04-03-22-55
+          image: elevenam/frames:dev
           ports:
             - containerPort: 3000
           livenessProbe:
