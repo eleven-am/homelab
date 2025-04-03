@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: frames
-          image: elevenam/frames:dev
+          image: elevenam/frames:dev-2025-04-03-22-55
           ports:
             - containerPort: 3000
           livenessProbe:
