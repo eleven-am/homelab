@@ -23,6 +23,7 @@ spec:
       containers:
         - name: frames
           image: elevenam/frames:dev
+          imagePullPolicy: Always
           ports:
             - containerPort: 3000
           livenessProbe:
