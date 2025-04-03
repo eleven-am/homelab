@@ -87,6 +87,14 @@ spec:
             - mountPath: /data
               name: samba-data-volume
               subPath: royossai
+        - name: fix-permissions
+          image: busybox
+          command: [ 'sh', '-c', 'chown -R 1005:1005 /samba/media' ]
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - mountPath: /samba/media
+              name: samba-media-dir
       volumes:
         - name: samba-config-volume
           secret:
