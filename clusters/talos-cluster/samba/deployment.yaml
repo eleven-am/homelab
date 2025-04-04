@@ -89,28 +89,12 @@ spec:
               subPath: royossai
         - name: fix-permissions
           image: busybox:latest
-          command: [ 'sh', '-c', 'chown -R 1005:1005 /samba/media' ]
+          command: [ 'sh', '-c', 'chown -R www-data:www-data /samba/media' ]
           securityContext:
             runAsUser: 0
           volumeMounts:
             - mountPath: /samba/media
               name: samba-media-dir
-        - name: create-royossai-user
-          image: busybox:latest
-          command: [ 'sh', '-c', 'adduser -u 1005 -D $SAMBA_USER && passwd -u $SAMBA_USER && echo "$SAMBA_USER:$SAMBA_PASSWORD" | chpasswd' ]
-          securityContext:
-            runAsUser: 0
-          env:
-            - name: SAMBA_USER
-              value: "royossai"
-            - name: SAMBA_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: samba-secret
-                  key: password
-          volumeMounts:
-            - name: samba-media-dir
-              mountPath: /samba/media
       volumes:
         - name: samba-config-volume
           secret:
