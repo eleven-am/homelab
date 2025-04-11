@@ -29,11 +29,11 @@ spec:
               subPath: database.db
           resources:
             requests:
-              memory: "128Mi"
-              cpu: "100m"
+              cpu: "200m"
+              memory: "512Mi"
             limits:
-              memory: "256Mi"
-              cpu: "500m"
+              cpu: "1000m"
+              memory: "2Gi"
       volumes:
         - name: data
           persistentVolumeClaim:
