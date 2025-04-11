@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: megane
+  namespace: megane
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: megane
+  template:
+    metadata:
+      labels:
+        app: megane
+    spec:
+      containers:
+        - name: megane
+          image: elevanam/megane:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: PORT
+              value: "3000"
+          volumeMounts:
+            - name: data
+              mountPath: /app/uploads
+            - name: database
+              mountPath: /database.db
+              subPath: database.db
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: megane-data
+        - name: database
+          persistentVolumeClaim:
+            claimName: megane-db
