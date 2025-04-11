@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: megane
-          image: elevanam/megane:latest
+          image: elevenam/megane:latest
           ports:
             - containerPort: 3000
           env:
