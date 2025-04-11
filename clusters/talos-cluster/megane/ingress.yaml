@@ -10,8 +10,8 @@ spec:
     service:
       name: megane
       port:
-        number: 80
+        number: 3000
   ingressClassName: tailscale
   tls:
     - hosts:
-        - drive
+        - megane
