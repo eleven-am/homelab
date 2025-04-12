@@ -23,6 +23,11 @@ spec:
               value: "3000"
             - name: DOMAIN_NAME
               value: "megane.maix.ovh"
+            - name: ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: megane-secret
+                  key: ADMIN_PASSWORD
           volumeMounts:
             - name: data
               mountPath: /app/uploads
