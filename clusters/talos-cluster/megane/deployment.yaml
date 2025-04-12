@@ -34,13 +34,6 @@ spec:
             - name: database
               mountPath: /database.db
               subPath: database.db
-          resources:
-            requests:
-              cpu: "200m"
-              memory: "512Mi"
-            limits:
-              cpu: "1000m"
-              memory: "2Gi"
       volumes:
         - name: data
           persistentVolumeClaim:
