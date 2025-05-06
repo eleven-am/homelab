@@ -37,8 +37,28 @@ resource "null_resource" "init_packer" {
   }
 }
 
+resource "null_resource" "delete_proxmox_template" {
+  triggers = {
+	talos_iso_url   = local.talos_iso_url
+	iso_url         = var.iso_url
+	template_name   = local.template_name
+	vm_id           = local.vm_id
+  }
+
+  provisioner "local-exec" {
+	# Delete the template via Proxmox API
+	command = <<EOF
+      curl -k -s \
+        -X DELETE \
+        -H "Authorization: PVEAPIToken=${var.proxmox_username}=${var.proxmox_token}" \
+        "${var.proxmox_host}/api2/json/nodes/${var.proxmox_node}/qemu/${local.vm_id}" \
+        || true  # Continue even if it doesn't exist yet
+    EOF
+  }
+}
+
 resource "null_resource" "packer_build" {
-  depends_on = [null_resource.init_packer]
+  depends_on = [null_resource.init_packer, null_resource.delete_proxmox_template]
 
   triggers = {
 	talos_iso_url = local.talos_iso_url

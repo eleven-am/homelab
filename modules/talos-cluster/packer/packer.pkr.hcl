@@ -99,7 +99,7 @@ source "proxmox-iso" "talos-template" {
     storage_pool      = var.proxmox_storage
     storage_pool_type = var.proxmox_storage_type
     format            = "raw"
-    disk_size         = "1500M"
+    disk_size         = "4500M"
     cache_mode        = "writethrough"
   }
 
