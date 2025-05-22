@@ -22,7 +22,6 @@ metadata:
 spec:
   selector:
     app: test-deployment
-  type: LoadBalancer
   ports:
     - name: test-tcp
       protocol: TCP
