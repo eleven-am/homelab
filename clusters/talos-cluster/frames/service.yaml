@@ -11,3 +11,19 @@ spec:
     - name: frames-tcp
       protocol: TCP
       port: 3000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: test-service
+  namespace: frames
+spec:
+  selector:
+    app: test-deployment
+  type: LoadBalancer
+  ports:
+    - name: test-tcp
+      protocol: TCP
+      port: 3000

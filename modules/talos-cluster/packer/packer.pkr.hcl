@@ -81,8 +81,9 @@ source "proxmox-iso" "talos-template" {
   insecure_skip_tls_verify = true
 
   # Base ISO configuration
-  iso_url          = var.iso_url
-  iso_checksum     = var.iso_checksum
+  // iso_url          = var.iso_url
+  iso_file         = "local:iso/archlinux-2024.09.01-x86_64.iso"
+  iso_checksum     = "none"
   iso_storage_pool = var.iso_storage_pool
   unmount_iso      = true
 
