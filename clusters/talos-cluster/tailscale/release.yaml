@@ -16,10 +16,10 @@ spec:
   interval: 1h
   valuesFrom:
     - kind: Secret
-      name: operator-oauth
+      name: sops-operator-oauth
       valuesKey: client_id
       targetPath: oauth.clientId
     - kind: Secret
-      name: operator-oauth
+      name: sops-operator-oauth
       valuesKey: client_secret
       targetPath: oauth.clientSecret
