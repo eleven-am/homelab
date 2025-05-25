@@ -44,6 +44,9 @@ spec:
               mountPath: /var/lib
             - name: horus-state
               mountPath: /state
+        - name: headscale-admin
+          image: goodieshq/headscale-admin:0.24
+          imagePullPolicy: Always
       restartPolicy: Always
       volumes:
         - name: horus-config
@@ -52,31 +55,3 @@ spec:
         - name: horus-state
           persistentVolumeClaim:
             claimName: horus-state
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: horus-data
-  namespace: mullvad
-spec:
-  accessModes:
-    - ReadWriteOnce
-  volumeMode: Filesystem
-  storageClassName: app-storage
-  resources:
-    requests:
-      storage: 100Mi
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: horus-state
-  namespace: mullvad
-spec:
-  accessModes:
-    - ReadWriteOnce
-  volumeMode: Filesystem
-  storageClassName: app-storage
-  resources:
-    requests:
-      storage: 100Mi
