@@ -1,0 +1,78 @@
+version: '3.9'
+services:
+  # NPM - Proxy Manager
+  npm:
+    container_name: npm
+    image: jc21/nginx-proxy-manager:latest
+    ports:
+      - "80:80"
+      - "81:81"
+      - "443:443"
+    volumes:
+      - ./data/npm/data:/data
+      - ./data/npm/letsencrypt:/etc/letsencrypt
+    restart: always
+    networks:
+      - backend
+
+  # Pi-hole - DNS Server
+  pi-hole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "7070:80"
+    dns:
+      - 127.0.0.1
+      - 1.1.1.1
+      - 8.8.8.8
+    environment:
+      - TZ=Europe/Paris
+      - WEBPASSWORD=${PIHOLE_PASSWORD}
+    volumes:
+      - ./data/pihole/pihole:/etc/pihole/
+      - ./data/pihole/dnsmasq.d:/etc/dnsmasq.d/
+    restart: unless-stopped
+    networks:
+      - backend
+
+  # Headscale - Self-hosted Tailscale server
+  headscale:
+    container_name: headscale
+    image: headscale/headscale:0.25.1
+    restart: unless-stopped
+    ports:
+      - "3478:3478/udp"
+    volumes:
+      - ./data/headscale/config:/etc/headscale
+      - ./data/headscale/data:/var/lib/headscale
+    environment:
+      - TZ=Europe/Paris
+    command: serve
+    networks:
+      - backend
+    labels:
+      - "headplane.managed=true"
+
+  # Headplane - Modern UI for Headscale management (alternative to headscale-admin)
+  headplane:
+    image: ghcr.io/tale/headplane:0.5.10
+    container_name: headplane
+    restart: unless-stopped
+    volumes:
+      - ./data/headplane/config.yaml:/etc/headplane/config.yaml
+      - ./data/headscale/config:/etc/headscale
+      - ./data/headplane/data:/var/lib/headplane
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - headscale
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
