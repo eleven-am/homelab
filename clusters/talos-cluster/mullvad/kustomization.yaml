@@ -11,4 +11,5 @@ resources:
   - sedna
   - shurdh
   - tia
-  - deployment.yaml
+  - headscale-admin.yaml
+  - horus.yaml
