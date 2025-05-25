@@ -1,0 +1,40 @@
+# Headplane Configuration for Docker integration with Headscale 0.26.0
+
+# Server configuration
+server:
+  host: "0.0.0.0"
+  port: 3000
+  
+  # Secret for encoding/decoding web sessions (exactly 32 characters)
+  cookie_secret: "K7mX9pQ2vL8nR5wE3jF6uY1tA4hS0zC9"
+  
+  # Set to false since NPM handles HTTPS externally
+  cookie_secure: false
+
+# Headscale configuration
+headscale:
+  # URL to Headscale HTTP API (internal Docker network)
+  url: "http://headscale:8080"
+  
+  # Path to Headscale config file
+  config_path: "/etc/headscale/config.yaml"
+  
+  # Enable strict validation of Headscale config
+  config_strict: true
+
+# Docker integration settings
+integration:
+  docker:
+    # Enable Docker integration
+    enabled: true
+    
+    # Container name to manage
+    container_name: "headscale"
+    
+    # Docker socket path
+    socket: "unix:///var/run/docker.sock"
+
+# Database configuration for Headplane
+database:
+  type: "sqlite"
+  path: "/var/lib/headplane/headplane.db"

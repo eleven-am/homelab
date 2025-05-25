@@ -1,0 +1,135 @@
+---
+# Headscale configuration for version 0.26.0
+# Compatible with Headplane integration
+
+# The url clients will connect to.
+server_url: https://headscale.maix.ovh
+
+# Address to listen to / bind to on the server
+listen_addr: 0.0.0.0:8080
+
+# Address to listen to /metrics and /debug
+# Changed to 0.0.0.0 so NPM can proxy metrics
+metrics_listen_addr: 0.0.0.0:9090
+
+# Address to listen for gRPC
+grpc_listen_addr: 0.0.0.0:50443
+
+# Allow the gRPC admin interface to run in INSECURE mode
+grpc_allow_insecure: false
+
+# The Noise section includes specific configuration for the TS2021 Noise protocol
+noise:
+  private_key_path: /var/lib/headscale/noise_private.key
+
+# List of IP prefixes to allocate tailaddresses from
+prefixes:
+  v4: 100.64.0.0/10
+  v6: fd7a:115c:a1e0::/48
+  allocation: sequential
+
+# DERP configuration
+derp:
+  server:
+    enabled: true
+    region_id: 999
+    region_code: "headscale"
+    region_name: "Headscale Embedded DERP"
+    stun_listen_addr: "0.0.0.0:3478"
+    private_key_path: /var/lib/headscale/derp_server_private.key
+    automatically_add_embedded_derp_region: true
+    # Your actual public IP
+    ipv4: 176.149.222.82
+
+  urls:
+    - https://controlplane.tailscale.com/derpmap/default
+
+  paths: []
+  auto_update_enabled: true
+  update_frequency: 24h
+
+# Disable automatic update checks
+disable_check_updates: false
+
+# Time before an inactive ephemeral node is deleted
+ephemeral_node_inactivity_timeout: 30m
+
+# Database configuration
+database:
+  type: sqlite
+  debug: false
+  
+  gorm:
+    prepare_stmt: true
+    parameterized_queries: true
+    skip_err_record_not_found: true
+    slow_threshold: 1000
+
+  sqlite:
+    path: /var/lib/headscale/db.sqlite
+    write_ahead_log: true
+    wal_autocheckpoint: 1000
+
+# TLS configuration
+acme_url: https://acme-v02.api.letsencrypt.org/directory
+acme_email: ""
+tls_letsencrypt_hostname: ""
+tls_letsencrypt_cache_dir: /var/lib/headscale/cache
+tls_letsencrypt_challenge_type: HTTP-01
+tls_letsencrypt_listen: ":http"
+tls_cert_path: ""
+tls_key_path: ""
+
+# Logging configuration
+log:
+  format: text
+  level: info
+
+# Policy configuration - CHANGED TO DATABASE MODE
+policy:
+  # The mode can be "file" or "database" that defines
+  # where the ACL policies are stored and read from.
+  # Database mode allows ACLs to be managed in the Headplane interface
+  mode: database
+  # path not needed in database mode
+
+# DNS configuration (0.26.0 structure)
+dns:
+  magic_dns: true
+  base_domain: tailnet.maix.ovh
+  override_local_dns: false  # Changed to false - let clients use their local DNS
+  
+  nameservers:
+    global:
+      # Use container name instead of IP - Docker resolves automatically
+      - pihole        # Your Pi-hole container
+      - 1.1.1.1       # Fallback
+      - 1.0.0.1       # Fallback
+    
+    split: {}
+  
+  search_domains: []
+  extra_records: []
+
+# Unix socket configuration
+unix_socket: /var/run/headscale/headscale.sock
+unix_socket_permission: "0770"
+
+# OpenID Connect configuration (0.26.0 format)
+oidc:
+  only_start_if_oidc_is_available: true
+  issuer: "https://accounts.google.com"
+  client_id: ""
+  client_secret: ""
+  expiry: 0
+  use_expiry_from_token: false
+  scope: ["openid", "profile", "email"]
+  extra_params:
+    domain_hint: maix.ovh
+
+# Logtail configuration
+logtail:
+  enabled: false
+
+# Randomize client port
+randomize_client_port: false
