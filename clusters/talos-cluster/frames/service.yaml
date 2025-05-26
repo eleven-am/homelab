@@ -17,12 +17,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: test-service
+  name: transcode-service
   namespace: frames
 spec:
   selector:
-    app: test-deployment
+    app: transcode-deployment
   ports:
-    - name: test-tcp
+    - name: transcode-tcp
       protocol: TCP
       port: 3000

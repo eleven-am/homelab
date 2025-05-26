@@ -96,28 +96,28 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: test-deployment
+  name: transcode-deployment
   labels:
-    app: test-deployment
+    app: transcode-deployment
   namespace: frames
 spec:
-  replicas: 2
+  replicas: 1
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxSurge: 2
+      maxSurge: 1
   selector:
     matchLabels:
-      app: test-deployment
+      app: transcode-deployment
   template:
     metadata:
-      name: test-deployment
+      name: transcode-deployment
       labels:
-        app: test-deployment
+        app: transcode-deployment
     spec:
       containers:
         - name: frames
-          image: elevenam/frames:test
+          image: elevenam/frames:transcode
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
