@@ -44,6 +44,10 @@ spec:
               value: "10"
             - name: POSTGRESQL_MAX_REPLICATION_SLOTS
               value: "10"
+            - name: POSTGRESQL_MAX_CONNECTIONS
+              value: "200"
+            - name: POSTGRESQL_SHARED_BUFFERS
+              value: "256MB"
           livenessProbe:
             exec:
               command:
