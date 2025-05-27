@@ -38,6 +38,12 @@ spec:
                 secretKeyRef:
                   name: postgres-secret
                   key: POSTGRES_DB
+            - name: POSTGRESQL_WAL_LEVEL
+              value: "logical"
+            - name: POSTGRESQL_MAX_WAL_SENDERS
+              value: "10"
+            - name: POSTGRESQL_MAX_REPLICATION_SLOTS
+              value: "10"
           livenessProbe:
             exec:
               command:
