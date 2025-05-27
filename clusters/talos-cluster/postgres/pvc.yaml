@@ -11,3 +11,17 @@ spec:
   resources:
     requests:
       storage: 10Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: electric-pvc
+  namespace: postgres
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  storageClassName: blizzard-storage
+  resources:
+    requests:
+      storage: 10Gi

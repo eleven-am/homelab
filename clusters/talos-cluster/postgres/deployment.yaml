@@ -135,3 +135,54 @@ spec:
             limits:
               cpu: 500m
               memory: 256Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: electric
+  namespace: postgres
+  labels:
+    app: electric
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: electric
+  template:
+    metadata:
+      labels:
+        app: electric
+    spec:
+      containers:
+        - name: electric
+          image: electricsql/electric:latest
+          ports:
+            - containerPort: 5133
+            - containerPort: 5433
+            - containerPort: 65432
+          env:
+            - name: DATABASE_URL
+              value: "postgresql://postgres-service.postgres.svc.cluster.local:5432/postgres"
+            - name: ELECTRIC_WRITE_TO_PG_MODE
+              value: "direct_writes"
+            - name: PG_PROXY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+            - name: ELECTRIC_STORAGE_DIR
+              value: "/var/lib/electric/persistent"
+          volumeMounts:
+            - name: electric-storage
+              mountPath: "/var/lib/electric/persistent"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+      volumes:
+        - name: electric-storage
+          persistentVolumeClaim:
+            claimName: electric-pvc
