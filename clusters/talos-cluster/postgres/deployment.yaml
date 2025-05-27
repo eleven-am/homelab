@@ -38,16 +38,27 @@ spec:
                 secretKeyRef:
                   name: postgres-secret
                   key: POSTGRES_DB
-            - name: POSTGRESQL_WAL_LEVEL
-              value: "logical"
-            - name: POSTGRESQL_MAX_WAL_SENDERS
-              value: "10"
-            - name: POSTGRESQL_MAX_REPLICATION_SLOTS
-              value: "10"
-            - name: POSTGRESQL_MAX_CONNECTIONS
-              value: "200"
-            - name: POSTGRESQL_SHARED_BUFFERS
-              value: "256MB"
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          # Override the default command to set PostgreSQL configuration
+          command:
+            - docker-entrypoint.sh
+          args:
+            - postgres
+            - -c
+            - wal_level=logical
+            - -c
+            - max_wal_senders=10
+            - -c
+            - max_replication_slots=10
+            - -c
+            - max_connections=200
+            - -c
+            - shared_buffers=256MB
+            - -c
+            - log_statement=all
+            - -c
+            - log_min_duration_statement=0
           livenessProbe:
             exec:
               command:
@@ -61,6 +72,13 @@ spec:
           volumeMounts:
             - name: postgres-data
               mountPath: /var/lib/postgresql/data
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              cpu: 1000m
+              memory: 2Gi
       restartPolicy: Always
       volumes:
         - name: postgres-data
