@@ -161,17 +161,28 @@ spec:
             - containerPort: 5433
             - containerPort: 65432
           env:
-            - name: DATABASE_URL
-              value: "postgresql://postgres-service.postgres.svc.cluster.local:5432/postgres"
-            - name: ELECTRIC_WRITE_TO_PG_MODE
-              value: "direct_writes"
-            - name: PG_PROXY_PASSWORD
+            - name: DATABASE_HOST
+              value: postgres-service.postgres.svc.cluster.local
+            - name: DATABASE_PORT
+              value: "5432"
+            - name: DATABASE_NAME
+              value: "postgres"
+            - name: DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_USER
+            - name: DATABASE_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: postgres-secret
                   key: POSTGRES_PASSWORD
+            - name: DATABASE_URL
+              value: "postgres://$(DATABASE_USER):$(DATABASE_PASSWORD)@$(DATABASE_HOST):$(DATABASE_PORT)/$(DATABASE_NAME)"
             - name: ELECTRIC_STORAGE_DIR
               value: "/var/lib/electric/persistent"
+            - name: ELECTRIC_WRITE_TO_PG_MODE
+              value: "direct_writes"
           volumeMounts:
             - name: electric-storage
               mountPath: "/var/lib/electric/persistent"
