@@ -164,7 +164,7 @@ spec:
             - name: DATABASE_PORT
               value: "5432"
             - name: DATABASE_NAME
-              value: "postgres"
+              value: "flow"
             - name: DATABASE_USER
               valueFrom:
                 secretKeyRef:
@@ -185,7 +185,7 @@ spec:
             - name: ELECTRIC_DB_POOL_SIZE
               value: "10"
             - name: ELECTRIC_REPLICATION_STREAM_ID
-              value: "my-app"  # Change this to your app name
+              value: "flow"
             - name: ELECTRIC_STORAGE_DIR
               value: "/var/lib/electric/persistent"
             - name: ELECTRIC_CACHE_MAX_AGE
