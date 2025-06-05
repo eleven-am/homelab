@@ -35,7 +35,6 @@ metadata:
   name: webdav-service
   namespace: samba
 spec:
-  type: LoadBalancer
   selector:
     app: webdav-deployment
   ports:
