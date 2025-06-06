@@ -16,6 +16,10 @@ spec:
       labels:
         app: postgres-deployment
     spec:
+      securityContext:
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
       containers:
         - name: postgres-deployment
           image: ankane/pgvector:latest
