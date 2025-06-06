@@ -90,6 +90,7 @@ policy:
   # The mode can be "file" or "database" that defines
   # where the ACL policies are stored and read from.
   # Database mode allows ACLs to be managed in the Headplane interface
+  path: "/etc/headscale/acl.hujson"
   mode: database
   # path not needed in database mode
 
