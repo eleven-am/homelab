@@ -20,6 +20,20 @@ spec:
         runAsUser: 999
         runAsGroup: 999
         fsGroup: 999
+      initContainers:
+        - name: postgres-data-permission-fix
+          image: busybox
+          command:
+            - /bin/sh
+            - -c
+            - |
+              chown -R 999:999 /var/lib/postgresql/data
+              chmod -R 0700 /var/lib/postgresql/data
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+          securityContext:
+            runAsUser: 0
       containers:
         - name: postgres-deployment
           image: ankane/pgvector:latest
