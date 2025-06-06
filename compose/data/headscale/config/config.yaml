@@ -58,7 +58,7 @@ ephemeral_node_inactivity_timeout: 30m
 database:
   type: sqlite
   debug: false
-  
+
   gorm:
     prepare_stmt: true
     parameterized_queries: true
@@ -93,23 +93,26 @@ policy:
   mode: database
   # path not needed in database mode
 
-# DNS configuration (0.26.0 structure)
+  # DNS configuration (0.26.0 structure)
 dns:
   magic_dns: true
   base_domain: tailnet.maix.ovh
-  override_local_dns: false  # Changed to false - let clients use their local DNS
-  
+  override_local_dns: false # Changed to false - let clients use their local DNS
+
   nameservers:
     global:
-      # Use container name instead of IP - Docker resolves automatically
-      - pihole        # Your Pi-hole container
-      - 1.1.1.1       # Fallback
-      - 1.0.0.1       # Fallback
-    
-    split: {}
-  
+      - 100.64.0.1
+      - 1.1.1.1
+      - 1.0.0.1
+
   search_domains: []
-  extra_records: []
+  extra_records:
+    - name: fileserver.tailnet.maix.ovh
+      type: A
+      value: 192.168.101.100
+    - name: samba.tailnet.maix.ovh
+      type: A
+      value: " 172.198.1.5"
 
 # Unix socket configuration
 unix_socket: /var/run/headscale/headscale.sock
@@ -123,7 +126,7 @@ oidc:
   client_secret: ""
   expiry: 0
   use_expiry_from_token: false
-  scope: ["openid", "profile", "email"]
+  scope: [ "openid", "profile", "email" ]
   extra_params:
     domain_hint: maix.ovh
 
