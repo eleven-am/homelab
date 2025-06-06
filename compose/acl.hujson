@@ -22,9 +22,15 @@
   // Named hosts for easier reference in rules
   "hosts": {
     // Development services
-    "redis": "172.198.1.4",
-    "cilium": "172.198.1.8",
-    "postgres": "172.198.1.5",
+    "redis": "172.198.1.3",
+    "cilium": "172.198.1.7",
+    "postgres": "172.198.1.1",
+
+    // Network subnets
+    "internal-network": "172.198.1.0/24",
+
+    // Your OPNsense router on Tailscale
+    "opnsense": "100.64.0.2"
   },
 
   // Access control rules - processed in order
@@ -59,6 +65,13 @@
         "postgres:5432", // PostgreSQL default port
         "cilium:443"     // HTTPS for Cilium gateway
       ]
+    },
+
+    {
+      // Routers can access the internal network subnet
+      "action": "accept",
+      "src": ["group:hephaestus"],
+      "dst": ["internal-network:*"]  // All ports on internal network
     }
 
     // Default deny - anything not explicitly allowed is blocked
