@@ -20,6 +20,18 @@ spec:
         - name: postgres-deployment
           image: ankane/pgvector:latest
           imagePullPolicy: IfNotPresent
+          command:
+            - postgres
+            - -c
+            - wal_level=logical
+            - -c
+            - max_wal_senders=10
+            - -c
+            - max_replication_slots=10
+            - -c
+            - max_connections=200
+            - -c
+            - shared_buffers=256MB
           ports:
             - containerPort: 5432
           env:
@@ -38,16 +50,6 @@ spec:
                 secretKeyRef:
                   name: postgres-secret
                   key: POSTGRES_DB
-            - name: POSTGRESQL_WAL_LEVEL
-              value: "logical"
-            - name: POSTGRESQL_MAX_WAL_SENDERS
-              value: "10"
-            - name: POSTGRESQL_MAX_REPLICATION_SLOTS
-              value: "10"
-            - name: POSTGRESQL_MAX_CONNECTIONS
-              value: "200"
-            - name: POSTGRESQL_SHARED_BUFFERS
-              value: "256MB"
           livenessProbe:
             exec:
               command:
