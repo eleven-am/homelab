@@ -28,6 +28,7 @@
 
     // Network subnets
     "internal-network": "172.198.1.0/24",
+    "mullvad-network": "192.168.200.0/24",
 
     // Your OPNsense router on Tailscale
     "opnsense": "100.64.0.2"
@@ -71,7 +72,10 @@
       // Routers can access the internal network subnet
       "action": "accept",
       "src": ["group:hephaestus"],
-      "dst": ["internal-network:*"]  // All ports on internal network
+      "dst": [
+        "internal-network:*",  // All ports on internal network
+        "mullvad-network:*"    // All ports on mullvad network
+      ]
     }
 
     // Default deny - anything not explicitly allowed is blocked
