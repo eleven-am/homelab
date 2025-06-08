@@ -49,6 +49,8 @@ spec:
           volumeMounts:
             - name: frames-data
               mountPath: /media
+            - name: transcode-data
+              mountPath: /transcode
           env:
             - name: DATABASE_HOST
               value: pgbouncer-service.postgres.svc.cluster.local
@@ -85,11 +87,16 @@ spec:
               value: "86400"
             - name: REDIS_DB
               value: "2"
+            - name: HLS_CACHE_DIRECTORY
+              value: "/transcode/hls"
       restartPolicy: Always
       volumes:
         - name: frames-data
           persistentVolumeClaim:
             claimName: frames-data
+        - name: transcode-data
+          persistentVolumeClaim:
+            claimName: transcode-data
 
 ---
 
