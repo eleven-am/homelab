@@ -4,10 +4,8 @@ metadata:
   name: rabbitmq-small
   namespace: rabbitmq-clusters
 spec:
-  # Small cluster with 1 replica for testing
   replicas: 1
 
-  # Resource allocation
   resources:
     requests:
       cpu: 200m
@@ -16,22 +14,15 @@ spec:
       cpu: 500m
       memory: 1Gi
 
-  # Storage configuration
   persistence:
-    storageClassName: "" # Use default storage class
+    storageClassName: "blizzard-storage"
     storage: 2Gi
 
-  # RabbitMQ configuration
   rabbitmq:
     additionalConfig: |
-      # Basic configuration for small cluster
       vm_memory_high_watermark.relative = 0.6
       disk_free_limit.relative = 1.0
       collect_statistics_interval = 10000
-      
-      # Enable management plugin
       management.tcp.port = 15672
-      
-      # Basic logging
       log.console.level = info
       log.file.level = info
