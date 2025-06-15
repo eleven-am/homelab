@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: email-engine-deployment
+  namespace: email-engine
+  labels:
+    app: email-engine-deployment
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: email-engine-deployment
+  template:
+    metadata:
+      name: email-engine-deployment
+      labels:
+        app: email-engine-deployment
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: email-engine
+          image: andris9/emailengine:v1.14.8
+          ports:
+            - containerPort: 3000
+              name: email-engine-tcp
+              protocol: TCP
+          env:
+            - name: EENGINE_REDIS
+              value: "redis://redis-service.redis.svc.cluster.local:6379/3"
+            - name: EENGINE_HOST
+              value: "0.0.0.0"
+            - name: EENGINE_PORT
+              value: "3000"
+            - name: EENGINE_AUTH_USER
+              value: "admin"
+            - name: EENGINE_AUTH_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: email-engine-secret
+                  key: EENGINE_AUTH_PASS
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 250m
+              memory: 256Mi
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 5
