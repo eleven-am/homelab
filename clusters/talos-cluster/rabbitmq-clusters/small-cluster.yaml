@@ -5,7 +5,6 @@ metadata:
   namespace: rabbitmq-clusters
 spec:
   replicas: 1
-
   resources:
     requests:
       cpu: 200m
@@ -13,11 +12,37 @@ spec:
     limits:
       cpu: 500m
       memory: 1Gi
-
   persistence:
     storageClassName: "blizzard-storage"
     storage: 2Gi
-
+  override:
+    statefulSet:
+      spec:
+        template:
+          spec:
+            securityContext:
+              fsGroup: 999
+              runAsUser: 999
+              runAsGroup: 999
+              fsGroupChangePolicy: "OnRootMismatch"
+            initContainers:
+              - name: fix-nfs-permissions
+                image: busybox:1.35
+                command:
+                  - sh
+                  - -c
+                  - |
+                    echo "Fixing NFS permissions for RabbitMQ data directory..."
+                    mkdir -p /var/lib/rabbitmq/mnesia
+                    chown -R 999:999 /var/lib/rabbitmq
+                    chmod -R 755 /var/lib/rabbitmq
+                    ls -la /var/lib/rabbitmq
+                volumeMounts:
+                  - name: persistence
+                    mountPath: /var/lib/rabbitmq
+                securityContext:
+                  runAsUser: 0
+                  runAsGroup: 0
   rabbitmq:
     additionalConfig: |
       vm_memory_high_watermark.relative = 0.6
