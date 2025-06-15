@@ -1,0 +1,119 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webhook-router
+  namespace: webhook-router
+  labels:
+    app: webhook-router
+    version: v0.1.0
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: webhook-router
+  template:
+    metadata:
+      labels:
+        app: webhook-router
+        version: v0.1.0
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/health"
+    spec:
+      containers:
+        - name: webhook-router
+          image: elevenam/webhook-router:v0.1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          env:
+            - name: RABBITMQ_URL
+              valueFrom:
+                secretKeyRef:
+                  name: webhook-router-secret
+                  key: rabbitmq-url
+            - name: DEFAULT_QUEUE
+              valueFrom:
+                configMapKeyRef:
+                  name: webhook-router-config
+                  key: DEFAULT_QUEUE
+            - name: LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: webhook-router-config
+                  key: LOG_LEVEL
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: webhook-router-config
+                  key: PORT
+            - name: DATABASE_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: webhook-router-config
+                  key: DATABASE_PATH
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            successThreshold: 1
+            failureThreshold: 3
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 30
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "200m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 65534
+            runAsGroup: 65534
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop:
+                - ALL
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: webhook-router-pvc
+      securityContext:
+        fsGroup: 65534
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
