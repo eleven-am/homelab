@@ -45,7 +45,7 @@ spec:
             runAsGroup: 0
       containers:
         - name: webhook-router
-          image: elevenam/webhook-router:v0.1.0
+          image: elevenam/webhook-router:v0.1.1
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
