@@ -7,7 +7,7 @@ spec:
   selector:
     app: email-engine-deployment
   ports:
-    - name: email-engine-tcp
+    - name: ee-tcp
       protocol: TCP
       port: 3000
       targetPort: 3000
