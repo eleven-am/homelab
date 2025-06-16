@@ -7,10 +7,10 @@ metadata:
     app: webhook-router
 spec:
   parentRefs:
-    - name: cilium-gateway
-      namespace: gateway
+    - name: cloudflare-gateway
+      namespace: cloudflare-gateway
   hostnames:
-    - "wr.horus.maix.ovh"
+    - "wr.maix.ovh"
   rules:
     - matches:
         - path:
