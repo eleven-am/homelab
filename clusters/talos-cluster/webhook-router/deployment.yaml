@@ -5,7 +5,7 @@ metadata:
   namespace: webhook-router
   labels:
     app: webhook-router
-    version: v0.1.1
+    version: v0.1.2
 spec:
   replicas: 1
   strategy:
@@ -20,7 +20,7 @@ spec:
     metadata:
       labels:
         app: webhook-router
-        version: v0.1.1
+        version: v0.1.2
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "8080"
@@ -45,7 +45,7 @@ spec:
             runAsGroup: 0
       containers:
         - name: webhook-router
-          image: elevenam/webhook-router:v0.1.1
+          image: elevenam/webhook-router:v0.1.2
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
