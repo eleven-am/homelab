@@ -8,3 +8,7 @@ metadata:
 data:
   NODE_ENV: "production"
   PORT: "3000"
+  HOSTNAME: "0.0.0.0"
+  NEXT_TELEMETRY_DISABLED: "1"
+  DATABASE_URL: "file:/app/data/pad.db"
+  NEXT_PUBLIC_BASE_URL: "https://pad.maix.ovh"

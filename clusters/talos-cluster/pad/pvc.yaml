@@ -5,13 +5,14 @@ metadata:
   namespace: pad
   labels:
     app: pad
+    component: data
 spec:
   accessModes:
     - ReadWriteOnce
+  storageClassName: app-storage
   resources:
     requests:
-      storage: 1Gi
-  storageClassName: app-storage
+      storage: 10Gi
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -20,10 +21,11 @@ metadata:
   namespace: pad
   labels:
     app: pad
+    component: uploads
 spec:
   accessModes:
     - ReadWriteOnce
+  storageClassName: app-storage
   resources:
     requests:
-      storage: 5Gi
-  storageClassName: app-storage
+      storage: 50Gi
