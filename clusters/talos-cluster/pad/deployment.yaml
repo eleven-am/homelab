@@ -54,7 +54,7 @@ spec:
       
       containers:
         - name: pad
-          image: ghcr.io/eleven-am/pad:latest
+          image: ghcr.io/eleven-am/pad:0.0.8
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
