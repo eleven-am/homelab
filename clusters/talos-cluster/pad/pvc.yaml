@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pad-data-pvc
+  namespace: pad
+  labels:
+    app: pad
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: app-storage
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pad-uploads-pvc
+  namespace: pad
+  labels:
+    app: pad
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: app-storage

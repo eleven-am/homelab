@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pad
+  namespace: pad
+  labels:
+    app: pad
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pad
+  template:
+    metadata:
+      labels:
+        app: pad
+    spec:
+      containers:
+        - name: pad
+          image: ghcr.io/eleven-am/pad:0.0.7
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: PORT
+              value: "3000"
+          volumeMounts:
+            - name: data-storage
+              mountPath: /app/data
+            - name: uploads-storage
+              mountPath: /app/public/uploads
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+      volumes:
+        - name: data-storage
+          persistentVolumeClaim:
+            claimName: pad-data-pvc
+        - name: uploads-storage
+          persistentVolumeClaim:
+            claimName: pad-uploads-pvc
