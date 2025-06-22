@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: artist-webapp-data-pvc
+  namespace: artist-webapp
+  labels:
+    app: artist-webapp
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: blizzard-storage
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: artist-webapp-uploads-pvc
+  namespace: artist-webapp
+  labels:
+    app: artist-webapp
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: blizzard-storage
