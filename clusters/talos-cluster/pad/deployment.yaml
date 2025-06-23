@@ -54,8 +54,9 @@ spec:
       
       containers:
         - name: pad
-          image: ghcr.io/eleven-am/pad:0.0.11
+          image: ghcr.io/eleven-am/pad:0.0.12
           imagePullPolicy: IfNotPresent
+          command: ["migrate"]
           ports:
             - name: http
               containerPort: 3000
