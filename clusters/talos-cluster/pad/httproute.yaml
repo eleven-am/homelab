@@ -10,7 +10,8 @@ spec:
     - name: cloudflare-gateway
       namespace: cloudflare-gateway
   hostnames:
-    - "pad.maix.ovh"  # Replace with your actual domain
+    - "pad.maix.ovh"
+    - "roy.theossaibrothers.com"
   rules:
     - matches:
         - path:
