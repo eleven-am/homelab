@@ -10,8 +10,7 @@ spec:
     - name: cloudflare-gateway
       namespace: cloudflare-gateway
   hostnames:
-    - "pad.maix.ovh"
-    - "roy.theossaibrothers.com"
+    - "blog.theossaibrothers.com"
   rules:
     - matches:
         - path:
