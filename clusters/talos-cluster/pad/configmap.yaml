@@ -11,4 +11,4 @@ data:
   HOSTNAME: "0.0.0.0"
   NEXT_TELEMETRY_DISABLED: "1"
   DATABASE_URL: "file:/app/data/pad.db"
-  NEXT_PUBLIC_BASE_URL: "https://pad.maix.ovh"  # Update with your actual domain
+  NEXT_PUBLIC_BASE_URL: "https://blog.theossaibrothers.com"
