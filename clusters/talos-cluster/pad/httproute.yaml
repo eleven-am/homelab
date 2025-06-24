@@ -7,8 +7,8 @@ metadata:
     app: pad
 spec:
   parentRefs:
-    - name: gateway  # Replace with your actual Gateway name
-      namespace: gateway-system  # Replace with your Gateway namespace
+    - name: cloudflare-gateway
+      namespace: cloudflare-gateway
   hostnames:
     - "pad.maix.ovh"  # Replace with your actual domain
   rules:
