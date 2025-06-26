@@ -115,7 +115,7 @@ main() {
 
   # Sleep for 30 seconds to allow the cluster to come up
   echo "[INFO] Sleeping for 60 seconds to allow the cluster to come up"
-  sleep 60
+  sleep 20
 
   check_health "${primary_controller}" "${talos_dir}"
   update_kubeconfig "${primary_controller}" "${talos_dir}" "${master_nodes_ips}" "${sops_age_key}"
