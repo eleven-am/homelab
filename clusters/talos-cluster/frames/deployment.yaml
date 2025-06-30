@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: frames
-          image: elevenam/frames:dev
+          image: elevenam/frames:dev-x86
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
