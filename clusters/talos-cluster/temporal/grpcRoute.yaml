@@ -22,7 +22,7 @@ spec:
             service: "temporal.api.adminservice.v1.AdminService"
         - method:
             type: RegularExpression
-            service: "temporal\\.api\\..*"  # Catch-all for any Temporal API services
+            service: "temporal\\.api\\..*"
       backendRefs:
         - name: temporal-service
           port: 7233
