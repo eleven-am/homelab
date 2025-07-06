@@ -10,19 +10,6 @@ spec:
   hostnames:
     - "temporal-grpc.horus.maix.ovh"
   rules:
-    - matches:
-        - method:
-            type: Exact
-            service: "temporal.api.workflowservice.v1.WorkflowService"
-        - method:
-            type: Exact
-            service: "temporal.api.operatorservice.v1.OperatorService"
-        - method:
-            type: Exact
-            service: "temporal.api.adminservice.v1.AdminService"
-        - method:
-            type: RegularExpression
-            service: "temporal\\.api\\..*"
-      backendRefs:
-        - name: temporal-service
-          port: 7233
+    backendRefs:
+      - name: temporal-service
+        port: 7233
