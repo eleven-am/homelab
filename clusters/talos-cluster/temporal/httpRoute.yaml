@@ -15,5 +15,5 @@ spec:
         type: PathPrefix
         value: /
     backendRefs:
-    - name: temporal-ui
+    - name: temporal-ui-service
       port: 8080
