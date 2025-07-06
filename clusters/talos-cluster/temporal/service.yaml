@@ -10,7 +10,7 @@ spec:
     - name: grpc
       port: 7233
       targetPort: 7233
-  type: ClusterIP
+  type: LoadBalancer
 ---
 apiVersion: v1
 kind: Service
