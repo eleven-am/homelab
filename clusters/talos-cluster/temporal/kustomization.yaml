@@ -5,7 +5,7 @@ namespace: temporal
 resources:
   - namespace.yaml
   - secret.yaml
-  - configmap.yaml
+  - configMap.yaml
   - deployment.yaml
   - service.yaml
   - httproute.yaml
