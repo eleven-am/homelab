@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: temporal-dynamicconfig
+  namespace: temporal
+data:
+  development-sql.yaml: |
+    # Retention and Archival Settings
+    system.historyArchivalEnabled:
+      - value: false  # Enable if you have archival storage configured
+        constraints: {}
+    system.visibilityArchivalEnabled:
+      - value: false  # Enable if you have archival storage configured
+        constraints: {}
+    
+    # Workflow Execution Limits
+    limit.maxIDLength:
+      - value: 255
+        constraints: {}
+    limit.taskQueueActivitiesPerSecond:
+      - value: 10000  # Rate limit for activities per task queue
+        constraints: {}
+    limit.taskQueueWorkflowsPerSecond:
+      - value: 10000  # Rate limit for workflows per task queue
+        constraints: {}
+    
+    # History Service Limits
+    history.maximumBufferedEventsBatch:
+      - value: 100
+        constraints: {}
+    history.maximumSignalsPerExecution:
+      - value: 10000
+        constraints: {}
+    
+    # Frontend Service Settings
+    frontend.enableClientVersionCheck:
+      - value: true
+        constraints: {}
+    frontend.maxBadBinaries:
+      - value: 10
+        constraints: {}
+    frontend.rps:
+      - value: 2400  # Requests per second limit
+        constraints: {}
+    
+    # Matching Service Settings (Task Distribution)
+    matching.numTaskqueueReadPartitions:
+      - value: 4  # Number of read partitions for task queues
+        constraints: {}
+    matching.numTaskqueueWritePartitions:
+      - value: 4  # Number of write partitions for task queues
+        constraints: {}
+    
+    # System Settings
+    system.forceSearchAttributesCacheRefreshOnRead:
+      - value: true  # Force cache refresh for search attributes
+        constraints: {}
+    system.enableActivityEagerExecution:
+      - value: true  # Enable eager activity execution
+        constraints: {}
+    
+    # Worker Service Settings
+    worker.executionsScannerEnabled:
+      - value: true
+        constraints: {}
+    worker.historyScannerEnabled:
+      - value: true
+        constraints: {}
