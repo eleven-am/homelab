@@ -1,7 +1,7 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: GRPCRoute
 metadata:
-  name: temporal-ui-route
+  name: temporal-grpc-route
   namespace: temporal
 spec:
   parentRefs:
