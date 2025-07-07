@@ -76,6 +76,13 @@ spec:
       severity: "UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL"
       ignoreUnfixed: false
       insecure: false
+      resources:
+        requests:
+          memory: 512Mi
+          cpu: 200m
+        limits:
+          memory: 1Gi
+          cpu: 1000m
       
     notary:
       enabled: false  # Enable if you need image signing
@@ -104,15 +111,6 @@ spec:
         requests:
           memory: 256Mi
           cpu: 100m
-        limits:
-          memory: 1Gi
-          cpu: 1000m
-    
-    trivy:
-      resources:
-        requests:
-          memory: 512Mi
-          cpu: 200m
         limits:
           memory: 1Gi
           cpu: 1000m
