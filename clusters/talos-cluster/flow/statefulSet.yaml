@@ -34,9 +34,13 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
-        # Raft bind address with port
+        # Raft bind address with port using actual pod IP
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
         - name: RAFT_BIND_ADDR
-          value: "0.0.0.0:8300"
+          value: "$(POD_IP):8300"
         # Bootstrap logic based on pod name
         - name: RAFT_BOOTSTRAP
           value: "$(RAFT_BOOTSTRAP_VALUE)"
