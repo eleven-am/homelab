@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flow-webhook-router
+  namespace: flow-system
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: flow-webhook-router
+  template:
+    metadata:
+      labels:
+        app: flow-webhook-router
+    spec:
+      containers:
+      - name: webhook-router
+        image: ghcr.io/eleven-am/flow-v1:main
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        envFrom:
+        - configMapRef:
+            name: flow-config
+        - secretRef:
+            name: flow-secrets
+        env:
+        # For Raft clustering
+        - name: RAFT_NODE_ID
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: RAFT_BIND_ADDR
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 256Mi
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      imagePullSecrets:
+      - name: ghcr-secret
