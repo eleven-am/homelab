@@ -66,3 +66,7 @@ data:
   RAFT_ENABLED: "false"
   RAFT_DATA_DIR: "/data/raft"
   RAFT_BOOTSTRAP: "false"
+
+  # Swagger UI
+  SWAGGER_HOST: "flow.horus.maix.ovh"
+  SWAGGER_SCHEME: "https"
