@@ -10,3 +10,18 @@ spec:
     targetPort: 8080
   selector:
     app: flow-webhook-router
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flow-webhook-router-headless
+  namespace: flow-system
+spec:
+  clusterIP: None
+  selector:
+    app: flow-webhook-router
+  ports:
+    - name: http
+      port: 8080
+    - name: raft
+      port: 8300

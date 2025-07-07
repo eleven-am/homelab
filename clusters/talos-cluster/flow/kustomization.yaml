@@ -5,6 +5,6 @@ resources:
   - ghcr-secret.yaml
   - secret.yaml
   - configMap.yaml
-  - deployment.yaml
+  - statefulSet.yaml
   - service.yaml
   - httpRoute.yaml
