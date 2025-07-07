@@ -26,13 +26,13 @@ spec:
         - -c
         - |
           # Wait for postgres to be ready
-          until pg_isready -h postgres-cluster-rw.postgres-cluster.svc.cluster.local -p 5432; do
+          until pg_isready -h postgres-service.postgres.svc.cluster.local -p 5432; do
             echo "Waiting for PostgreSQL..."
             sleep 2
           done
           
           # Create harbor user and databases
-          psql -h postgres-cluster-rw.postgres-cluster.svc.cluster.local -U postgres <<EOF
+          psql -h postgres-service.postgres.svc.cluster.local -U postgres <<EOF
           -- Create user if not exists
           DO \$\$
           BEGIN

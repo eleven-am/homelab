@@ -58,7 +58,7 @@ spec:
   
   # Monitoring
   monitoring:
-    enabled: true
+    enablePodMonitor: true
     
   # Backup configuration (optional - configure based on your needs)
   # backup:
