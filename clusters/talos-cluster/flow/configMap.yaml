@@ -63,7 +63,7 @@ data:
   ENVIRONMENT: "production"
   
   # Raft Configuration (for distributed mode)
-  RAFT_ENABLED: "false"
+  RAFT_ENABLED: "true"
   RAFT_DATA_DIR: "/data/raft"
   RAFT_BOOTSTRAP: "false"
 
