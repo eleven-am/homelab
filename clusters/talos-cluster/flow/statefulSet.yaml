@@ -23,7 +23,7 @@ spec:
           - |
             echo "Fixing permissions for /data/raft directory..."
             mkdir -p /data/raft/snapshots
-            chown -R 65534:65534 /data/raft
+            chown -R 1001:1001 /data/raft
             chmod -R 755 /data/raft
             echo "Permissions fixed successfully"
         volumeMounts:
