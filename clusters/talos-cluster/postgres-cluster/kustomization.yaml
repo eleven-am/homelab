@@ -7,5 +7,5 @@ resources:
   - operator.yaml
   - secret.yaml
   - app-user-secret.yaml
-  - cluster.yaml
-  - loadbalancer-service.yaml
+  # - cluster.yaml  # Deploy this after operator is ready
+  # - loadbalancer-service.yaml  # Deploy this after cluster is ready
