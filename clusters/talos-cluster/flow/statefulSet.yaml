@@ -60,7 +60,7 @@ spec:
           fi
           
           # Start the application
-          exec /app/api
+          exec /usr/local/bin/api
         volumeMounts:
         - name: raft-data
           mountPath: /data/raft
