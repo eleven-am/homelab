@@ -1,19 +1,19 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: registry-route
+  name: registry-api-route
   namespace: registry
 spec:
   parentRefs:
     - name: cilium-gateway
       namespace: gateway
   hostnames:
-    - "registry.horus.maix.ovh"
+    - "docker.horus.maix.ovh"
   rules:
     - matches:
         - path:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: registry-ui
-          port: 80
+        - name: docker-registry
+          port: 5000

@@ -3,7 +3,11 @@ kind: Kustomization
 namespace: registry
 resources:
   - namespace.yaml
+  - secret.yaml
   - pvc.yaml
   - deployment.yaml
   - service.yaml
+  - ui-deployment.yaml
+  - ui-service.yaml
   - httpRoute.yaml
+  - registry-api-route.yaml
