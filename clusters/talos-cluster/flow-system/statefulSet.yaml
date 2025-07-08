@@ -64,6 +64,8 @@ spec:
               value: "$(POD_IP):8300"
             - name: RAFT_DATA_DIR
               value: "/data/raft"
+            - name: RAFT_HEADLESS_SERVICE
+              value: "flow-webhook-router-headless"
           command:
             - /usr/local/bin/api
           securityContext:
