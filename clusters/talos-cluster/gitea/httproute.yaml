@@ -5,8 +5,8 @@ metadata:
   namespace: gitea
 spec:
   parentRefs:
-  - name: cilium-gateway
-    namespace: kube-system
+    - name: cilium-gateway
+      namespace: gateway
   hostnames:
   - gitea.horus.maix.ovh
   rules:
