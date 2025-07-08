@@ -14,6 +14,8 @@ spec:
       labels:
         app: flow-webhook-router
     spec:
+      securityContext:
+        fsGroup: 65532
       initContainers:
         - name: fix-permissions
           image: busybox:1.36-musl
@@ -23,7 +25,8 @@ spec:
             - |
               echo "Fixing permissions for /data/raft directory..."
               mkdir -p /data/raft/snapshots
-              chown -R 1001:1001 /data/raft
+              # Distroless runs as user 65532 (nonroot)
+              chown -R 65532:65532 /data/raft
               chmod -R 755 /data/raft
               echo "Permissions fixed successfully"
           volumeMounts:
@@ -63,6 +66,10 @@ spec:
               value: "/data/raft"
           command:
             - /usr/local/bin/api
+          securityContext:
+            runAsUser: 65532
+            runAsGroup: 65532
+            runAsNonRoot: true
           volumeMounts:
             - name: raft-data
               mountPath: /data/raft
