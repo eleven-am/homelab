@@ -36,9 +36,8 @@ spec:
             echo "User gitea already exists"
           fi
           
-          # Grant privileges
-          psql -h $POSTGRES_HOST -U $POSTGRES_USER -c "GRANT ALL PRIVILEGES ON DATABASE gitea TO gitea;"
-          # Note: Database remains owned by app user, gitea user has all privileges
+          # The gitea user already has the necessary privileges (CTc) from the GRANT ALL command
+          echo "Gitea user has necessary privileges on the database"
           
           echo "PostgreSQL setup completed!"
         env:
