@@ -45,7 +45,7 @@ spec:
   # Storage configuration
   storage:
     size: 20Gi
-    storageClass: app-storage  # SSD for better performance
+    storageClass: blizzard-storage  # SSD for better performance
   
   # Resource limits
   resources:
