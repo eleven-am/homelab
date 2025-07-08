@@ -22,7 +22,39 @@ spec:
         - |
           mkdir -p /data/gitea/conf
           cp /etc/gitea/app.ini /data/gitea/conf/app.ini
+          # Substitute environment variables
+          sed -i "s|\${GITEA_DB_PASSWORD}|$GITEA_DB_PASSWORD|g" /data/gitea/conf/app.ini
+          sed -i "s|\${GITEA_SECRET_KEY}|$GITEA_SECRET_KEY|g" /data/gitea/conf/app.ini
+          sed -i "s|\${GITEA_INTERNAL_TOKEN}|$GITEA_INTERNAL_TOKEN|g" /data/gitea/conf/app.ini
+          sed -i "s|\${MINIO_ACCESS_KEY}|$MINIO_ACCESS_KEY|g" /data/gitea/conf/app.ini
+          sed -i "s|\${MINIO_SECRET_KEY}|$MINIO_SECRET_KEY|g" /data/gitea/conf/app.ini
           chown -R 1000:1000 /data/gitea
+        env:
+        - name: GITEA_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: gitea-secret
+              key: GITEA_DB_PASSWORD
+        - name: GITEA_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: gitea-secret
+              key: GITEA_SECRET_KEY
+        - name: GITEA_INTERNAL_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: gitea-secret
+              key: GITEA_INTERNAL_TOKEN
+        - name: MINIO_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: gitea-secret
+              key: MINIO_ACCESS_KEY
+        - name: MINIO_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: gitea-secret
+              key: MINIO_SECRET_KEY
         volumeMounts:
         - name: gitea-config
           mountPath: /etc/gitea
