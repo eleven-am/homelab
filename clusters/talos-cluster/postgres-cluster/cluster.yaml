@@ -45,9 +45,7 @@ spec:
     storageClass: app-storage
 
   monitoring:
-    enabled: true
-    podMonitor:
-      enabled: true
+    enabled: false
 
   backup:
     retentionPolicy: "30d"
@@ -62,7 +60,6 @@ spec:
           name: minio-backup-creds
           key: SECRET_ACCESS_KEY
       wal:
-        retention: "7d"
         maxParallel: 8
       data:
         compression: gzip
