@@ -18,6 +18,7 @@ spec:
           echo "Creating Gitea database and user..."
           
           export PGPASSWORD=$POSTGRES_PASSWORD
+          export PGSSLMODE=require
           
           # Check if database exists
           if ! psql -h $POSTGRES_HOST -U postgres -lqt | cut -d \| -f 1 | grep -qw gitea; then
