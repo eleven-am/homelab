@@ -44,9 +44,6 @@ spec:
     size: 20Gi
     storageClass: app-storage
 
-  monitoring:
-    enabled: false
-
   backup:
     retentionPolicy: "30d"
     barmanObjectStore:
