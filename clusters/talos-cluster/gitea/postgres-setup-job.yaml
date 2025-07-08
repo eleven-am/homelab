@@ -1,0 +1,55 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: gitea-postgres-setup
+  namespace: gitea
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: postgres-setup
+        image: postgres:16-alpine
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -e
+          echo "Creating Gitea database and user..."
+          
+          export PGPASSWORD=$POSTGRES_PASSWORD
+          
+          # Check if database exists
+          if ! psql -h $POSTGRES_HOST -U postgres -lqt | cut -d \| -f 1 | grep -qw gitea; then
+            echo "Creating database gitea..."
+            psql -h $POSTGRES_HOST -U postgres -c "CREATE DATABASE gitea;"
+          else
+            echo "Database gitea already exists"
+          fi
+          
+          # Check if user exists
+          if ! psql -h $POSTGRES_HOST -U postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='gitea'" | grep -q 1; then
+            echo "Creating user gitea..."
+            psql -h $POSTGRES_HOST -U postgres -c "CREATE USER gitea WITH PASSWORD '$GITEA_PASSWORD';"
+          else
+            echo "User gitea already exists"
+          fi
+          
+          # Grant privileges
+          psql -h $POSTGRES_HOST -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE gitea TO gitea;"
+          psql -h $POSTGRES_HOST -U postgres -c "ALTER DATABASE gitea OWNER TO gitea;"
+          
+          echo "PostgreSQL setup completed!"
+        env:
+        - name: POSTGRES_HOST
+          value: "postgres-cluster-rw.postgres-cluster.svc.cluster.local"
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-credentials
+              key: postgres-password
+        - name: GITEA_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: gitea-secret
+              key: GITEA_DB_PASSWORD

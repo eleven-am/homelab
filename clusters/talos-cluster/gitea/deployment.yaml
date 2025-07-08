@@ -1,0 +1,113 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitea
+  namespace: gitea
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gitea
+  template:
+    metadata:
+      labels:
+        app: gitea
+    spec:
+      initContainers:
+      - name: wait-for-postgres
+        image: postgres:16-alpine
+        command:
+        - /bin/sh
+        - -c
+        - |
+          until pg_isready -h postgres-cluster-rw.postgres-cluster.svc.cluster.local -U gitea; do
+            echo "Waiting for PostgreSQL..."
+            sleep 2
+          done
+          echo "PostgreSQL is ready!"
+        env:
+        - name: PGPASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: gitea-secret
+              key: GITEA_DB_PASSWORD
+      - name: wait-for-minio
+        image: minio/mc:latest
+        command:
+        - /bin/sh
+        - -c
+        - |
+          until mc alias set test http://minio-service.minio.svc.cluster.local:9000 $MINIO_ACCESS_KEY $MINIO_SECRET_KEY; do
+            echo "Waiting for MinIO..."
+            sleep 2
+          done
+          echo "MinIO is ready!"
+        env:
+        - name: MINIO_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: gitea-secret
+              key: MINIO_ACCESS_KEY
+        - name: MINIO_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: gitea-secret
+              key: MINIO_SECRET_KEY
+      containers:
+      - name: gitea
+        image: gitea/gitea:1.21.3
+        ports:
+        - containerPort: 3000
+          name: http
+        - containerPort: 22
+          name: ssh
+        env:
+        - name: USER_UID
+          value: "1000"
+        - name: USER_GID
+          value: "1000"
+        - name: GITEA_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: gitea-secret
+              key: GITEA_DB_PASSWORD
+        - name: GITEA_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: gitea-secret
+              key: GITEA_SECRET_KEY
+        - name: GITEA_INTERNAL_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: gitea-secret
+              key: GITEA_INTERNAL_TOKEN
+        - name: MINIO_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: gitea-secret
+              key: MINIO_ACCESS_KEY
+        - name: MINIO_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: gitea-secret
+              key: MINIO_SECRET_KEY
+        volumeMounts:
+        - name: gitea-config
+          mountPath: /data/gitea/conf/app.ini
+          subPath: app.ini
+        - name: gitea-data
+          mountPath: /data
+        resources:
+          requests:
+            cpu: 500m
+            memory: 512Mi
+          limits:
+            cpu: 2000m
+            memory: 2Gi
+      volumes:
+      - name: gitea-config
+        configMap:
+          name: gitea-config
+      - name: gitea-data
+        persistentVolumeClaim:
+          claimName: gitea-data-pvc
