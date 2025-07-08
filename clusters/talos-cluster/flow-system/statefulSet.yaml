@@ -1,0 +1,118 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: flow-webhook-router
+  namespace: flow-system
+spec:
+  serviceName: flow-webhook-router-headless
+  replicas: 3
+  selector:
+    matchLabels:
+      app: flow-webhook-router
+  template:
+    metadata:
+      labels:
+        app: flow-webhook-router
+    spec:
+      initContainers:
+      - name: fix-permissions
+        image: busybox:1.36-musl
+        command:
+          - sh
+          - -c
+          - |
+            echo "Fixing permissions for /data/raft directory..."
+            mkdir -p /data/raft/snapshots
+            chown -R 1001:1001 /data/raft
+            chmod -R 755 /data/raft
+            echo "Permissions fixed successfully"
+        volumeMounts:
+          - name: raft-data
+            mountPath: /data/raft
+        securityContext:
+          runAsUser: 0
+          runAsGroup: 0
+      containers:
+      - name: webhook-router
+        image: ghcr.io/eleven-am/flow-v1:main
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: http
+        - containerPort: 8300
+          name: raft
+        envFrom:
+        - configMapRef:
+            name: flow-config
+        - secretRef:
+            name: flow-secrets
+        env:
+        # Raft node ID based on pod name
+        - name: RAFT_NODE_ID
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        # Raft bind address with port using actual pod IP
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: RAFT_BIND_ADDR
+          value: "$(POD_IP):8300"
+        # Bootstrap logic based on pod name
+        - name: RAFT_BOOTSTRAP
+          value: "$(RAFT_BOOTSTRAP_VALUE)"
+        # Join address - only for non-bootstrap nodes
+        - name: RAFT_JOIN_ADDRESS
+          value: "$(RAFT_JOIN_VALUE)"
+        command:
+        - /bin/sh
+        - -c
+        - |
+          # Extract pod ordinal from pod name
+          POD_ORDINAL=$(echo $RAFT_NODE_ID | rev | cut -d'-' -f1 | rev)
+          
+          # Set environment variables based on pod ordinal
+          if [ "$POD_ORDINAL" = "0" ]; then
+            export RAFT_BOOTSTRAP=true
+            export RAFT_JOIN_ADDRESS=""
+          else
+            export RAFT_BOOTSTRAP=false
+            export RAFT_JOIN_ADDRESS="flow-webhook-router-0.flow-webhook-router-headless.flow-system.svc.cluster.local:8300"
+          fi
+          
+          # Start the application
+          exec /usr/local/bin/api
+        volumeMounts:
+        - name: raft-data
+          mountPath: /data/raft
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 256Mi
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      imagePullSecrets:
+      - name: ghcr-secret
+  volumeClaimTemplates:
+  - metadata:
+      name: raft-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: app-storage
+      resources:
+        requests:
+          storage: 1Gi
