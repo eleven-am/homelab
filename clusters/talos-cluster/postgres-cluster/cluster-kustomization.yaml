@@ -12,6 +12,10 @@ spec:
     name: flux-system
   dependsOn:
     - name: postgres-operator
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age
   healthChecks:
     - apiVersion: postgresql.cnpg.io/v1
       kind: Cluster
