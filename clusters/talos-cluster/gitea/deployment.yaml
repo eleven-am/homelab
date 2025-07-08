@@ -105,7 +105,7 @@ spec:
         ports:
         - containerPort: 3000
           name: http
-        - containerPort: 22
+        - containerPort: 2222
           name: ssh
         env:
         - name: USER_UID

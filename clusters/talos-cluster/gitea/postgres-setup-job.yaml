@@ -36,8 +36,9 @@ spec:
             echo "User gitea already exists"
           fi
           
-          # The gitea user already has the necessary privileges (CTc) from the GRANT ALL command
-          echo "Gitea user has necessary privileges on the database"
+          # Grant schema permissions (required for PostgreSQL 15+)
+          psql -h $POSTGRES_HOST -U $POSTGRES_USER -d gitea -c "GRANT ALL ON SCHEMA public TO gitea;"
+          echo "Granted schema permissions to gitea user"
           
           echo "PostgreSQL setup completed!"
         env:
