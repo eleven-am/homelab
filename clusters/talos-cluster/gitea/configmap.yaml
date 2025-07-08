@@ -46,11 +46,19 @@ data:
     
     [attachment]
     STORAGE_TYPE = minio
+    MINIO_ENDPOINT = minio-service.minio.svc.cluster.local:9000
+    MINIO_ACCESS_KEY_ID = ${MINIO_ACCESS_KEY}
+    MINIO_SECRET_ACCESS_KEY = ${MINIO_SECRET_KEY}
     MINIO_BUCKET = gitea-attachments
+    MINIO_USE_SSL = false
     
     [lfs]
     STORAGE_TYPE = minio
+    MINIO_ENDPOINT = minio-service.minio.svc.cluster.local:9000
+    MINIO_ACCESS_KEY_ID = ${MINIO_ACCESS_KEY}
+    MINIO_SECRET_ACCESS_KEY = ${MINIO_SECRET_KEY}
     MINIO_BUCKET = gitea-lfs
+    MINIO_USE_SSL = false
     
     [security]
     INSTALL_LOCK = true
