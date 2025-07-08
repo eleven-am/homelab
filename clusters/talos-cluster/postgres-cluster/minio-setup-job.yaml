@@ -1,0 +1,83 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: minio-postgres-setup
+  namespace: postgres-cluster
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: minio-client
+        image: minio/mc:latest
+        command:
+        - /bin/sh
+        - -c
+        - |
+          # Configure MinIO client
+          mc alias set myminio http://minio.minio.svc.cluster.local:9000 $MINIO_ROOT_USER $MINIO_ROOT_PASSWORD
+          
+          # Create bucket if it doesn't exist
+          mc mb myminio/postgres-backups --ignore-existing
+          
+          # Create user
+          mc admin user add myminio $BACKUP_ACCESS_KEY $BACKUP_SECRET_KEY
+          
+          # Create policy for postgres-backups bucket
+          cat > /tmp/postgres-backup-policy.json <<EOF
+          {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "s3:ListBucket",
+                  "s3:GetBucketLocation"
+                ],
+                "Resource": [
+                  "arn:aws:s3:::postgres-backups"
+                ]
+              },
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "s3:GetObject",
+                  "s3:PutObject",
+                  "s3:DeleteObject"
+                ],
+                "Resource": [
+                  "arn:aws:s3:::postgres-backups/*"
+                ]
+              }
+            ]
+          }
+          EOF
+          
+          # Add policy
+          mc admin policy create myminio postgres-backup-policy /tmp/postgres-backup-policy.json
+          
+          # Attach policy to user
+          mc admin policy attach myminio postgres-backup-policy --user=$BACKUP_ACCESS_KEY
+          
+          echo "MinIO setup completed successfully!"
+        env:
+        - name: MINIO_ROOT_USER
+          valueFrom:
+            secretKeyRef:
+              name: minio-root-creds
+              key: MINIO_ROOT_USER
+        - name: MINIO_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: minio-root-creds
+              key: MINIO_ROOT_PASSWORD
+        - name: BACKUP_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: minio-backup-creds
+              key: ACCESS_KEY_ID
+        - name: BACKUP_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: minio-backup-creds
+              key: SECRET_ACCESS_KEY
