@@ -1,0 +1,43 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: traefik-gateway
+  namespace: traefik
+spec:
+  gatewayClassName: traefik
+  listeners:
+    - name: web
+      protocol: HTTP
+      port: 80
+      allowedRoutes:
+        namespaces:
+          from: All
+    - name: websecure
+      protocol: HTTPS
+      port: 443
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: wildcard-cert
+            namespace: cert-manager
+      allowedRoutes:
+        namespaces:
+          from: All
+    - name: postgres
+      protocol: TCP
+      port: 5432
+      allowedRoutes:
+        namespaces:
+          from: All
+    - name: redis
+      protocol: TCP
+      port: 6379
+      allowedRoutes:
+        namespaces:
+          from: All
+    - name: mysql
+      protocol: TCP
+      port: 3306
+      allowedRoutes:
+        namespaces:
+          from: All
