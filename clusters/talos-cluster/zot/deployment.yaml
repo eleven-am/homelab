@@ -71,4 +71,5 @@ spec:
         configMap:
           name: zot-config
       - name: data
-        emptyDir: {}
+        persistentVolumeClaim:
+          claimName: zot-data-pvc
