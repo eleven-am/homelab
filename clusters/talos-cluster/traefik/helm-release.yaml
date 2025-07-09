@@ -19,6 +19,7 @@ spec:
     providers:
       kubernetesGateway:
         enabled: true
+        experimentalChannel: true  # Enable experimental channel for TCP
     
     # Enable experimental features for TCPRoute
     experimental:
