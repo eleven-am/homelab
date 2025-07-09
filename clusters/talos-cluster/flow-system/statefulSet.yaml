@@ -77,4 +77,4 @@ spec:
         - name: raft-data
           emptyDir: {}
       imagePullSecrets:
-        - name: ghcr-secret
+        - name: zot-registry-secret

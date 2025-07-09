@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - ghcr-secret.yaml
+  - zot-registry-secret.yaml
   - secret.yaml
   - configMap.yaml
   - statefulSet.yaml
