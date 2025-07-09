@@ -26,7 +26,7 @@ data:
                 "issuer": "https://github.com",
                 "clientid": "GITHUB_CLIENT_ID_PLACEHOLDER",
                 "clientsecret": "GITHUB_CLIENT_SECRET_PLACEHOLDER",
-                "scopes": ["read:user", "user:email"],
+                "scopes": ["read:org", "user", "repo"],
                 "keypath": ""
               }
             }
