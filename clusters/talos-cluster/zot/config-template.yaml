@@ -30,7 +30,8 @@ data:
                 "keypath": ""
               }
             }
-          }
+          },
+          "apikey": true
         }
       },
       "log": {
