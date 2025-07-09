@@ -47,7 +47,7 @@ data:
   WEBHOOK_EXPRESSION_CACHE_TTL: "5m"
   
   # Observability
-  LOG_LEVEL: "info"
+  LOG_LEVEL: "debug"
   LOG_FORMAT: "json"
   ENABLE_METRICS: "true"
   ENABLE_TRACING: "false"
