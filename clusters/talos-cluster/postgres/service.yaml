@@ -3,6 +3,8 @@ kind: Service
 metadata:
   name: postgres-service
   namespace: postgres
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: postgres.local
 spec:
   selector:
     app: postgres-deployment
@@ -18,6 +20,8 @@ kind: Service
 metadata:
   name: pgbouncer-service
   namespace: postgres
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: pgbouncer.local
 spec:
   selector:
     app: pgbouncer
@@ -35,6 +39,8 @@ metadata:
   namespace: postgres
   labels:
     app: electric
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: electric.local
 spec:
   selector:
     app: electric

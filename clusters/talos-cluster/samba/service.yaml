@@ -3,6 +3,8 @@ kind: Service
 metadata:
   name: samba-service
   namespace: samba
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: smb.local
 spec:
   type: LoadBalancer
   selector:

@@ -20,6 +20,8 @@ kind: Service
 metadata:
   name: gitea-ssh
   namespace: gitea
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: git-ssh.local
 spec:
   type: LoadBalancer
   selector:
