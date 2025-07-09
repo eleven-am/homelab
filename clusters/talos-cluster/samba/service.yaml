@@ -4,7 +4,7 @@ metadata:
   name: samba-service
   namespace: samba
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: files.horus
+    external-dns.alpha.kubernetes.io/hostname: postgres-2.horus
     io.cilium/lb-ipam-ips: "172.198.1.16"
 spec:
   type: LoadBalancer
