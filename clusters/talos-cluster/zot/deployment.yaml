@@ -41,13 +41,13 @@ spec:
         args: ["serve", "/etc/zot/config.json"]
         livenessProbe:
           httpGet:
-            path: /v2/
+            path: /metrics
             port: 5000
           initialDelaySeconds: 30
           periodSeconds: 30
         readinessProbe:
           httpGet:
-            path: /v2/
+            path: /metrics
             port: 5000
           initialDelaySeconds: 5
           periodSeconds: 10
