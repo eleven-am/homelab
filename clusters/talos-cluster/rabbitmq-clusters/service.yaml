@@ -4,7 +4,7 @@ metadata:
   name: rabbitmq-small-lb
   namespace: rabbitmq-clusters
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: rmq.local
+    external-dns.alpha.kubernetes.io/hostname: rmq.horus
 spec:
   type: LoadBalancer
   selector:

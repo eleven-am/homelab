@@ -4,7 +4,7 @@ metadata:
   name: postgres-cluster-ro-lb
   namespace: postgres-cluster
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: ro.pgc.local
+    external-dns.alpha.kubernetes.io/hostname: ro.pgc.horus
 spec:
   type: LoadBalancer
   ports:

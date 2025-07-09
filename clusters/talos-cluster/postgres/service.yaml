@@ -4,7 +4,7 @@ metadata:
   name: postgres-service
   namespace: postgres
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: postgres.local
+    external-dns.alpha.kubernetes.io/hostname: postgres.horus
 spec:
   selector:
     app: postgres-deployment
@@ -21,7 +21,7 @@ metadata:
   name: pgbouncer-service
   namespace: postgres
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: pgbouncer.local
+    external-dns.alpha.kubernetes.io/hostname: pgbouncer.horus
 spec:
   selector:
     app: pgbouncer
@@ -40,7 +40,7 @@ metadata:
   labels:
     app: electric
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: electric.local
+    external-dns.alpha.kubernetes.io/hostname: electric.horus
 spec:
   selector:
     app: electric

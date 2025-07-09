@@ -4,7 +4,7 @@ metadata:
   name: postgres-cluster-lb
   namespace: postgres-cluster
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: rw.pgc.local
+    external-dns.alpha.kubernetes.io/hostname: rw.pgc.horus
 spec:
   type: LoadBalancer
   ports:
@@ -14,5 +14,5 @@ spec:
     protocol: TCP
   selector:
     cnpg.io/cluster: postgres-cluster
-    cnpg.io/instanceRole: primary  # Only route to primary instance
-  sessionAffinity: ClientIP  # Stick to same backend for connection
+    cnpg.io/instanceRole: primary
+  sessionAffinity: ClientIP
