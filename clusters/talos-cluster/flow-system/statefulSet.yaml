@@ -18,7 +18,7 @@ spec:
         fsGroup: 65532
       containers:
         - name: webhook-router
-          image: ghcr.io/eleven-am/flow-v1:main
+          image: zot.maix.ovh/flow/webhook-router:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
