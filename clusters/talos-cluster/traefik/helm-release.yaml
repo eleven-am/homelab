@@ -35,9 +35,6 @@ spec:
       web:
         port: 8000
         exposedPort: 80
-      websecure:
-        port: 8443
-        exposedPort: 443
       postgres:
         port: 5432
         exposedPort: 5432
