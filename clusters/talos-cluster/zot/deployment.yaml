@@ -15,6 +15,32 @@ spec:
       labels:
         app: zot
     spec:
+      initContainers:
+      - name: config-init
+        image: busybox:latest
+        command:
+        - sh
+        - -c
+        - |
+          sed -e "s/GITHUB_CLIENT_ID_PLACEHOLDER/$GITHUB_CLIENT_ID/g" \
+              -e "s/GITHUB_CLIENT_SECRET_PLACEHOLDER/$GITHUB_CLIENT_SECRET/g" \
+              /config-template/config.json.template > /config/config.json
+        env:
+        - name: GITHUB_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: zot-github-oauth
+              key: clientId
+        - name: GITHUB_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: zot-github-oauth
+              key: clientSecret
+        volumeMounts:
+        - name: config-template
+          mountPath: /config-template
+        - name: config
+          mountPath: /config
       containers:
       - name: zot
         image: ghcr.io/project-zot/zot:v2.1.5
@@ -35,7 +61,6 @@ spec:
         volumeMounts:
         - name: config
           mountPath: /etc/zot
-          readOnly: true
         - name: data
           mountPath: /var/lib/zot
         args: ["serve", "/etc/zot/config.json"]
@@ -47,9 +72,11 @@ spec:
             memory: "2Gi"
             cpu: "1000m"
       volumes:
-      - name: config
+      - name: config-template
         configMap:
-          name: zot-config
+          name: zot-config-template
+      - name: config
+        emptyDir: {}
       - name: data
         persistentVolumeClaim:
           claimName: zot-data-pvc
