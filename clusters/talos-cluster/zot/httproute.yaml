@@ -7,7 +7,6 @@ spec:
   parentRefs:
   - name: cloudflare-gateway
     namespace: cloudflare-gateway
-    sectionName: https
   hostnames:
   - "zot.maix.ovh"
   rules:
