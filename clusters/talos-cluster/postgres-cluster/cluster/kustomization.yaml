@@ -8,5 +8,7 @@ resources:
   - ../minio-root-secret.yaml
   - ../cluster.yaml
   - ../loadbalancer-service.yaml
+  - ../loadbalancer-ro-service.yaml
+  - ../loadbalancer-r-service.yaml
   - ../minio-setup-job.yaml
   - ../scheduled-backup.yaml
