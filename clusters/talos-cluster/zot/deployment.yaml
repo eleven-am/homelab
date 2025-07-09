@@ -30,16 +30,6 @@ spec:
             secretKeyRef:
               name: zot-github-oauth
               key: clientSecret
-        - name: AWS_ACCESS_KEY_ID
-          valueFrom:
-            secretKeyRef:
-              name: zot-minio-credentials
-              key: accessKey
-        - name: AWS_SECRET_ACCESS_KEY
-          valueFrom:
-            secretKeyRef:
-              name: zot-minio-credentials
-              key: secretKey
         volumeMounts:
         - name: config
           mountPath: /etc/zot

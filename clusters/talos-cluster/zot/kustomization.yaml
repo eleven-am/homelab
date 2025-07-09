@@ -3,12 +3,9 @@ kind: Kustomization
 namespace: zot
 resources:
   - namespace.yaml
-  - minio-secret.yaml
   - github-oauth-secret.yaml
-  - minio-root-secret.yaml
   - configmap.yaml
   - pvc.yaml
   - deployment.yaml
   - service.yaml
   - httproute.yaml
-  - minio-setup-job.yaml
