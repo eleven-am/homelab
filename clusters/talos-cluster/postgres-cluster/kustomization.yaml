@@ -3,4 +3,3 @@ kind: Kustomization
 resources:
   - operator-kustomization.yaml
   - cluster-kustomization.yaml
-  - postgres-tcproute.yaml
