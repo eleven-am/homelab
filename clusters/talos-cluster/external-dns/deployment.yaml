@@ -77,5 +77,7 @@ spec:
         # Only manage .local domains
         - --domain-filter=local
         - --domain-filter=homelab
+        # Add verbose logging
+        - --log-level=debug
       securityContext:
         fsGroup: 65534
