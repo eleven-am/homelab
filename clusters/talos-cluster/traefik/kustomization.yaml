@@ -7,4 +7,3 @@ resources:
   - helm-release.yaml
   - gateway-class.yaml
   - gateway.yaml
-  - dashboard-httproute.yaml

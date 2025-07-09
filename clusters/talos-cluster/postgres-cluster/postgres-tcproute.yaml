@@ -7,7 +7,7 @@ spec:
   parentRefs:
     - name: traefik-gateway
       namespace: traefik
-      sectionName: postgres
+      sectionName: postgres-tcp
   rules:
     - backendRefs:
         - name: postgres-cluster-rw
