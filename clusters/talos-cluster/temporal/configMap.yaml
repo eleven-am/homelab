@@ -58,11 +58,3 @@ data:
     system.enableActivityEagerExecution:
       - value: true  # Enable eager activity execution
         constraints: {}
-    
-    # Worker Service Settings
-    worker.executionsScannerEnabled:
-      - value: true
-        constraints: {}
-    worker.historyScannerEnabled:
-      - value: true
-        constraints: {}
