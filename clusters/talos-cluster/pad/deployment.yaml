@@ -93,7 +93,7 @@ spec:
             - name: data-storage
               mountPath: /app/data
             - name: uploads-storage
-              mountPath: /app/public/uploads
+              mountPath: /app/uploads
 
           # Health checks - give more time for migration on startup
           livenessProbe:
