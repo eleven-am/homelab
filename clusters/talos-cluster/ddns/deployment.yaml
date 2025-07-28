@@ -20,6 +20,13 @@ spec:
         - name: cloudflare-ddns
           image: timothyjmiller/cloudflare-ddns:latest
           imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              memory: "32Mi"
+              cpu: "25m"
+            limits:
+              memory: "128Mi"
+              cpu: "100m"
           env:
             - name: CF_DDNS_API_TOKEN
               valueFrom:

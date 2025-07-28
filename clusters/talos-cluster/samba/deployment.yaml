@@ -23,6 +23,13 @@ spec:
       containers:
         - name: samba
           image: crazymax/samba:latest
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
           # Assuming privileged mode needed for Samba
           securityContext:
             privileged: true
@@ -147,6 +154,13 @@ spec:
       containers:
         - name: webdav
           image: bytemark/webdav:latest
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
           ports:
             - containerPort: 80
               name: http

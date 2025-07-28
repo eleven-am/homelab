@@ -28,6 +28,13 @@ spec:
             - -c
           args:
             - minio server /data --console-address :9090
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "50m"
+            limits:
+              memory: "512Mi"
+              cpu: "250m"
           volumeMounts:
             - mountPath: /data
               name: minio-data

@@ -60,6 +60,13 @@ spec:
               mc admin policy attach myminio postgres-backup-policy --user=$BACKUP_ACCESS_KEY
               
               echo "MinIO setup completed successfully!"
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
           env:
             - name: MINIO_ROOT_USER
               valueFrom:
