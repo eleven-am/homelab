@@ -31,27 +31,3 @@ spec:
       name: postgres
       protocol: TCP
   type: LoadBalancer
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: electric
-  namespace: postgres
-  labels:
-    app: electric
-  annotations:
-    external-dns.alpha.kubernetes.io/hostname: electric.horus
-spec:
-  selector:
-    app: electric
-  ports:
-    - name: api
-      port: 5133
-      targetPort: 5133
-    - name: logical-replication
-      port: 5433
-      targetPort: 5433
-    - name: pg-proxy
-      port: 65432
-      targetPort: 65432
-  type: LoadBalancer
