@@ -1,0 +1,57 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../base
+
+patches:
+  - target:
+      kind: Deployment
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: wodan-deployment
+      - op: replace
+        path: /metadata/labels/app
+        value: wodan-deployment
+      - op: replace
+        path: /spec/template/metadata/labels/app
+        value: wodan-deployment
+      - op: replace
+        path: /spec/template/metadata/name
+        value: wodan-deployment
+      - op: replace
+        path: /spec/selector/matchLabels/app
+        value: wodan-deployment
+      - op: replace
+        path: /spec/template/spec/volumes/1/persistentVolumeClaim/claimName
+        value: wodan-data
+      - op: replace
+        path: /spec/template/spec/volumes/2/persistentVolumeClaim/claimName
+        value: wodan-state
+      - op: replace
+        path: /spec/template/spec/containers/1/env/2/value
+        value: wodan
+      - op: replace
+        path: /spec/template/spec/containers/1/name
+        value: wodan-tailscale
+      - op: replace
+        path: /spec/template/spec/containers/0/env/0/value
+        value: "Europe/Berlin"
+      - op: replace
+        path: /spec/template/spec/containers/0/env/5/value
+        value: "Frankfurt"
+  - target:
+      kind: PersistentVolumeClaim
+      name: base-data
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: wodan-data
+  - target:
+      kind: PersistentVolumeClaim
+      name: base-state
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: wodan-state

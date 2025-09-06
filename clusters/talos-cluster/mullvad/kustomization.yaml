@@ -6,9 +6,14 @@ resources:
   - tun-device-plugin.yaml
   - abeona
   - ankou
+  - brigantia
+  - epona
   - hermes
   - meili
+  - njord
   - sedna
   - shurdh
+  - taranis
   - tia
+  - wodan
   - horus.yaml
