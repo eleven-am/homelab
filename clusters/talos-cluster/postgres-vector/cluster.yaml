@@ -1,0 +1,42 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: postgres-vector
+  namespace: postgres
+spec:
+  instances: 1
+
+  # Use tensorchord image with vectorchord and pgvector >= 0.7.0
+  imageName: ghcr.io/tensorchord/cloudnative-vectorchord:16-0.4.0
+
+  # Storage configuration
+  storage:
+    size: 50Gi
+    storageClass: app-storage
+
+  # PostgreSQL configuration
+  postgresql:
+    parameters:
+      shared_preload_libraries: "vchord.so"
+      max_connections: "200"
+      shared_buffers: "256MB"
+
+  # Bootstrap with initial database and user
+  bootstrap:
+    initdb:
+      database: immich
+      owner: immich
+      secret:
+        name: postgres-vector-superuser
+      postInitSQL:
+        - CREATE EXTENSION IF NOT EXISTS vector;
+        - CREATE EXTENSION IF NOT EXISTS vchord;
+        - CREATE EXTENSION IF NOT EXISTS cube;
+        - CREATE EXTENSION IF NOT EXISTS earthdistance;
+        - CREATE EXTENSION IF NOT EXISTS pg_trgm;
+        - CREATE EXTENSION IF NOT EXISTS unaccent;
+        - CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+  # Monitoring
+  monitoring:
+    enablePodMonitor: false
