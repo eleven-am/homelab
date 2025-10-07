@@ -44,12 +44,16 @@ spec:
         mode: "dynamic"
         dynamic:
           storageClassName: "app-storage"
+          accessModes:
+            - ReadWriteOnce
           requests:
             storage: "20Gi"
       logs:
         mode: "dynamic"
         dynamic:
           storageClassName: "app-storage"
+          accessModes:
+            - ReadWriteOnce
           requests:
             storage: "5Gi"
 

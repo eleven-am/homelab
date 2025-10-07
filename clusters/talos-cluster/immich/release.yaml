@@ -24,19 +24,14 @@ spec:
     remediation:
       retries: 3
   values:
-    # Disable bundled PostgreSQL and Redis
-    postgresql:
-      enabled: false
-    redis:
-      enabled: false
+    # Image version
+    image:
+      tag: v2.0.0
 
     # Environment configuration for external services
     env:
-      # Database configuration - using pgbouncer
-      DB_HOSTNAME:
-        value: pgbouncer-service.postgres.svc.cluster.local
-      DB_PORT:
-        value: "5432"
+      DB_HOSTNAME: pgbouncer-service.postgres.svc.cluster.local
+      DB_PORT: "5432"
       DB_USERNAME:
         valueFrom:
           secretKeyRef:
@@ -52,61 +47,18 @@ spec:
           secretKeyRef:
             name: immich-secret
             key: DB_DATABASE_NAME
+      REDIS_HOSTNAME: redis-service.redis.svc.cluster.local
+      REDIS_PORT: "6379"
 
-      # Redis configuration
-      REDIS_HOSTNAME:
-        value: redis-service.redis.svc.cluster.local
-      REDIS_PORT:
-        value: "6379"
-
-      # JWT Secret
-      IMMICH_JWT_SECRET:
-        valueFrom:
-          secretKeyRef:
-            name: immich-secret
-            key: JWT_SECRET
-
-    # Persistence configuration
-    persistence:
-      library:
-        enabled: true
-        storageClass: media-storage
-        size: 500Gi
-        accessMode: ReadWriteMany
-
-    # Server configuration
-    server:
-      resources:
-        requests:
-          memory: 512Mi
-          cpu: 250m
-        limits:
-          memory: 2Gi
-          cpu: 2000m
-
-    # Machine Learning configuration
-    machinelearning:
-      enabled: true
+    # Immich configuration
+    immich:
       persistence:
-        cache:
-          enabled: true
-          storageClass: app-storage
-          size: 10Gi
-      resources:
-        requests:
-          memory: 1Gi
-          cpu: 500m
-        limits:
-          memory: 4Gi
-          cpu: 2000m
+        library:
+          existingClaim: immich-library
 
-    # Microservices configuration
-    microservices:
-      enabled: true
-      resources:
-        requests:
-          memory: 512Mi
-          cpu: 250m
-        limits:
-          memory: 2Gi
-          cpu: 2000m
+    # Disable bundled services
+    postgresql:
+      enabled: false
+
+    redis:
+      enabled: false

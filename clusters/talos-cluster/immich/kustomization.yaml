@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - secret.yaml
+  - pvc.yaml
   - repo.yaml
   - release.yaml
   - httpRoute.yaml
