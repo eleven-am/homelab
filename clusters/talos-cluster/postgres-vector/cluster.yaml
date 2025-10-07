@@ -17,7 +17,6 @@ spec:
   # PostgreSQL configuration
   postgresql:
     parameters:
-      shared_preload_libraries: "vchord.so"
       max_connections: "200"
       shared_buffers: "256MB"
 
@@ -25,7 +24,7 @@ spec:
   bootstrap:
     initdb:
       database: immich
-      owner: immich
+      owner: postgres
       secret:
         name: postgres-vector-superuser
       postInitSQL:
