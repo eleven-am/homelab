@@ -61,7 +61,8 @@ spec:
     services:
       neo4j:
         enabled: true
-        type: ClusterIP
+        annotations:
+          external-dns.alpha.kubernetes.io/hostname: neo4j.horus
         ports:
           http:
             enabled: true
