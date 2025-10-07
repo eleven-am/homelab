@@ -17,7 +17,6 @@ spec:
       labels:
         app: immich-server
     spec:
-      serviceAccountName: immich-sa
       initContainers:
         - name: init-db
           image: postgres:16-alpine
@@ -56,15 +55,13 @@ spec:
             - name: POSTGRES_ADMIN_USER
               valueFrom:
                 secretKeyRef:
-                  name: postgres-secret
-                  namespace: postgres
-                  key: POSTGRES_USER
+                  name: immich-secret
+                  key: POSTGRES_ADMIN_USER
             - name: PGPASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: postgres-secret
-                  namespace: postgres
-                  key: POSTGRES_PASSWORD
+                  name: immich-secret
+                  key: POSTGRES_ADMIN_PASSWORD
             - name: DB_USERNAME
               valueFrom:
                 secretKeyRef:
