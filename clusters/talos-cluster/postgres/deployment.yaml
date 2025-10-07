@@ -111,7 +111,10 @@ spec:
                   name: postgres-secret
                   key: POSTGRES_PASSWORD
             - name: DATABASES_DBNAME
-              value: "*"
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_DB
             - name: POOL_MODE
               value: "transaction"
             - name: MAX_CLIENT_CONN
