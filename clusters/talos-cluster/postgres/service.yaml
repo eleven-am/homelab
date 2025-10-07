@@ -27,7 +27,7 @@ spec:
     app: pgbouncer
   ports:
     - port: 5432
-      targetPort: 6432
+      targetPort: 5432
       name: postgres
       protocol: TCP
   type: LoadBalancer
