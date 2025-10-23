@@ -6,7 +6,7 @@ metadata:
 data:
   server.yml: |
     # Base URL for the server
-    base-url: "https://ntfy.maix.ovh"
+    base-url: "https://ntfy.horus.maix.ovh"
 
     # Cache file for message persistence
     cache-file: "/var/cache/ntfy/cache.db"
