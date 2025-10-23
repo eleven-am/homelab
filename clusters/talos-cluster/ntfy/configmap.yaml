@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ntfy-config
+  namespace: ntfy
+data:
+  server.yml: |
+    # Base URL for the server
+    base-url: "https://ntfy.maix.ovh"
+
+    # Cache file for message persistence
+    cache-file: "/var/cache/ntfy/cache.db"
+    cache-duration: "12h"
+
+    # Attachment storage
+    attachment-cache-dir: "/var/cache/ntfy/attachments"
+    attachment-total-size-limit: "5G"
+    attachment-file-size-limit: "15M"
+    attachment-expiry-duration: "3h"
+
+    # Enable web UI
+    enable-signup: false
+    enable-login: false
+    enable-reservations: false
+
+    # iOS support - forward poll requests to ntfy.sh for instant notifications
+    upstream-base-url: "https://ntfy.sh"
+
+    # Keepalive for WebSocket connections
+    keepalive-interval: "45s"
+
+    # Logging
+    log-level: info
+    log-format: json
+
+    # Behind a proxy
+    behind-proxy: true
+
+    # Visitor limits (adjust as needed)
+    visitor-subscription-limit: 30
+    visitor-request-limit-burst: 60
+    visitor-request-limit-replenish: "5s"
+    visitor-message-daily-limit: 0
