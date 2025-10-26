@@ -19,15 +19,13 @@ spec:
             - name: PGUSER
               valueFrom:
                 secretKeyRef:
-                  name: postgres-secret
-                  namespace: postgres
-                  key: POSTGRES_USER
+                  name: immich-secret
+                  key: PGUSER
             - name: PGPASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: postgres-secret
-                  namespace: postgres
-                  key: POSTGRES_PASSWORD
+                  name: immich-secret
+                  key: PGPASSWORD
           command:
             - sh
             - /scripts/init.sh
