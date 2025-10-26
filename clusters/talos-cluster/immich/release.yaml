@@ -24,34 +24,38 @@ spec:
     - kind: Secret
       name: immich-secret
       valuesKey: DB_HOSTNAME
-      targetPath: env.DB_HOSTNAME
+      targetPath: controllers.main.containers.main.env.DB_HOSTNAME
     - kind: Secret
       name: immich-secret
       valuesKey: DB_PORT
-      targetPath: env.DB_PORT
+      targetPath: controllers.main.containers.main.env.DB_PORT
     - kind: Secret
       name: immich-secret
       valuesKey: DB_USERNAME
-      targetPath: env.DB_USERNAME
+      targetPath: controllers.main.containers.main.env.DB_USERNAME
     - kind: Secret
       name: immich-secret
       valuesKey: DB_PASSWORD
-      targetPath: env.DB_PASSWORD
+      targetPath: controllers.main.containers.main.env.DB_PASSWORD
     - kind: Secret
       name: immich-secret
       valuesKey: DB_DATABASE_NAME
-      targetPath: env.DB_DATABASE_NAME
+      targetPath: controllers.main.containers.main.env.DB_DATABASE_NAME
     - kind: Secret
       name: immich-secret
       valuesKey: REDIS_HOSTNAME
-      targetPath: env.REDIS_HOSTNAME
+      targetPath: controllers.main.containers.main.env.REDIS_HOSTNAME
     - kind: Secret
       name: immich-secret
       valuesKey: REDIS_PORT
-      targetPath: env.REDIS_PORT
+      targetPath: controllers.main.containers.main.env.REDIS_PORT
   values:
-    env:
-      TZ: Europe/Paris
+    controllers:
+      main:
+        containers:
+          main:
+            env:
+              TZ: Europe/Paris
 
     image:
       tag: v2.1.0
