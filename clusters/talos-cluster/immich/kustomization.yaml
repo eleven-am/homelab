@@ -4,5 +4,6 @@ resources:
   - namespace.yaml
   - repository.yaml
   - pvc.yaml
+  - secret.yaml
   - release.yaml
   - httpRoute.yaml
