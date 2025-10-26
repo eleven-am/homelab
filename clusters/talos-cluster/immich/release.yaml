@@ -67,12 +67,3 @@ spec:
           enabled: true
           storageClass: app-storage
           size: 10Gi
-
-    redis:
-      enabled: false
-
-    valkey:
-      enabled: false
-
-    postgresql:
-      enabled: false
