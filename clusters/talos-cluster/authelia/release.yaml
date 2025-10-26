@@ -65,7 +65,7 @@ spec:
         cookies:
           - domain: horus.maix.ovh
             subdomain: auth
-            default_redirection_url: https://auth.horus.maix.ovh
+            default_redirection_url: https://horus.maix.ovh
 
         redis:
           enabled: true
