@@ -102,3 +102,7 @@ spec:
         filesystem:
           enabled: true
           filename: /config/notification.txt
+
+    secret:
+      additionalSecrets:
+        authelia-secret: {}
