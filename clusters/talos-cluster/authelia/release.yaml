@@ -99,9 +99,12 @@ spec:
 
       notifier:
         disable_startup_check: false
-        filesystem:
+        smtp:
           enabled: true
-          filename: /config/notification.txt
+          address: smtp://smtp-relay.smtp-relay.svc.cluster.local:587
+          sender: "Authelia <noreply@auth.maix.ovh>"
+          disable_require_tls: true
+          disable_html_emails: false
 
     secret:
       additionalSecrets:
