@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: smtp-relay
+  namespace: smtp-relay
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: smtp-relay
+  template:
+    metadata:
+      labels:
+        app: smtp-relay
+    spec:
+      containers:
+        - name: smtp-relay
+          image: boky/postfix:v4.0.0
+          ports:
+            - containerPort: 587
+              name: smtp
+          env:
+            - name: RELAYHOST
+              valueFrom:
+                secretKeyRef:
+                  name: smtp-relay-secret
+                  key: SMTP_SERVER
+            - name: RELAYHOST_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: smtp-relay-secret
+                  key: SMTP_PORT
+            - name: RELAYHOST_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: smtp-relay-secret
+                  key: SMTP_USERNAME
+            - name: RELAYHOST_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: smtp-relay-secret
+                  key: SMTP_PASSWORD
+            - name: ALLOWED_SENDER_DOMAINS
+              value: "auth.maix.ovh frames.maix.ovh"
+            - name: LOG_LEVEL
+              value: "info"
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
