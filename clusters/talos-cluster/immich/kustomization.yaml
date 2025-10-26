@@ -5,5 +5,7 @@ resources:
   - repository.yaml
   - pvc.yaml
   - secret.yaml
+  - init-db-configmap.yaml
+  - init-db-job.yaml
   - release.yaml
   - httpRoute.yaml
