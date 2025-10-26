@@ -20,15 +20,6 @@ spec:
   upgrade:
     remediation:
       retries: 3
-  valuesFrom:
-    - kind: Secret
-      name: authelia-secret
-      valuesKey: DB_PASSWORD
-      targetPath: configMap.storage.postgres.password.value
-    - kind: Secret
-      name: authelia-secret
-      valuesKey: STORAGE_ENCRYPTION_KEY
-      targetPath: configMap.storage.encryption_key.value
   values:
     pod:
       kind: Deployment
@@ -94,9 +85,13 @@ spec:
           timeout: 5s
           password:
             disabled: false
+            secret_name: authelia-secret
+            path: storage.postgres.password.txt
 
         encryption_key:
           disabled: false
+          secret_name: authelia-secret
+          path: storage.encryption.key
 
       access_control:
         default_policy: deny
@@ -107,6 +102,3 @@ spec:
         filesystem:
           enabled: true
           filename: /config/notification.txt
-
-    secret:
-      existingSecret: authelia-secret
