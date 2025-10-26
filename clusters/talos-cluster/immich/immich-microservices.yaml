@@ -18,8 +18,9 @@ spec:
           image: ghcr.io/immich-app/immich-server:v2.1.0
           command:
             - /bin/sh
+            - ./start.sh
           args:
-            - ./start-microservices.sh
+            - microservices
           env:
             - name: DB_HOSTNAME
               value: "immich-postgres"
