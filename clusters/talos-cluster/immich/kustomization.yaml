@@ -6,7 +6,6 @@ resources:
   - postgres.yaml
   - redis.yaml
   - immich-server.yaml
-  - immich-microservices.yaml
   - immich-machine-learning.yaml
   - service.yaml
   - httpRoute.yaml
