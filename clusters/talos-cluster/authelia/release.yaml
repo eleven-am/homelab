@@ -101,7 +101,7 @@ spec:
         disable_startup_check: false
         smtp:
           enabled: true
-          address: smtp://smtp-relay.smtp-relay.svc.cluster.local:587
+          address: smtp://smtp-relay.smtp-relay.svc.cluster.local:25
           sender: "Authelia <noreply@auth.maix.ovh>"
           disable_require_tls: true
           disable_html_emails: false

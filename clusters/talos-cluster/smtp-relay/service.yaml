@@ -8,6 +8,9 @@ spec:
     app: smtp-relay
   ports:
     - name: smtp
+      port: 25
+      targetPort: 25
+    - name: submission
       port: 587
       targetPort: 587
   type: ClusterIP

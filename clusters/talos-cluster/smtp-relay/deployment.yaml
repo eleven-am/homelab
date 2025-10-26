@@ -17,8 +17,10 @@ spec:
         - name: smtp-relay
           image: boky/postfix:v4.0.0
           ports:
-            - containerPort: 587
+            - containerPort: 25
               name: smtp
+            - containerPort: 587
+              name: submission
           env:
             - name: RELAYHOST
               valueFrom:
