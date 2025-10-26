@@ -37,9 +37,42 @@ spec:
       image:
         repository: ghcr.io/immich-app/immich-server
         tag: v2.1.0
-      envFrom:
-        - secretRef:
-            name: immich-secret
+      env:
+        DB_HOSTNAME:
+          valueFrom:
+            secretKeyRef:
+              name: immich-secret
+              key: DB_HOSTNAME
+        DB_PORT:
+          valueFrom:
+            secretKeyRef:
+              name: immich-secret
+              key: DB_PORT
+        DB_USERNAME:
+          valueFrom:
+            secretKeyRef:
+              name: immich-secret
+              key: DB_USERNAME
+        DB_PASSWORD:
+          valueFrom:
+            secretKeyRef:
+              name: immich-secret
+              key: DB_PASSWORD
+        DB_DATABASE_NAME:
+          valueFrom:
+            secretKeyRef:
+              name: immich-secret
+              key: DB_DATABASE_NAME
+        REDIS_HOSTNAME:
+          valueFrom:
+            secretKeyRef:
+              name: immich-secret
+              key: REDIS_HOSTNAME
+        REDIS_PORT:
+          valueFrom:
+            secretKeyRef:
+              name: immich-secret
+              key: REDIS_PORT
       ingress:
         main:
           enabled: false
@@ -49,11 +82,43 @@ spec:
       image:
         repository: ghcr.io/immich-app/immich-server
         tag: v2.1.0
-      envFrom:
-        - secretRef:
-            name: immich-secret
       env:
         IMMICH_WORKERS_EXCLUDE: api
+        DB_HOSTNAME:
+          valueFrom:
+            secretKeyRef:
+              name: immich-secret
+              key: DB_HOSTNAME
+        DB_PORT:
+          valueFrom:
+            secretKeyRef:
+              name: immich-secret
+              key: DB_PORT
+        DB_USERNAME:
+          valueFrom:
+            secretKeyRef:
+              name: immich-secret
+              key: DB_USERNAME
+        DB_PASSWORD:
+          valueFrom:
+            secretKeyRef:
+              name: immich-secret
+              key: DB_PASSWORD
+        DB_DATABASE_NAME:
+          valueFrom:
+            secretKeyRef:
+              name: immich-secret
+              key: DB_DATABASE_NAME
+        REDIS_HOSTNAME:
+          valueFrom:
+            secretKeyRef:
+              name: immich-secret
+              key: REDIS_HOSTNAME
+        REDIS_PORT:
+          valueFrom:
+            secretKeyRef:
+              name: immich-secret
+              key: REDIS_PORT
 
     machine-learning:
       enabled: true
