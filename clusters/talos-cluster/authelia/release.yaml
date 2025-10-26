@@ -30,8 +30,6 @@ spec:
       valuesKey: STORAGE_ENCRYPTION_KEY
       targetPath: configMap.storage.encryption_key.value
   values:
-    domain: horus.maix.ovh
-
     pod:
       kind: Deployment
       replicas: 1
@@ -40,7 +38,7 @@ spec:
       theme: dark
 
       server:
-        address: 'tcp://0.0.0.0:9091'
+        port: 9091
 
       log:
         level: info
@@ -81,7 +79,6 @@ spec:
         redis:
           enabled: true
           deploy: false
-          enabledSecret: false
           host: redis-service.redis.svc.cluster.local
           port: 6379
           database_index: 0
