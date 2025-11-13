@@ -142,6 +142,8 @@ spec:
               value: "postgres"
             - name: STATS_USERS
               value: "postgres"
+            - name: AUTH_TYPE
+              value: "scram-sha-256"
           resources:
             requests:
               cpu: 100m
