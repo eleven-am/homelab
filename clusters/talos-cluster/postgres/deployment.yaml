@@ -36,6 +36,8 @@ spec:
             - max_connections=200
             - -c
             - shared_buffers=256MB
+            - -c
+            - password_encryption=md5
           ports:
             - containerPort: 5432
           env:
@@ -92,60 +94,56 @@ spec:
     spec:
       containers:
         - name: pgbouncer
-          image: pgbouncer/pgbouncer:latest
+          image: edoburu/pgbouncer:latest
           ports:
             - containerPort: 5432
           env:
-            - name: DATABASES_HOST
+            - name: DB_HOST
               value: "postgres-service"
-            - name: DATABASES_PORT
+            - name: DB_PORT
               value: "5432"
-            - name: DATABASES_USER
+            - name: DB_USER
               valueFrom:
                 secretKeyRef:
                   name: postgres-secret
                   key: POSTGRES_USER
-            - name: DATABASES_PASSWORD
+            - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: postgres-secret
                   key: POSTGRES_PASSWORD
-            - name: DATABASES_DBNAME
+            - name: DB_NAME
               value: "*"
-            - name: PGBOUNCER_POOL_MODE
+            - name: POOL_MODE
               value: "transaction"
-            - name: PGBOUNCER_MAX_CLIENT_CONN
+            - name: MAX_CLIENT_CONN
               value: "1000"
-            - name: PGBOUNCER_DEFAULT_POOL_SIZE
+            - name: DEFAULT_POOL_SIZE
               value: "10"
-            - name: PGBOUNCER_MIN_POOL_SIZE
+            - name: MIN_POOL_SIZE
               value: "5"
-            - name: PGBOUNCER_RESERVE_POOL_SIZE
+            - name: RESERVE_POOL_SIZE
               value: "5"
-            - name: PGBOUNCER_RESERVE_POOL_TIMEOUT
+            - name: RESERVE_POOL_TIMEOUT
               value: "5"
-            - name: PGBOUNCER_SERVER_RESET_QUERY
+            - name: SERVER_RESET_QUERY
               value: "DISCARD ALL"
-            - name: PGBOUNCER_SERVER_RESET_QUERY_ALWAYS
+            - name: SERVER_RESET_QUERY_ALWAYS
               value: "0"
-            - name: PGBOUNCER_IGNORE_STARTUP_PARAMETERS
+            - name: IGNORE_STARTUP_PARAMETERS
               value: "extra_float_digits"
-            - name: PGBOUNCER_LOG_CONNECTIONS
+            - name: LOG_CONNECTIONS
               value: "1"
-            - name: PGBOUNCER_LOG_DISCONNECTIONS
+            - name: LOG_DISCONNECTIONS
               value: "1"
-            - name: PGBOUNCER_LOG_POOLER_ERRORS
+            - name: LOG_POOLER_ERRORS
               value: "1"
-            - name: PGBOUNCER_STATS_PERIOD
+            - name: STATS_PERIOD
               value: "60"
-            - name: PGBOUNCER_ADMIN_USERS
+            - name: ADMIN_USERS
               value: "postgres"
-            - name: PGBOUNCER_STATS_USERS
+            - name: STATS_USERS
               value: "postgres"
-            - name: PGBOUNCER_AUTH_TYPE
-              value: "scram-sha-256"
-            - name: PGBOUNCER_LISTEN_PORT
-              value: "5432"
           resources:
             requests:
               cpu: 100m
