@@ -4,6 +4,8 @@ resources:
   - namespace.yaml
   - secret.yaml
   - pvc.yaml
+  - postgres-configmap.yaml
+  - pgbouncer-configmap.yaml
   - deployment.yaml
   - autoscaling.yaml
   - service.yaml
