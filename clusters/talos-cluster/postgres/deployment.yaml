@@ -67,11 +67,17 @@ spec:
           volumeMounts:
             - name: postgres-data
               mountPath: /var/lib/postgresql/data
+            - name: postgres-config
+              mountPath: /var/lib/postgresql/data/pg_hba.conf
+              subPath: pg_hba.conf
       restartPolicy: Always
       volumes:
         - name: postgres-data
           persistentVolumeClaim:
             claimName: postgres-data
+        - name: postgres-config
+          configMap:
+            name: postgres-config
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -95,29 +101,10 @@ spec:
           image: pgbouncer/pgbouncer:1.15.0
           ports:
             - containerPort: 6432
-          env:
-            - name: DATABASES_HOST
-              value: "postgres-service"
-            - name: DATABASES_PORT
-              value: "5432"
-            - name: DATABASES_USER
-              valueFrom:
-                secretKeyRef:
-                  name: postgres-secret
-                  key: POSTGRES_USER
-            - name: DATABASES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: postgres-secret
-                  key: POSTGRES_PASSWORD
-            - name: DATABASES_DBNAME
-              value: "*"
-            - name: POOL_MODE
-              value: "transaction"
-            - name: MAX_CLIENT_CONN
-              value: "1000"
-            - name: DEFAULT_POOL_SIZE
-              value: "10"
+          volumeMounts:
+            - name: pgbouncer-config
+              mountPath: /etc/pgbouncer
+              readOnly: true
           resources:
             requests:
               cpu: 100m
@@ -125,3 +112,7 @@ spec:
             limits:
               cpu: 500m
               memory: 256Mi
+      volumes:
+        - name: pgbouncer-config
+          configMap:
+            name: pgbouncer-config
