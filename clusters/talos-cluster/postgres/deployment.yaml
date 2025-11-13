@@ -92,57 +92,57 @@ spec:
     spec:
       containers:
         - name: pgbouncer
-          image: edoburu/pgbouncer:latest
+          image: pgbouncer/pgbouncer:latest
           ports:
             - containerPort: 5432
           env:
-            - name: DB_HOST
+            - name: DATABASES_HOST
               value: "postgres-service"
-            - name: DB_PORT
+            - name: DATABASES_PORT
               value: "5432"
-            - name: DB_USER
+            - name: DATABASES_USER
               valueFrom:
                 secretKeyRef:
                   name: postgres-secret
                   key: POSTGRES_USER
-            - name: DB_PASSWORD
+            - name: DATABASES_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: postgres-secret
                   key: POSTGRES_PASSWORD
-            - name: DB_NAME
+            - name: DATABASES_DBNAME
               value: "*"
-            - name: POOL_MODE
+            - name: PGBOUNCER_POOL_MODE
               value: "transaction"
-            - name: MAX_CLIENT_CONN
+            - name: PGBOUNCER_MAX_CLIENT_CONN
               value: "1000"
-            - name: DEFAULT_POOL_SIZE
+            - name: PGBOUNCER_DEFAULT_POOL_SIZE
               value: "10"
-            - name: MIN_POOL_SIZE
+            - name: PGBOUNCER_MIN_POOL_SIZE
               value: "5"
-            - name: RESERVE_POOL_SIZE
+            - name: PGBOUNCER_RESERVE_POOL_SIZE
               value: "5"
-            - name: RESERVE_POOL_TIMEOUT
+            - name: PGBOUNCER_RESERVE_POOL_TIMEOUT
               value: "5"
-            - name: SERVER_RESET_QUERY
+            - name: PGBOUNCER_SERVER_RESET_QUERY
               value: "DISCARD ALL"
-            - name: SERVER_RESET_QUERY_ALWAYS
+            - name: PGBOUNCER_SERVER_RESET_QUERY_ALWAYS
               value: "0"
-            - name: IGNORE_STARTUP_PARAMETERS
+            - name: PGBOUNCER_IGNORE_STARTUP_PARAMETERS
               value: "extra_float_digits"
-            - name: LOG_CONNECTIONS
+            - name: PGBOUNCER_LOG_CONNECTIONS
               value: "1"
-            - name: LOG_DISCONNECTIONS
+            - name: PGBOUNCER_LOG_DISCONNECTIONS
               value: "1"
-            - name: LOG_POOLER_ERRORS
+            - name: PGBOUNCER_LOG_POOLER_ERRORS
               value: "1"
-            - name: STATS_PERIOD
+            - name: PGBOUNCER_STATS_PERIOD
               value: "60"
-            - name: ADMIN_USERS
+            - name: PGBOUNCER_ADMIN_USERS
               value: "postgres"
-            - name: STATS_USERS
+            - name: PGBOUNCER_STATS_USERS
               value: "postgres"
-            - name: AUTH_TYPE
+            - name: PGBOUNCER_AUTH_TYPE
               value: "scram-sha-256"
           resources:
             requests:
