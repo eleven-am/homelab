@@ -36,8 +36,6 @@ spec:
             - max_connections=200
             - -c
             - shared_buffers=256MB
-            - -c
-            - password_encryption=md5
           ports:
             - containerPort: 5432
           env:
@@ -94,56 +92,35 @@ spec:
     spec:
       containers:
         - name: pgbouncer
-          image: edoburu/pgbouncer:latest
+          image: pgbouncer/pgbouncer:1.15.0
           ports:
-            - containerPort: 5432
+            - containerPort: 6432
           env:
-            - name: DB_HOST
+            - name: DATABASES_HOST
               value: "postgres-service"
-            - name: DB_PORT
+            - name: DATABASES_PORT
               value: "5432"
-            - name: DB_USER
+            - name: DATABASES_USER
               valueFrom:
                 secretKeyRef:
                   name: postgres-secret
                   key: POSTGRES_USER
-            - name: DB_PASSWORD
+            - name: DATABASES_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: postgres-secret
                   key: POSTGRES_PASSWORD
-            - name: DB_NAME
-              value: "*"
+            - name: DATABASES_DBNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_DB
             - name: POOL_MODE
               value: "transaction"
             - name: MAX_CLIENT_CONN
               value: "1000"
             - name: DEFAULT_POOL_SIZE
               value: "10"
-            - name: MIN_POOL_SIZE
-              value: "5"
-            - name: RESERVE_POOL_SIZE
-              value: "5"
-            - name: RESERVE_POOL_TIMEOUT
-              value: "5"
-            - name: SERVER_RESET_QUERY
-              value: "DISCARD ALL"
-            - name: SERVER_RESET_QUERY_ALWAYS
-              value: "0"
-            - name: IGNORE_STARTUP_PARAMETERS
-              value: "extra_float_digits"
-            - name: LOG_CONNECTIONS
-              value: "1"
-            - name: LOG_DISCONNECTIONS
-              value: "1"
-            - name: LOG_POOLER_ERRORS
-              value: "1"
-            - name: STATS_PERIOD
-              value: "60"
-            - name: ADMIN_USERS
-              value: "postgres"
-            - name: STATS_USERS
-              value: "postgres"
           resources:
             requests:
               cpu: 100m
