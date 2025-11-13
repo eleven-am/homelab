@@ -101,6 +101,9 @@ spec:
           image: pgbouncer/pgbouncer:1.15.0
           ports:
             - containerPort: 6432
+          env:
+            - name: DATABASES_HOST
+              value: "postgres-service"
           volumeMounts:
             - name: pgbouncer-config
               mountPath: /etc/pgbouncer
