@@ -92,58 +92,9 @@ spec:
     spec:
       containers:
         - name: pgbouncer
-          image: bitnami/pgbouncer:latest
+          image: pgbouncer/pgbouncer:1.15.0
           ports:
             - containerPort: 5432
-          env:
-            - name: POSTGRESQL_HOST
-              value: "postgres-service"
-            - name: POSTGRESQL_PORT
-              value: "5432"
-            - name: POSTGRESQL_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: postgres-secret
-                  key: POSTGRES_USER
-            - name: POSTGRESQL_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: postgres-secret
-                  key: POSTGRES_PASSWORD
-            - name: PGBOUNCER_POOL_MODE
-              value: "transaction"
-            - name: PGBOUNCER_MAX_CLIENT_CONN
-              value: "1000"
-            - name: PGBOUNCER_DEFAULT_POOL_SIZE
-              value: "10"
-            - name: PGBOUNCER_MIN_POOL_SIZE
-              value: "5"
-            - name: PGBOUNCER_RESERVE_POOL_SIZE
-              value: "5"
-            - name: PGBOUNCER_RESERVE_POOL_TIMEOUT
-              value: "5"
-            - name: PGBOUNCER_SERVER_RESET_QUERY
-              value: "DISCARD ALL"
-            - name: PGBOUNCER_SERVER_RESET_QUERY_ALWAYS
-              value: "0"
-            - name: PGBOUNCER_IGNORE_STARTUP_PARAMETERS
-              value: "extra_float_digits"
-            - name: PGBOUNCER_LOG_CONNECTIONS
-              value: "1"
-            - name: PGBOUNCER_LOG_DISCONNECTIONS
-              value: "1"
-            - name: PGBOUNCER_LOG_POOLER_ERRORS
-              value: "1"
-            - name: PGBOUNCER_STATS_PERIOD
-              value: "60"
-            - name: PGBOUNCER_ADMIN_USERS
-              value: "postgres"
-            - name: PGBOUNCER_STATS_USERS
-              value: "postgres"
-            - name: PGBOUNCER_PORT
-              value: "5432"
-            - name: PGBOUNCER_DATABASE
-              value: "*"
           resources:
             requests:
               cpu: 100m
@@ -151,3 +102,20 @@ spec:
             limits:
               cpu: 500m
               memory: 256Mi
+          volumeMounts:
+            - name: pgbouncer-config
+              mountPath: /etc/pgbouncer/pgbouncer.ini
+              subPath: pgbouncer.ini
+            - name: pgbouncer-userlist
+              mountPath: /etc/pgbouncer/userlist.txt
+              subPath: userlist.txt
+      volumes:
+        - name: pgbouncer-config
+          configMap:
+            name: pgbouncer-config
+        - name: pgbouncer-userlist
+          secret:
+            secretName: postgres-secret
+            items:
+              - key: userlist.txt
+                path: userlist.txt
