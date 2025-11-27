@@ -141,9 +141,8 @@ spec:
             - sh
             - -c
             - |
-              mkdir -p /var/lib/samba/private/msg.sock
-              chmod 0700 /var/lib/samba/private/msg.sock
-              chmod 0755 /var/lib/samba/private
+              mkdir -p /var/lib/samba/private
+              chmod 0700 /var/lib/samba/private
           securityContext:
             runAsUser: 0
           volumeMounts:
