@@ -130,8 +130,9 @@ spec:
             - sh
             - -c
             - |
+              mkdir -p /data/cache/msg.lock /data/lib/private
               chmod 0755 /data/cache /data/cache/msg.lock
-              chmod 0700 /data/lib/private /data/lib/private/msg.sock 2>/dev/null || true
+              chmod 0700 /data/lib/private
           securityContext:
             runAsUser: 0
           volumeMounts:
