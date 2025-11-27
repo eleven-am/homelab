@@ -84,6 +84,8 @@ spec:
             - mountPath: /data/config.yml
               name: samba-config-volume
               subPath: config.yml
+            - mountPath: /var/cache/samba
+              name: samba-cache
       initContainers:
         - name: init-config
           image: busybox:latest
@@ -118,6 +120,19 @@ spec:
           volumeMounts:
             - name: samba-media-dir
               mountPath: /samba/media
+        - name: fix-samba-cache-permissions
+          image: busybox:latest
+          command:
+            - sh
+            - -c
+            - |
+              mkdir -p /var/cache/samba/msg.lock
+              chmod 0755 /var/cache/samba/msg.lock
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - name: samba-cache
+              mountPath: /var/cache/samba
       volumes:
         - name: samba-config-volume
           secret:
@@ -128,6 +143,8 @@ spec:
         - name: samba-media-dir
           persistentVolumeClaim:
             claimName: samba-media
+        - name: samba-cache
+          emptyDir: {}
 ---
 apiVersion: apps/v1
 kind: Deployment
