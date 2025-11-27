@@ -84,12 +84,6 @@ spec:
             - mountPath: /data/config.yml
               name: samba-config-volume
               subPath: config.yml
-            - mountPath: /var/cache/samba
-              name: samba-data-volume
-              subPath: cache
-            - mountPath: /var/lib/samba
-              name: samba-data-volume
-              subPath: lib
       initContainers:
         - name: init-config
           image: busybox:latest
@@ -124,20 +118,6 @@ spec:
           volumeMounts:
             - name: samba-media-dir
               mountPath: /samba/media
-        - name: fix-samba-dirs
-          image: busybox:latest
-          command:
-            - sh
-            - -c
-            - |
-              mkdir -p /data/cache/msg.lock /data/lib/private
-              chmod 0755 /data/cache /data/cache/msg.lock
-              chmod 0700 /data/lib/private
-          securityContext:
-            runAsUser: 0
-          volumeMounts:
-            - name: samba-data-volume
-              mountPath: /data
       volumes:
         - name: samba-config-volume
           secret:
