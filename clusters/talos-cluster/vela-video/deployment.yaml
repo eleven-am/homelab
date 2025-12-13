@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: vela-video
-          image: elevenam/vela-video:20251213-125902
+          image: elevenam/vela-video:20251213-133731
           ports:
             - containerPort: 9191
           env:
@@ -33,6 +33,11 @@ spec:
                 secretKeyRef:
                   name: vela-video-secret
                   key: VELA_ADMIN_PASS
+            - name: VELA_JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: vela-video-secret
+                  key: VELA_JWT_SECRET
           volumeMounts:
             - name: videos
               mountPath: /data/videos
