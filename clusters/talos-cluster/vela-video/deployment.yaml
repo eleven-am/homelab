@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: vela-video
-          image: elevenam/vela-video:20251213-210150
+          image: elevenam/vela-video:20251213-211143
           ports:
             - containerPort: 9191
           env:
@@ -23,6 +23,8 @@ spec:
               value: /data/videos
             - name: VELA_STORAGE_PATH
               value: /data/streaming
+            - name: VELA_DATABASE_PATH
+              value: /data/db/vela-video.db
             - name: VELA_ADMIN_USER
               valueFrom:
                 secretKeyRef:
