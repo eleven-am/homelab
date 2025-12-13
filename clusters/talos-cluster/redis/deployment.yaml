@@ -20,6 +20,8 @@ spec:
         - name: redis-deployment
           image: redis:latest
           imagePullPolicy: IfNotPresent
+          command: ["redis-server"]
+          args: ["--maxmemory", "512mb", "--maxmemory-policy", "allkeys-lru"]
           ports:
             - containerPort: 6379
           volumeMounts:
