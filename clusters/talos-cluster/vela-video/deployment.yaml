@@ -41,6 +41,8 @@ spec:
               mountPath: /data/db
             - name: streaming
               mountPath: /data/streaming
+            - name: tmp
+              mountPath: /tmp
           resources:
             requests:
               memory: "256Mi"
@@ -70,3 +72,5 @@ spec:
         - name: streaming
           persistentVolumeClaim:
             claimName: vela-video-streaming
+        - name: tmp
+          emptyDir: {}
