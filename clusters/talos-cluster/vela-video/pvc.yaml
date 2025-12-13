@@ -4,12 +4,12 @@ metadata:
   name: vela-video-data
   namespace: vela-video
 spec:
-  storageClassName: media-storage
+  storageClassName: smb-storage
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   resources:
     requests:
-      storage: 100Gi
+      storage: 100Mi
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

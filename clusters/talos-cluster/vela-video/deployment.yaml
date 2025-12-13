@@ -36,6 +36,7 @@ spec:
           volumeMounts:
             - name: videos
               mountPath: /data/videos
+              subPath: royossai/Private/Videos
             - name: database
               mountPath: /data/db
             - name: streaming
