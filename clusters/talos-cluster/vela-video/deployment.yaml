@@ -15,11 +15,11 @@ spec:
     spec:
       containers:
         - name: vela-video
-          image: elevenam/vela-video:20251213-232541
+          image: elevenam/vela-video:20251214-151841
           ports:
             - containerPort: 9191
           env:
-            - name: VELA_WATCH_PATH
+            - name: VELA_VIDEO_WATCH_PATH
               value: /data/videos
             - name: VELA_STORAGE_PATH
               value: /data/streaming
