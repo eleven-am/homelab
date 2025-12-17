@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: vela-video
-          image: elevenam/vela-video:20251217-193410
+          image: elevenam/vela-video:20251217-195811
           ports:
             - containerPort: 9191
           env:
