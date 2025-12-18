@@ -1,8 +1,8 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: vela-video-horus-route
-  namespace: vela-video
+  name: vela-horus-route
+  namespace: vela
 spec:
   parentRefs:
     - name: cilium-gateway
@@ -15,5 +15,5 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: vela-video
+        - name: vela
           port: 9191

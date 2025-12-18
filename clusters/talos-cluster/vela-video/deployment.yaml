@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: vela-video
-  namespace: vela-video
+  name: vela
+  namespace: vela
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: vela-video
+      app: vela
   template:
     metadata:
       labels:
-        app: vela-video
+        app: vela
     spec:
       containers:
-        - name: vela-video
-          image: elevenam/vela-video:20251218-034634
+        - name: vela
+          image: elevenam/vela:20251218-034634
           ports:
             - containerPort: 9191
           env:
@@ -26,21 +26,21 @@ spec:
             - name: VELA_STORAGE_PATH
               value: /data/streaming
             - name: VELA_DATABASE_PATH
-              value: /data/db/vela-video.db
+              value: /data/db/vela.db
             - name: VELA_ADMIN_USER
               valueFrom:
                 secretKeyRef:
-                  name: vela-video-secret
+                  name: vela-secret
                   key: VELA_ADMIN_USER
             - name: VELA_ADMIN_PASS
               valueFrom:
                 secretKeyRef:
-                  name: vela-video-secret
+                  name: vela-secret
                   key: VELA_ADMIN_PASS
             - name: VELA_JWT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: vela-video-secret
+                  name: vela-secret
                   key: VELA_JWT_SECRET
           volumeMounts:
             - name: videos
@@ -76,12 +76,12 @@ spec:
       volumes:
         - name: videos
           persistentVolumeClaim:
-            claimName: vela-video-data
+            claimName: vela-data
         - name: database
           persistentVolumeClaim:
-            claimName: vela-video-db
+            claimName: vela-db
         - name: streaming
           persistentVolumeClaim:
-            claimName: vela-video-streaming
+            claimName: vela-streaming
         - name: tmp
           emptyDir: {}

@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: vela-video
-  namespace: vela-video
+  name: vela
+  namespace: vela
 spec:
   selector:
-    app: vela-video
+    app: vela
   ports:
     - protocol: TCP
       port: 9191

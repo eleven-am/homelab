@@ -1,8 +1,8 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: vela-video-data
-  namespace: vela-video
+  name: vela-data
+  namespace: vela
 spec:
   storageClassName: smb-storage
   accessModes:
@@ -14,8 +14,8 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: vela-video-db
-  namespace: vela-video
+  name: vela-db
+  namespace: vela
 spec:
   storageClassName: app-storage
   accessModes:
@@ -27,8 +27,8 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: vela-video-streaming
-  namespace: vela-video
+  name: vela-streaming
+  namespace: vela
 spec:
   storageClassName: blizzard-storage
   accessModes:
