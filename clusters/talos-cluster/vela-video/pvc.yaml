@@ -30,7 +30,7 @@ metadata:
   name: vela-video-streaming
   namespace: vela-video
 spec:
-  storageClassName: app-storage
+  storageClassName: blizzard-storage
   accessModes:
     - ReadWriteOnce
   resources:
