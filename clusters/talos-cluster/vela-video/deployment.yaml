@@ -15,12 +15,14 @@ spec:
     spec:
       containers:
         - name: vela-video
-          image: elevenam/vela-video:20251217-195811
+          image: elevenam/vela-video:20251218-030122
           ports:
             - containerPort: 9191
           env:
             - name: VELA_VIDEO_WATCH_PATH
               value: /data/videos
+            - name: VELA_AUDIO_WATCH_PATH
+              value: /data/audios
             - name: VELA_STORAGE_PATH
               value: /data/streaming
             - name: VELA_DATABASE_PATH
@@ -44,6 +46,9 @@ spec:
             - name: videos
               mountPath: /data/videos
               subPath: royossai/Private/Videos
+            - name: videos
+              mountPath: /data/audios
+              subPath: royossai/Private/Vocals
             - name: database
               mountPath: /data/db
             - name: streaming
