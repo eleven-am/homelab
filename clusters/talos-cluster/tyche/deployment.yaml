@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: tyche
-          image: elevenam/tyche:20251219-020051
+          image: elevenam/tyche:20251219-103129
           ports:
             - name: http
               containerPort: 8080
@@ -75,6 +75,26 @@ spec:
                 secretKeyRef:
                   name: tyche-secrets
                   key: ANTHROPIC_API_KEY
+            - name: GOOGLE_AI_MODEL
+              value: "gemini-2.5-flash"
+            - name: OPENAI_MODEL
+              value: "gpt-5.2"
+            - name: ANTHROPIC_MODEL
+              value: "claude-haiku-4-5-20251001"
+            - name: AI_SYNTHESIZER_MODEL
+              value: "gemini-3-flash-preview"
+            - name: OPENAI_COST_IN
+              value: "5.0"
+            - name: OPENAI_COST_OUT
+              value: "15.0"
+            - name: GOOGLE_AI_COST_IN
+              value: "1.25"
+            - name: GOOGLE_AI_COST_OUT
+              value: "5.0"
+            - name: ANTHROPIC_COST_IN
+              value: "15.0"
+            - name: ANTHROPIC_COST_OUT
+              value: "75.0"
           volumeMounts:
             - name: data
               mountPath: /data
