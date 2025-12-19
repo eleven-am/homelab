@@ -1,0 +1,100 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tyche
+  namespace: tyche
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tyche
+  template:
+    metadata:
+      labels:
+        app: tyche
+    spec:
+      containers:
+        - name: tyche
+          image: elevenam/tyche:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PORT
+              value: "8080"
+            - name: HOST
+              value: "0.0.0.0"
+            - name: DATABASE_PATH
+              value: "/data/tyche.db"
+            - name: UPLOAD_PATH
+              value: "/uploads"
+            - name: OAUTH_CALLBACK_BASE_URL
+              value: "https://tyche.maix.ovh"
+            - name: GOOGLE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: tyche-secrets
+                  key: GOOGLE_CLIENT_ID
+            - name: GOOGLE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: tyche-secrets
+                  key: GOOGLE_CLIENT_SECRET
+            - name: GITHUB_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: tyche-secrets
+                  key: GITHUB_CLIENT_ID
+            - name: GITHUB_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: tyche-secrets
+                  key: GITHUB_CLIENT_SECRET
+            - name: SESSION_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: tyche-secrets
+                  key: SESSION_SECRET
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: tyche-secrets
+                  key: JWT_SECRET
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: tyche-secrets
+                  key: OPENAI_API_KEY
+            - name: GOOGLE_AI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: tyche-secrets
+                  key: GOOGLE_AI_API_KEY
+            - name: ANTHROPIC_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: tyche-secrets
+                  key: ANTHROPIC_API_KEY
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: uploads
+              mountPath: /uploads
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: tyche-data
+        - name: uploads
+          persistentVolumeClaim:
+            claimName: tyche-uploads
