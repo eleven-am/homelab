@@ -17,7 +17,8 @@ spec:
         - name: tyche
           image: elevenam/tyche:20251219-020051
           ports:
-            - containerPort: 8080
+            - name: http
+              containerPort: 8080
           env:
             - name: PORT
               value: "8080"
