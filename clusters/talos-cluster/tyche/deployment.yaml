@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: tyche
-          image: elevenam/tyche:20251219-151038
+          image: elevenam/tyche:20251219-153522
           ports:
             - name: http
               containerPort: 8080
