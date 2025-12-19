@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: tyche
-          image: elevenam/tyche:20251219-103129
+          image: elevenam/tyche:20251219-111402
           ports:
             - name: http
               containerPort: 8080
@@ -84,17 +84,21 @@ spec:
             - name: AI_SYNTHESIZER_MODEL
               value: "gemini-3-flash-preview"
             - name: OPENAI_COST_IN
-              value: "5.0"
+              value: "1.75"
             - name: OPENAI_COST_OUT
-              value: "15.0"
+              value: "14.0"
             - name: GOOGLE_AI_COST_IN
-              value: "1.25"
+              value: "0.30"
             - name: GOOGLE_AI_COST_OUT
-              value: "5.0"
+              value: "2.50"
             - name: ANTHROPIC_COST_IN
-              value: "15.0"
+              value: "1.0"
             - name: ANTHROPIC_COST_OUT
-              value: "75.0"
+              value: "5.0"
+            - name: AI_SYNTHESIZER_COST_IN
+              value: "0.50"
+            - name: AI_SYNTHESIZER_COST_OUT
+              value: "3.0"
           volumeMounts:
             - name: data
               mountPath: /data
