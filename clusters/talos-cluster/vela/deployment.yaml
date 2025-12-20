@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: vela
-          image: elevenam/vela:20251220-204415
+          image: elevenam/vela:20251220-210440
           ports:
             - containerPort: 9191
           env:
