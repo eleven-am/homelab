@@ -19,12 +19,12 @@ locals {
 
   control_plane_actual_ips = [
     for vm in proxmox_virtual_environment_vm.control_plane :
-    [for ip in flatten(vm.ipv4_addresses) : ip if ip != "127.0.0.1"][0]
+    [for ip in flatten(vm.ipv4_addresses) : ip if ip != "127.0.0.1" && !startswith(ip, "169.254.") && !startswith(ip, "10.244.")][0]
   ]
 
   worker_actual_ips = [
     for vm in proxmox_virtual_environment_vm.worker :
-    [for ip in flatten(vm.ipv4_addresses) : ip if ip != "127.0.0.1"][0]
+    [for ip in flatten(vm.ipv4_addresses) : ip if ip != "127.0.0.1" && !startswith(ip, "169.254.") && !startswith(ip, "10.244.")][0]
   ]
 }
 

@@ -230,3 +230,9 @@ variable "output_directory" {
   type        = string
   default     = "talos"
 }
+
+variable "export_configs" {
+  description = "Export kubeconfig and talosconfig to ~/.kube/config and ~/.talos/config"
+  type        = bool
+  default     = true
+}

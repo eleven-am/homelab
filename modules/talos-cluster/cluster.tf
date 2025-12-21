@@ -73,6 +73,21 @@ data "helm_template" "cilium" {
     name  = "nodePort.enabled"
     value = "true"
   }
+
+  set {
+    name  = "bgpControlPlane.enabled"
+    value = "true"
+  }
+
+  set {
+    name  = "l2announcements.enabled"
+    value = "true"
+  }
+
+  set {
+    name  = "externalIPs.enabled"
+    value = "true"
+  }
 }
 
 resource "talos_machine_secrets" "this" {
@@ -277,4 +292,34 @@ resource "local_file" "kubeconfig" {
   content         = data.talos_cluster_kubeconfig.this[0].kubeconfig_raw
   filename        = "${var.output_directory}/kubeconfig"
   file_permission = "0600"
+}
+
+resource "null_resource" "export_kubeconfig" {
+  count = var.control_plane_count > 0 && var.export_configs ? 1 : 0
+
+  provisioner "local-exec" {
+    command = <<-EOT
+      mkdir -p ~/.kube
+      cp ${var.output_directory}/kubeconfig ~/.kube/config
+      chmod 600 ~/.kube/config
+      echo "Kubeconfig exported to ~/.kube/config"
+    EOT
+  }
+
+  depends_on = [local_file.kubeconfig, null_resource.wait_for_cluster]
+}
+
+resource "null_resource" "export_talosconfig" {
+  count = var.control_plane_count > 0 && var.export_configs ? 1 : 0
+
+  provisioner "local-exec" {
+    command = <<-EOT
+      mkdir -p ~/.talos
+      cp ${var.output_directory}/talosconfig ~/.talos/config
+      chmod 600 ~/.talos/config
+      echo "Talosconfig exported to ~/.talos/config"
+    EOT
+  }
+
+  depends_on = [local_file.talosconfig, null_resource.wait_for_cluster]
 }
