@@ -81,9 +81,9 @@ spec:
         # Pi-hole V6 API
         - --pihole-api-version=6
         # Pi-hole server URL is now taken from EXTERNAL_DNS_PIHOLE_SERVER env var
-        # Only manage .horus domains
-        - --domain-filter=horus
-        - --domain-filter=homelab
+        # Only manage these domains
+        - --domain-filter=horus.maix.ovh
+        - --domain-filter=staging.ossai.dev
         # Add verbose logging
         - --log-level=debug
       securityContext:
