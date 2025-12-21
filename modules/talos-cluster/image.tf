@@ -5,7 +5,7 @@ locals {
   ]
 
   nvidia_extensions = var.enable_nvidia_gpu ? [
-    "siderolabs/nonfree-kmod-nvidia-production",
+    "siderolabs/nvidia-open-gpu-kernel-modules-production",
     "siderolabs/nvidia-container-toolkit-production",
   ] : []
 
