@@ -6,7 +6,7 @@ metadata:
   annotations:
     cert-manager.io/issuer: cloudflare-staging-issuer
 spec:
-  gatewayClassName: cilium
+  gatewayClassName: envoy
   listeners:
     - protocol: HTTPS
       port: 443
@@ -29,7 +29,7 @@ metadata:
   annotations:
     cert-manager.io/issuer: cloudflare-issuer
 spec:
-  gatewayClassName: cilium
+  gatewayClassName: envoy
   listeners:
     - protocol: HTTPS
       port: 443
@@ -50,7 +50,7 @@ metadata:
   name: cilium-http-gateway
   namespace: gateway
 spec:
-  gatewayClassName: cilium
+  gatewayClassName: envoy
   listeners:
     - protocol: HTTP
       port: 80
@@ -66,7 +66,7 @@ metadata:
   name: cilium-tcp-gateway
   namespace: gateway
 spec:
-  gatewayClassName: cilium
+  gatewayClassName: envoy
   listeners:
     - protocol: TCP
       port: 6379

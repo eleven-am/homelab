@@ -1,159 +1,232 @@
-variable "proxmox_host" {
-  description = "The Proxmox host URL to connect to"
+variable "proxmox_endpoint" {
+  description = "The Proxmox API endpoint URL (e.g., https://192.168.1.6:8006)"
   type        = string
 }
 
-variable "proxmox_username" {
-  description = "The Proxmox username to authenticate with"
+variable "proxmox_api_token" {
+  description = "The Proxmox API token in format 'user@realm!tokenid=secret'"
   type        = string
-}
-
-variable "proxmox_token" {
-  description = "The Proxmox token to authenticate with"
-  type        = string
+  sensitive   = true
 }
 
 variable "proxmox_node" {
-  description = "The Proxmox node to create the VM template on"
+  description = "The Proxmox node name to deploy VMs on"
   type        = string
 }
 
 variable "proxmox_storage" {
-  description = "The Proxmox storage pool to create the VM template on"
+  description = "The Proxmox storage pool for VM disks"
   type        = string
+  default     = "local-lvm"
 }
 
-variable "proxmox_storage_type" {
-  description = "The Proxmox storage pool type to create the VM template on"
+variable "iso_storage" {
+  description = "The Proxmox storage pool for ISO/images"
   type        = string
-}
-
-variable "iso_url" {
-  description = "The URL to the Talos ISO to use"
-  type        = string
-}
-
-variable "iso_checksum" {
-  description = "The checksum of the Talos ISO"
-  type        = string
-}
-
-variable "iso_storage_pool" {
-  description = "The Proxmox storage pool to store the Talos ISO"
-  type        = string
+  default     = "local"
 }
 
 variable "talos_version" {
-  description = "The version of Talos to use"
+  description = "The Talos Linux version to deploy"
+  type        = string
+  default     = "v1.11.5"
+}
+
+variable "cluster_name" {
+  description = "Name of the Kubernetes cluster"
+  type        = string
+  default     = "talos-cluster"
+}
+
+variable "cluster_vip" {
+  description = "Virtual IP for the cluster control plane (optional)"
+  type        = string
+  default     = ""
+}
+
+variable "enable_nvidia_gpu" {
+  description = "Enable NVIDIA GPU support with proprietary drivers"
+  type        = bool
+  default     = false
+}
+
+variable "nvidia_driver_version" {
+  description = "NVIDIA driver version (must match Talos version)"
+  type        = string
+  default     = "550.144.03"
+}
+
+variable "extra_extensions" {
+  description = "Additional Talos extensions to include"
+  type        = list(string)
+  default     = []
+}
+
+variable "subnet" {
+  description = "Subnet for the cluster nodes (e.g., 192.168.101.0/24)"
   type        = string
 }
 
-variable "schematic_id" {
-  description = "The schematic ID to use for the installation of talos"
+variable "gateway" {
+  description = "Gateway IP (defaults to first IP in subnet)"
   type        = string
+  default     = ""
 }
 
-variable cidr {
-  description = "The CIDR block for the cluster"
-  type        = number
+variable "nameservers" {
+  description = "DNS nameservers"
+  type        = list(string)
+  default     = ["1.1.1.1", "8.8.8.8"]
 }
 
-variable cluster_prefix {
-  description = "The prefix for the cluster"
+variable "network_bridge" {
+  description = "Proxmox network bridge"
   type        = string
+  default     = "vmbr0"
 }
 
-variable master_count {
-  description = "The number of Kubernetes master nodes"
+variable "vlan_tag" {
+  description = "VLAN tag (-1 for no VLAN)"
   type        = number
+  default     = -1
 }
 
-variable worker_count {
-  description = "The number of Kubernetes worker nodes"
+variable "control_plane_count" {
+  description = "Number of control plane nodes"
   type        = number
+  default     = 1
 }
 
-variable master_cores {
-  description = "The number of cores for the master nodes"
+variable "control_plane_ip_offset" {
+  description = "IP offset for control plane nodes within subnet"
   type        = number
+  default     = 10
 }
 
-variable master_memory {
-  description = "The amount of memory for the master nodes"
+variable "control_plane_cores" {
+  description = "Number of CPU cores for control plane nodes"
   type        = number
+  default     = 4
 }
 
-variable master_network_bridge {
-  description = "The network bridge for the master nodes"
-  type        = string
-}
-
-variable "master_ip_offset" {
-  description = "Offset for the IP addresses for the master nodes"
-  type 	  	  = number
-}
-
-variable master_vlan_tag {
-  description = "The VLAN tag for the master nodes"
+variable "control_plane_memory" {
+  description = "Memory in MB for control plane nodes"
   type        = number
+  default     = 8192
 }
 
-variable "master_disk_size" {
-  description = "Disk size for master nodes"
-  type 	  	  = number
-}
-
-variable subnet {
-  description = "The subnet for the cluster"
-  type        = string
-}
-
-variable worker_cores {
-  description = "The number of cores for the worker nodes"
+variable "control_plane_disk_size" {
+  description = "Disk size in GB for control plane nodes"
   type        = number
+  default     = 50
 }
 
-variable worker_memory {
-  description = "The amount of memory for the worker nodes"
+variable "control_plane_vm_id_start" {
+  description = "Starting VM ID for control plane nodes"
   type        = number
+  default     = 600
 }
 
-variable worker_network_bridge {
-  description = "The network bridge for the worker nodes"
-  type        = string
+variable "worker_count" {
+  description = "Number of worker nodes"
+  type        = number
+  default     = 0
 }
 
 variable "worker_ip_offset" {
-  description = "Offset for the IP addresses for the worker nodes"
-  type 	  	  = number
+  description = "IP offset for worker nodes within subnet"
+  type        = number
+  default     = 20
 }
 
-variable worker_vlan_tag {
-  description = "The VLAN tag for the worker nodes"
+variable "worker_cores" {
+  description = "Number of CPU cores for worker nodes"
   type        = number
+  default     = 4
+}
+
+variable "worker_memory" {
+  description = "Memory in MB for worker nodes"
+  type        = number
+  default     = 8192
 }
 
 variable "worker_disk_size" {
-  description = "Disk size for worker nodes"
-  type 	  	  = number
+  description = "Disk size in GB for worker nodes"
+  type        = number
+  default     = 50
+}
+
+variable "worker_vm_id_start" {
+  description = "Starting VM ID for worker nodes"
+  type        = number
+  default     = 700
+}
+
+variable "gpu_passthrough_enabled" {
+  description = "Enable GPU passthrough for worker nodes"
+  type        = bool
+  default     = false
+}
+
+variable "gpu_mapping" {
+  description = "Name of the Proxmox PCI resource mapping for the GPU"
+  type        = string
+  default     = ""
+}
+
+variable "enable_flux" {
+  description = "Enable FluxCD bootstrap"
+  type        = bool
+  default     = true
 }
 
 variable "github_username" {
-  description = "Github username to use for the installation of flux"
+  description = "GitHub username for FluxCD"
   type        = string
-}
-
-variable "github_token" {
-  description = "Github token to use for the installation of flux"
-  type        = string
+  default     = ""
 }
 
 variable "github_repository" {
-  description = "Github repository to use for the installation of flux"
+  description = "GitHub repository for FluxCD"
   type        = string
+  default     = ""
+}
+
+variable "github_token" {
+  description = "GitHub token for FluxCD"
+  type        = string
+  sensitive   = true
+  default     = ""
 }
 
 variable "sops_age_key" {
-  description = "Age key to use for the installation of sops"
+  description = "SOPS age key for secret decryption"
   type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "cilium_version" {
+  description = "Cilium Helm chart version"
+  type        = string
+  default     = "1.16.5"
+}
+
+variable "enable_hubble" {
+  description = "Enable Hubble observability"
+  type        = bool
+  default     = true
+}
+
+variable "enable_gateway_api" {
+  description = "Enable Gateway API support (disabled - using Envoy Gateway instead)"
+  type        = bool
+  default     = false
+}
+
+variable "output_directory" {
+  description = "Directory to store talosconfig and kubeconfig"
+  type        = string
+  default     = "talos"
 }
