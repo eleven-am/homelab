@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: whisper-deployment
+  labels:
+    app: whisper
+  namespace: whisper
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: whisper
+  template:
+    metadata:
+      labels:
+        app: whisper
+    spec:
+      runtimeClassName: nvidia
+      containers:
+        - name: whisper
+          image: fedirz/faster-whisper-server:latest-cuda
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          env:
+            - name: WHISPER__MODEL
+              value: "Systran/faster-whisper-large-v3-turbo"
+            - name: WHISPER__INFERENCE_DEVICE
+              value: "cuda"
+            - name: WHISPER__COMPUTE_TYPE
+              value: "float16"
+          resources:
+            requests:
+              memory: "8Gi"
+              cpu: "2"
+              nvidia.com/gpu: "1"
+            limits:
+              memory: "12Gi"
+              cpu: "4"
+              nvidia.com/gpu: "1"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            failureThreshold: 3
+      restartPolicy: Always
