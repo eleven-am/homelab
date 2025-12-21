@@ -4,7 +4,7 @@ data "helm_template" "cilium" {
   repository   = "https://helm.cilium.io/"
   chart        = "cilium"
   version      = var.cilium_version
-  kube_version = "1.32.0"
+  kube_version = var.kubernetes_version
 
   set {
     name  = "ipam.mode"
@@ -104,13 +104,14 @@ data "talos_client_configuration" "this" {
 data "talos_machine_configuration" "control_plane" {
   count = var.control_plane_count
 
-  cluster_name     = var.cluster_name
-  cluster_endpoint = local.cluster_endpoint
-  machine_type     = "controlplane"
-  machine_secrets  = talos_machine_secrets.this.machine_secrets
-  talos_version    = var.talos_version
-  docs             = false
-  examples         = false
+  cluster_name       = var.cluster_name
+  cluster_endpoint   = local.cluster_endpoint
+  machine_type       = "controlplane"
+  machine_secrets    = talos_machine_secrets.this.machine_secrets
+  talos_version      = var.talos_version
+  kubernetes_version = var.kubernetes_version
+  docs               = false
+  examples           = false
 
   config_patches = [
     yamlencode({
@@ -180,13 +181,14 @@ data "talos_machine_configuration" "control_plane" {
 data "talos_machine_configuration" "worker" {
   count = var.worker_count
 
-  cluster_name     = var.cluster_name
-  cluster_endpoint = local.cluster_endpoint
-  machine_type     = "worker"
-  machine_secrets  = talos_machine_secrets.this.machine_secrets
-  talos_version    = var.talos_version
-  docs             = false
-  examples         = false
+  cluster_name       = var.cluster_name
+  cluster_endpoint   = local.cluster_endpoint
+  machine_type       = "worker"
+  machine_secrets    = talos_machine_secrets.this.machine_secrets
+  talos_version      = var.talos_version
+  kubernetes_version = var.kubernetes_version
+  docs               = false
+  examples           = false
 
   config_patches = [
     yamlencode({
