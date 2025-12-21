@@ -16,6 +16,13 @@ spec:
       containers:
         - name: vela
           image: elevenam/vela:20251221-041308
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "100m"
+            limits:
+              memory: "2Gi"
+              cpu: "500m"
           ports:
             - containerPort: 9191
           env:

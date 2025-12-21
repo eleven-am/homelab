@@ -16,6 +16,13 @@ spec:
       containers:
         - name: tyche
           image: elevenam/tyche:20251219-161930
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "100m"
+            limits:
+              memory: "2Gi"
+              cpu: "500m"
           ports:
             - name: http
               containerPort: 8080
