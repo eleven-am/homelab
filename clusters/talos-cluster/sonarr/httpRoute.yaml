@@ -5,7 +5,7 @@ metadata:
   namespace: sonarr
 spec:
   parentRefs:
-    - name: cilium-gateway
+    - name: envoy-gateway
       namespace: gateway
   hostnames:
     - "sonarr.horus.maix.ovh"

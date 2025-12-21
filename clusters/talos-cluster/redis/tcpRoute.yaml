@@ -1,0 +1,14 @@
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: TCPRoute
+metadata:
+  name: redis-route
+  namespace: redis
+spec:
+  parentRefs:
+    - name: envoy-tcp-gateway
+      namespace: gateway
+      sectionName: redis-listener
+  rules:
+    - backendRefs:
+        - name: redis-service
+          port: 6379

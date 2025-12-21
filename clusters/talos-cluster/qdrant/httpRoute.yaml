@@ -6,7 +6,7 @@ metadata:
 spec:
   parentRefs:
     - kind: Gateway
-      name: cilium-gateway
+      name: envoy-gateway
       namespace: gateway
   hostnames:
     - "qdrant.horus.maix.ovh"

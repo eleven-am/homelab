@@ -5,7 +5,7 @@ metadata:
   namespace: minio
 spec:
   parentRefs:
-    - name: cilium-gateway
+    - name: envoy-gateway
       namespace: gateway
   hostnames:
     - "minio.horus.maix.ovh"
@@ -25,7 +25,7 @@ metadata:
   namespace: minio
 spec:
   parentRefs:
-    - name: cilium-gateway
+    - name: envoy-gateway
       namespace: gateway
   hostnames:
     - "s3.horus.maix.ovh"

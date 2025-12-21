@@ -1,11 +1,11 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: webdav-cilium-route
+  name: webdav-envoy-route
   namespace: samba
 spec:
   parentRefs:
-    - name: cilium-gateway
+    - name: envoy-gateway
       namespace: gateway
   hostnames:
     - "webdav.horus.maix.ovh"
