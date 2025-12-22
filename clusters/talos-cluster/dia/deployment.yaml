@@ -17,24 +17,25 @@ spec:
       labels:
         app: dia
     spec:
+      runtimeClassName: nvidia
       containers:
         - name: dia
-          image: ghcr.io/devnen/dia-tts-server:latest
+          image: elevenam/dia-tts:cu128
           imagePullPolicy: Always
           ports:
             - containerPort: 8003
           env:
             - name: HF_HUB_ENABLE_HF_TRANSFER
               value: "1"
-            - name: CUDA_VISIBLE_DEVICES
-              value: ""
           resources:
             requests:
               memory: "8Gi"
-              cpu: "4"
+              cpu: "2"
+              nvidia.com/gpu: "1"
             limits:
               memory: "16Gi"
-              cpu: "8"
+              cpu: "4"
+              nvidia.com/gpu: "1"
           volumeMounts:
             - name: model-cache
               mountPath: /app/model_cache
@@ -42,16 +43,16 @@ spec:
             httpGet:
               path: /health
               port: 8003
-            initialDelaySeconds: 180
+            initialDelaySeconds: 300
             periodSeconds: 30
-            failureThreshold: 3
+            failureThreshold: 5
           readinessProbe:
             httpGet:
               path: /health
               port: 8003
-            initialDelaySeconds: 120
-            periodSeconds: 10
-            failureThreshold: 3
+            initialDelaySeconds: 180
+            periodSeconds: 15
+            failureThreshold: 5
       restartPolicy: Always
       volumes:
         - name: model-cache
