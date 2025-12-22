@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: whisper-model-cache
-  namespace: whisper
+  name: speaches-model-cache
+  namespace: speaches
 spec:
   accessModes:
     - ReadWriteOnce
   storageClassName: blizzard-storage
   resources:
     requests:
-      storage: 10Gi
+      storage: 30Gi

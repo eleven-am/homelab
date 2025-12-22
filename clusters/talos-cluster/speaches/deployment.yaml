@@ -1,43 +1,43 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: whisper-deployment
+  name: speaches-deployment
   labels:
-    app: whisper
-  namespace: whisper
+    app: speaches
+  namespace: speaches
 spec:
   replicas: 1
   strategy:
     type: Recreate
   selector:
     matchLabels:
-      app: whisper
+      app: speaches
   template:
     metadata:
       labels:
-        app: whisper
+        app: speaches
     spec:
       runtimeClassName: nvidia
       containers:
-        - name: whisper
-          image: fedirz/faster-whisper-server:latest-cuda
+        - name: speaches
+          image: ghcr.io/speaches-ai/speaches:latest-cuda
           imagePullPolicy: Always
           ports:
             - containerPort: 8000
           env:
-            - name: WHISPER__MODEL
-              value: "Systran/faster-whisper-large-v3-turbo"
-            - name: WHISPER__INFERENCE_DEVICE
-              value: "cuda"
-            - name: WHISPER__COMPUTE_TYPE
-              value: "float16"
+            - name: SPEACHES_STT_MODEL
+              value: "Systran/faster-whisper-large-v3"
+            - name: SPEACHES_TTS_MODEL
+              value: "hexgrad/Kokoro-82M"
+            - name: SPEACHES_TTS_VOICE
+              value: "af_bella"
           resources:
             requests:
               memory: "8Gi"
               cpu: "2"
               nvidia.com/gpu: "1"
             limits:
-              memory: "12Gi"
+              memory: "16Gi"
               cpu: "4"
               nvidia.com/gpu: "1"
           livenessProbe:
@@ -46,19 +46,21 @@ spec:
               port: 8000
             initialDelaySeconds: 120
             periodSeconds: 30
-            failureThreshold: 3
+            timeoutSeconds: 10
+            failureThreshold: 5
           readinessProbe:
             httpGet:
               path: /health
               port: 8000
             initialDelaySeconds: 60
             periodSeconds: 10
-            failureThreshold: 3
+            timeoutSeconds: 10
+            failureThreshold: 5
           volumeMounts:
             - name: model-cache
-              mountPath: /root/.cache/huggingface
+              mountPath: /home/ubuntu/.cache/huggingface/hub
       restartPolicy: Always
       volumes:
         - name: model-cache
           persistentVolumeClaim:
-            claimName: whisper-model-cache
+            claimName: speaches-model-cache
