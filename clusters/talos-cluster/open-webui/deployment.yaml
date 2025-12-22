@@ -25,13 +25,25 @@ spec:
             - name: OLLAMA_BASE_URL
               value: "http://ollama-service.ollama.svc.cluster.local:11434"
             - name: WEBUI_AUTH
-              value: "false"
+              value: "true"
             - name: ENABLE_RAG_WEB_SEARCH
               value: "true"
             - name: RAG_WEB_SEARCH_ENGINE
               value: "searxng"
             - name: SEARXNG_QUERY_URL
               value: "http://searxng.searxng.svc.cluster.local:8080/search?q=<query>&format=json"
+            - name: AUDIO_TTS_ENGINE
+              value: "openai"
+            - name: AUDIO_TTS_OPENAI_API_BASE_URL
+              value: "http://dia-service.dia.svc.cluster.local:8003/v1"
+            - name: AUDIO_TTS_OPENAI_API_KEY
+              value: "not-needed"
+            - name: AUDIO_STT_ENGINE
+              value: "openai"
+            - name: AUDIO_STT_OPENAI_API_BASE_URL
+              value: "http://whisper-service.whisper.svc.cluster.local:8000/v1"
+            - name: AUDIO_STT_OPENAI_API_KEY
+              value: "not-needed"
           resources:
             requests:
               memory: "512Mi"
