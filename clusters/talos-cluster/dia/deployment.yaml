@@ -44,15 +44,17 @@ spec:
               path: /health
               port: 8003
             initialDelaySeconds: 300
-            periodSeconds: 30
-            failureThreshold: 5
+            periodSeconds: 60
+            timeoutSeconds: 60
+            failureThreshold: 10
           readinessProbe:
             httpGet:
               path: /health
               port: 8003
             initialDelaySeconds: 180
-            periodSeconds: 15
-            failureThreshold: 5
+            periodSeconds: 30
+            timeoutSeconds: 60
+            failureThreshold: 10
       restartPolicy: Always
       volumes:
         - name: model-cache
