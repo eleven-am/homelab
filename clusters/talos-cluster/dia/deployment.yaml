@@ -58,4 +58,5 @@ spec:
       restartPolicy: Always
       volumes:
         - name: model-cache
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: dia-model-cache
