@@ -37,13 +37,13 @@ spec:
             - name: AUDIO_TTS_ENGINE
               value: "openai"
             - name: AUDIO_TTS_OPENAI_API_BASE_URL
-              value: "http://dia-service.dia.svc.cluster.local:8003/v1"
+              value: "http://speaches-service.speaches.svc.cluster.local:8000/v1"
             - name: AUDIO_TTS_OPENAI_API_KEY
               value: "not-needed"
             - name: AUDIO_STT_ENGINE
               value: "openai"
             - name: AUDIO_STT_OPENAI_API_BASE_URL
-              value: "http://whisper-service.whisper.svc.cluster.local:8000/v1"
+              value: "http://speaches-service.speaches.svc.cluster.local:8000/v1"
             - name: AUDIO_STT_OPENAI_API_KEY
               value: "not-needed"
           resources:
