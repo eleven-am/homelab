@@ -23,6 +23,7 @@ WORKDIR /app
 RUN pip3 install --no-cache-dir \
     torch \
     torchaudio \
+    torchcodec \
     --index-url https://download.pytorch.org/whl/cu128
 
 # Install other dependencies
