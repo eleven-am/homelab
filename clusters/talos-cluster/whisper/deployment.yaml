@@ -56,7 +56,7 @@ spec:
             failureThreshold: 3
           volumeMounts:
             - name: model-cache
-              mountPath: /root/.cache/huggingface
+              mountPath: /home/ubuntu/.cache/huggingface/hub
       restartPolicy: Always
       volumes:
         - name: model-cache
