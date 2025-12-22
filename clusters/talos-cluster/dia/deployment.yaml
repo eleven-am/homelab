@@ -18,6 +18,10 @@ spec:
         app: dia
     spec:
       runtimeClassName: nvidia
+      tolerations:
+        - key: node.kubernetes.io/disk-pressure
+          operator: Exists
+          effect: NoSchedule
       containers:
         - name: dia
           image: elevenam/dia-tts:cu128
