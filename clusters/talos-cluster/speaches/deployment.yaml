@@ -28,7 +28,7 @@ spec:
             - name: SPEACHES_STT_MODEL
               value: "Systran/faster-whisper-large-v3"
             - name: SPEACHES_TTS_MODEL
-              value: "hexgrad/Kokoro-82M"
+              value: "speaches-ai/Kokoro-82M-v1.0-ONNX"
             - name: SPEACHES_TTS_VOICE
               value: "af_bella"
           resources:
