@@ -1,0 +1,16 @@
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: whisper-api-key-auth
+  namespace: whisper
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: whisper-route
+  apiKeyAuth:
+    credentialsRef:
+      name: whisper-api-keys
+    extractFrom:
+      headers:
+        - Authorization
