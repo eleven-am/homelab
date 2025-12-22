@@ -31,6 +31,8 @@ spec:
               value: "cuda"
             - name: WHISPER__COMPUTE_TYPE
               value: "float16"
+            - name: HF_HUB_OFFLINE
+              value: "0"
           resources:
             requests:
               memory: "8Gi"
