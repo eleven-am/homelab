@@ -18,6 +18,13 @@ spec:
         app: speaches
     spec:
       runtimeClassName: nvidia
+      initContainers:
+        - name: fix-permissions
+          image: busybox
+          command: ["sh", "-c", "chown -R 1000:1000 /cache"]
+          volumeMounts:
+            - name: model-cache
+              mountPath: /cache
       containers:
         - name: speaches
           image: ghcr.io/speaches-ai/speaches:latest-cuda
