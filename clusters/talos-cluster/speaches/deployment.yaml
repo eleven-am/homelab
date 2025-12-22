@@ -37,7 +37,7 @@ spec:
             - name: SPEACHES_TTS_MODEL
               value: "speaches-ai/Kokoro-82M-v1.0-ONNX"
             - name: SPEACHES_TTS_VOICE
-              value: "af_bella"
+              value: "af_heart"
           resources:
             requests:
               memory: "8Gi"
