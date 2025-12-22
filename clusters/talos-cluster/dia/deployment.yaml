@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dia-deployment
+  labels:
+    app: dia
+  namespace: dia
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: dia
+  template:
+    metadata:
+      labels:
+        app: dia
+    spec:
+      runtimeClassName: nvidia
+      containers:
+        - name: dia
+          image: ghcr.io/devnen/dia-tts-server:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8003
+          env:
+            - name: HF_HUB_ENABLE_HF_TRANSFER
+              value: "1"
+          resources:
+            requests:
+              memory: "8Gi"
+              cpu: "2"
+              nvidia.com/gpu: "1"
+            limits:
+              memory: "12Gi"
+              cpu: "4"
+              nvidia.com/gpu: "1"
+          volumeMounts:
+            - name: model-cache
+              mountPath: /app/model_cache
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8003
+            initialDelaySeconds: 180
+            periodSeconds: 30
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8003
+            initialDelaySeconds: 120
+            periodSeconds: 10
+            failureThreshold: 3
+      restartPolicy: Always
+      volumes:
+        - name: model-cache
+          emptyDir: {}

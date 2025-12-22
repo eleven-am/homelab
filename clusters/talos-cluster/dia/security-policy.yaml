@@ -1,0 +1,18 @@
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: dia-api-key-auth
+  namespace: dia
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: dia-route
+  apiKeyAuth:
+    credentialRefs:
+      - group: ""
+        kind: Secret
+        name: dia-api-keys
+    extractFrom:
+      - headers:
+          - x-api-key
