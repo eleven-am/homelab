@@ -54,4 +54,11 @@ spec:
             initialDelaySeconds: 60
             periodSeconds: 10
             failureThreshold: 3
+          volumeMounts:
+            - name: model-cache
+              mountPath: /root/.cache/huggingface
       restartPolicy: Always
+      volumes:
+        - name: model-cache
+          persistentVolumeClaim:
+            claimName: whisper-model-cache
