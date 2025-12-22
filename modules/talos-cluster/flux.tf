@@ -26,6 +26,31 @@ resource "null_resource" "wait_for_cluster" {
   ]
 }
 
+resource "null_resource" "envoy_gateway" {
+  count = var.control_plane_count > 0 ? 1 : 0
+
+  provisioner "local-exec" {
+    command = <<-EOT
+      export KUBECONFIG="${var.output_directory}/kubeconfig"
+
+      echo "Installing Envoy Gateway..."
+      helm repo add envoy-gateway https://charts.gateway.envoyproxy.io || true
+      helm repo update
+      helm upgrade --install envoy-gateway envoy-gateway/gateway-helm \
+        --namespace envoy-gateway-system --create-namespace \
+        --version v1.6.1 \
+        --wait --timeout 5m
+
+      echo "Envoy Gateway installed successfully!"
+    EOT
+  }
+
+  depends_on = [
+    null_resource.wait_for_cluster,
+    local_file.kubeconfig,
+  ]
+}
+
 resource "null_resource" "sops_secret" {
   count = var.enable_flux && var.sops_age_key != "" && var.control_plane_count > 0 ? 1 : 0
 
@@ -74,6 +99,7 @@ resource "null_resource" "flux_bootstrap" {
 
   depends_on = [
     null_resource.sops_secret,
+    null_resource.envoy_gateway,
     local_file.kubeconfig,
   ]
 }
