@@ -58,4 +58,5 @@ spec:
       restartPolicy: Always
       volumes:
         - name: ollama-data
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: ollama-data
