@@ -3,3 +3,5 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - daemonset.yaml
+  - service.yaml
+  - httpRoute.yaml
