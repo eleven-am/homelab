@@ -14,6 +14,9 @@ spec:
         - path:
             type: PathPrefix
             value: /
+      timeouts:
+        request: "300s"
+        backendRequest: "300s"
       backendRefs:
         - name: speaches-service
           port: 8000
