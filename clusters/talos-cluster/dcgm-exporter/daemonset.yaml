@@ -14,15 +14,24 @@ spec:
       labels:
         app: dcgm-exporter
     spec:
+      runtimeClassName: nvidia
       containers:
         - name: dcgm-exporter
           image: nvcr.io/nvidia/k8s/dcgm-exporter:3.3.5-3.4.0-ubuntu22.04
           ports:
             - containerPort: 9400
               name: metrics
+          env:
+            - name: DCGM_EXPORTER_KUBERNETES
+              value: "true"
+            - name: NVIDIA_VISIBLE_DEVICES
+              value: "all"
           securityContext:
             runAsNonRoot: false
             runAsUser: 0
+            capabilities:
+              add:
+                - SYS_ADMIN
           volumeMounts:
             - name: pod-resources
               mountPath: /var/lib/kubelet/pod-resources
