@@ -17,7 +17,7 @@ spec:
       runtimeClassName: nvidia
       containers:
         - name: dcgm-exporter
-          image: nvcr.io/nvidia/k8s/dcgm-exporter:3.3.5-3.4.0-ubuntu22.04
+          image: nvcr.io/nvidia/k8s/dcgm-exporter:4.4.2-4.7.0-ubuntu22.04
           ports:
             - containerPort: 9400
               name: metrics
