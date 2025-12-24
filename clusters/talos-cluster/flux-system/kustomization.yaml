@@ -4,6 +4,17 @@ resources:
 - gotk-components.yaml
 - gotk-sync.yaml
 - sops-decrypt.yaml
+patches:
+  - patch: |
+      - op: add
+        path: /spec/decryption
+        value:
+          provider: sops
+          secretRef:
+            name: sops-age
+    target:
+      kind: Kustomization
+      name: flux-system
 # Gateway API v1.4.1 - Standard channel (GA/Beta)
 - https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/v1.4.1/config/crd/standard/gateway.networking.k8s.io_gatewayclasses.yaml
 - https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/v1.4.1/config/crd/standard/gateway.networking.k8s.io_gateways.yaml
