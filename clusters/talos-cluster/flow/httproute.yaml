@@ -5,8 +5,8 @@ metadata:
   namespace: flow
 spec:
   parentRefs:
-    - name: envoy-gateway
-      namespace: gateway
+    - name: cloudflare-gateway
+      namespace: cloudflare-gateway
   hostnames:
     - "flow.maix.ovh"
   rules:
