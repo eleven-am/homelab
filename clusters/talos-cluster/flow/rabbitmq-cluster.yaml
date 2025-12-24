@@ -1,0 +1,50 @@
+apiVersion: rabbitmq.com/v1beta1
+kind: RabbitmqCluster
+metadata:
+  name: flow-rabbitmq
+  namespace: flow
+spec:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 300m
+      memory: 512Mi
+  persistence:
+    storageClassName: "blizzard-storage"
+    storage: 1Gi
+  override:
+    statefulSet:
+      spec:
+        template:
+          spec:
+            securityContext:
+              fsGroup: 999
+              runAsUser: 999
+              runAsGroup: 999
+            initContainers:
+              - name: fix-nfs-permissions
+                image: busybox:1.35
+                command:
+                  - sh
+                  - -c
+                  - |
+                    echo "Fixing NFS permissions for RabbitMQ data directory..."
+                    mkdir -p /var/lib/rabbitmq/mnesia
+                    chown -R 999:999 /var/lib/rabbitmq
+                    chmod -R 755 /var/lib/rabbitmq
+                volumeMounts:
+                  - name: persistence
+                    mountPath: /var/lib/rabbitmq
+                securityContext:
+                  runAsUser: 0
+                  runAsGroup: 0
+            containers: []
+  rabbitmq:
+    additionalConfig: |
+      vm_memory_high_watermark.relative = 0.6
+      disk_free_limit.relative = 1.0
+      collect_statistics_interval = 10000
+      log.console.level = info

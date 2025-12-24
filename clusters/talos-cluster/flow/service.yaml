@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: flow-headless
+  namespace: flow
+spec:
+  clusterIP: None
+  selector:
+    app: flow
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+    - name: grpc
+      port: 9192
+      targetPort: 9192
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flow-service
+  namespace: flow
+spec:
+  selector:
+    app: flow
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
