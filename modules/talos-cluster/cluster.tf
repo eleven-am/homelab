@@ -16,6 +16,23 @@ data "helm_template" "cilium" {
     value = "true"
   }
 
+  # Enable VXLAN tunnel mode (required for multicast)
+  set {
+    name  = "routingMode"
+    value = "tunnel"
+  }
+
+  set {
+    name  = "tunnelProtocol"
+    value = "vxlan"
+  }
+
+  # Enable multicast for mDNS auto-discovery
+  set {
+    name  = "multicast.enabled"
+    value = "true"
+  }
+
   set {
     name  = "securityContext.capabilities.ciliumAgent"
     value = "{CHOWN,KILL,NET_ADMIN,NET_RAW,IPC_LOCK,SYS_ADMIN,SYS_RESOURCE,DAC_OVERRIDE,FOWNER,SETGID,SETUID}"
