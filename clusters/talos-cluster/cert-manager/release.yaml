@@ -18,8 +18,9 @@ spec:
   values:
     installCRDs: false
     replicaCount: 3
+    config:
+      enableGatewayAPI: true
     extraArgs:
-      - --feature-gates=ExperimentalGatewayAPISupport=true
       - --dns01-recursive-nameservers=1.1.1.1:53,9.9.9.9:53
       - --dns01-recursive-nameservers-only=true
     podDnsPolicy: None
