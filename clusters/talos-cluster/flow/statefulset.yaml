@@ -71,12 +71,12 @@ spec:
               USER_EXISTS=$(psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='$FLOW_DB_USER'")
               if [ "$USER_EXISTS" != "1" ]; then
                 echo "Creating user $FLOW_DB_USER..."
-                psql -c "CREATE USER $FLOW_DB_USER WITH PASSWORD '$FLOW_DB_PASSWORD';"
+                psql -c "CREATE USER $FLOW_DB_USER WITH PASSWORD '$FLOW_DB_PASSWORD' CREATEDB;"
               else
                 echo "User $FLOW_DB_USER already exists, updating password..."
-                psql -c "ALTER USER $FLOW_DB_USER WITH PASSWORD '$FLOW_DB_PASSWORD';"
+                psql -c "ALTER USER $FLOW_DB_USER WITH PASSWORD '$FLOW_DB_PASSWORD' CREATEDB;"
               fi
-
+              
               echo "Checking if database $FLOW_DB_NAME exists..."
               DB_EXISTS=$(psql -tAc "SELECT 1 FROM pg_database WHERE datname='$FLOW_DB_NAME'")
               if [ "$DB_EXISTS" != "1" ]; then
@@ -85,7 +85,7 @@ spec:
               else
                 echo "Database $FLOW_DB_NAME already exists"
               fi
-
+              
               echo "Granting privileges..."
               psql -c "GRANT ALL PRIVILEGES ON DATABASE $FLOW_DB_NAME TO $FLOW_DB_USER;"
               echo "Database initialization complete!"
