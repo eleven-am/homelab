@@ -120,9 +120,9 @@ spec:
               value: "info"
             - name: ALLOWED_ORIGINS
               value: "https://flow.maix.ovh"
-            # Database
+            # Database (direct connection, not via pgbouncer)
             - name: DB_HOST
-              value: "pgbouncer-service.postgres.svc.cluster.local"
+              value: "postgres-service.postgres.svc.cluster.local"
             - name: DB_PORT
               value: "5432"
             - name: DB_SSL_MODE
