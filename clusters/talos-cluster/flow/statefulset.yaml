@@ -163,7 +163,7 @@ spec:
                   name: flow-secret
                   key: SECRET_KEY
             # Cluster peers for Raft
-            - name: WORKFLOW_PEERS
+            - name: CLUSTER_PEERS
               value: "flow-0.flow-headless.flow.svc.cluster.local:9192,flow-1.flow-headless.flow.svc.cluster.local:9192,flow-2.flow-headless.flow.svc.cluster.local:9192"
           volumeMounts:
             - name: flow-data
