@@ -190,7 +190,7 @@ spec:
         name: flow-data
       spec:
         accessModes: ["ReadWriteOnce"]
-        storageClassName: blizzard-storage
+        storageClassName: app-storage
         resources:
           requests:
             storage: 2Gi
