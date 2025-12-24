@@ -216,7 +216,7 @@ variable "sops_age_key" {
 variable "cilium_version" {
   description = "Cilium Helm chart version"
   type        = string
-  default     = "1.16.5"
+  default     = "1.18.5"
 }
 
 variable "enable_hubble" {
