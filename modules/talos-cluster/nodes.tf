@@ -63,6 +63,8 @@ resource "proxmox_virtual_environment_vm" "control_plane" {
     interface = "ide2"
   }
 
+  boot_order = ["scsi0", "ide2"]
+
   disk {
     datastore_id = var.proxmox_storage
     interface    = "scsi0"
@@ -155,6 +157,8 @@ resource "proxmox_virtual_environment_vm" "worker" {
     file_id   = proxmox_virtual_environment_download_file.talos_image.id
     interface = "ide2"
   }
+
+  boot_order = ["scsi0", "ide2"]
 
   disk {
     datastore_id = var.proxmox_storage
