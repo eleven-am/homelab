@@ -91,7 +91,9 @@ resource "null_resource" "flux_bootstrap" {
         --branch=main \
         --path="clusters/${var.cluster_name}" \
         --personal \
-        --token-auth
+        --token-auth \
+        --decryption-provider=sops \
+        --decryption-secret=sops-age
 
       echo "FluxCD bootstrapped successfully!"
     EOT
