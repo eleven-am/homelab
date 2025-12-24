@@ -4,6 +4,7 @@ namespace: zot
 resources:
   - namespace.yaml
   - github-oauth-secret.yaml
+  - pull-secret.yaml
   - config-template.yaml
   - pvc.yaml
   - deployment.yaml
