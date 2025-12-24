@@ -29,13 +29,13 @@ variable "iso_storage" {
 variable "talos_version" {
   description = "The Talos Linux version to deploy"
   type        = string
-  default     = "v1.11.6"
+  default     = "v1.12.0"
 }
 
 variable "kubernetes_version" {
   description = "The Kubernetes version to deploy"
   type        = string
-  default     = "1.34.1"
+  default     = "1.35.0"
 }
 
 variable "cluster_name" {
