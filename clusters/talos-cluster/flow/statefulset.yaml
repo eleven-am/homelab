@@ -1,0 +1,198 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: flow
+  namespace: flow
+spec:
+  serviceName: flow-headless
+  replicas: 3
+  selector:
+    matchLabels:
+      app: flow
+  template:
+    metadata:
+      labels:
+        app: flow
+    spec:
+      imagePullSecrets:
+        - name: zot-pull-secret
+      initContainers:
+        - name: fix-permissions
+          image: busybox:1.35
+          command:
+            - sh
+            - -c
+            - |
+              mkdir -p /data
+              chown -R 1000:1000 /data
+              chmod -R 755 /data
+          volumeMounts:
+            - name: flow-data
+              mountPath: /data
+          securityContext:
+            runAsUser: 0
+        - name: init-db
+          image: postgres:15-alpine
+          env:
+            - name: PGHOST
+              value: "postgres-service.postgres.svc.cluster.local"
+            - name: PGPORT
+              value: "5432"
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_USER
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+            - name: FLOW_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: flow-secret
+                  key: DB_USER
+            - name: FLOW_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: flow-secret
+                  key: DB_PASSWORD
+            - name: FLOW_DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: flow-secret
+                  key: DB_NAME
+          command:
+            - sh
+            - -c
+            - |
+              echo "Checking if user $FLOW_DB_USER exists..."
+              USER_EXISTS=$(psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='$FLOW_DB_USER'")
+              if [ "$USER_EXISTS" != "1" ]; then
+                echo "Creating user $FLOW_DB_USER..."
+                psql -c "CREATE USER $FLOW_DB_USER WITH PASSWORD '$FLOW_DB_PASSWORD';"
+              else
+                echo "User $FLOW_DB_USER already exists, updating password..."
+                psql -c "ALTER USER $FLOW_DB_USER WITH PASSWORD '$FLOW_DB_PASSWORD';"
+              fi
+
+              echo "Checking if database $FLOW_DB_NAME exists..."
+              DB_EXISTS=$(psql -tAc "SELECT 1 FROM pg_database WHERE datname='$FLOW_DB_NAME'")
+              if [ "$DB_EXISTS" != "1" ]; then
+                echo "Creating database $FLOW_DB_NAME..."
+                psql -c "CREATE DATABASE $FLOW_DB_NAME OWNER $FLOW_DB_USER;"
+              else
+                echo "Database $FLOW_DB_NAME already exists"
+              fi
+
+              echo "Granting privileges..."
+              psql -c "GRANT ALL PRIVILEGES ON DATABASE $FLOW_DB_NAME TO $FLOW_DB_USER;"
+              echo "Database initialization complete!"
+      containers:
+        - name: flow
+          image: zot.maix.ovh/flow:v0.1.0
+          ports:
+            - name: http
+              containerPort: 8080
+            - name: grpc
+              containerPort: 9192
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: WORKFLOW_NODE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: WORKFLOW_CLUSTER_ID
+              value: "flow-cluster"
+            - name: WORKFLOW_DATA_DIR
+              value: "/data"
+            - name: WORKFLOW_GRPC_PORT
+              value: "9192"
+            - name: PORT
+              value: "8080"
+            - name: ENV
+              value: "production"
+            - name: LOG_LEVEL
+              value: "info"
+            - name: ALLOWED_ORIGINS
+              value: "https://flow.maix.ovh"
+            # Database
+            - name: DB_HOST
+              value: "pgbouncer-service.postgres.svc.cluster.local"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_SSL_MODE
+              value: "disable"
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: flow-secret
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: flow-secret
+                  key: DB_PASSWORD
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: flow-secret
+                  key: DB_NAME
+            # Redis
+            - name: REDIS_URL
+              value: "redis://redis-service.redis.svc.cluster.local:6379/1"
+            # RabbitMQ (credentials from operator-created secret)
+            - name: RABBITMQ_URL
+              valueFrom:
+                secretKeyRef:
+                  name: flow-rabbitmq-default-user
+                  key: connection_string
+            # Secrets
+            - name: ENCRYPTION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: flow-secret
+                  key: ENCRYPTION_KEY
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: flow-secret
+                  key: SECRET_KEY
+            # Cluster peers for Raft
+            - name: WORKFLOW_PEERS
+              value: "flow-0.flow-headless.flow.svc.cluster.local:9192,flow-1.flow-headless.flow.svc.cluster.local:9192,flow-2.flow-headless.flow.svc.cluster.local:9192"
+          volumeMounts:
+            - name: flow-data
+              mountPath: /data
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+  volumeClaimTemplates:
+    - metadata:
+        name: flow-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: blizzard-storage
+        resources:
+          requests:
+            storage: 2Gi
