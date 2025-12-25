@@ -166,7 +166,7 @@ spec:
                   key: SECRET_KEY
             # Cluster peers for Raft
             - name: CLUSTER_PEERS
-              value: "flow-0.flow-headless.flow.svc.cluster.local:9192,flow-1.flow-headless.flow.svc.cluster.local:9192,flow-2.flow-headless.flow.svc.cluster.local:9192"
+              value: "flow-0.flow-headless.flow.svc.cluster.local:9191,flow-1.flow-headless.flow.svc.cluster.local:9191,flow-2.flow-headless.flow.svc.cluster.local:9191"
           volumeMounts:
             - name: flow-data
               mountPath: /data
