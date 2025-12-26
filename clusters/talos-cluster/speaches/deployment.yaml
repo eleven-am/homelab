@@ -32,8 +32,6 @@ spec:
           ports:
             - containerPort: 8000
           env:
-            - name: UVICORN_HOST
-              value: "127.0.0.1"
             - name: LOOPBACK_HOST_URL
               value: "http://localhost:8000"
             - name: SPEACHES_STT_MODEL
