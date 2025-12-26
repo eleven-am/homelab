@@ -27,7 +27,7 @@ spec:
               mountPath: /cache
       containers:
         - name: speaches
-          image: docker.io/elevenam/speaches:20251226125947-cuda
+          image: docker.io/elevenam/speaches:20251226133714-cuda
           imagePullPolicy: Always
           ports:
             - containerPort: 8000
