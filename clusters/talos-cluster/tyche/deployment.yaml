@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: tyche
-          image: elevenam/tyche:20251219-161930
+          image: elevenam/tyche:20251226-212437
           resources:
             requests:
               memory: "512Mi"
