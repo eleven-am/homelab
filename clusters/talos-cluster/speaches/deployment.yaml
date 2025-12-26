@@ -32,8 +32,8 @@ spec:
           ports:
             - containerPort: 8000
           env:
-            - name: OPENAI_BASE_URL
-              value: "http://localhost:8000/v1"
+            - name: LOOPBACK_HOST_URL
+              value: "http://localhost:8000"
             - name: SPEACHES_STT_MODEL
               value: "Systran/faster-whisper-large-v3"
             - name: SPEACHES_TTS_MODEL
