@@ -27,7 +27,7 @@ spec:
               mountPath: /cache
       containers:
         - name: sidecar
-          image: docker.io/elevenam/sidecar:v0.1.5
+          image: docker.io/elevenam/sidecar:v0.1.6
           imagePullPolicy: Always
           ports:
             - containerPort: 50051
