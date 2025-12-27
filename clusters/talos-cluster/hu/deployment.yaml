@@ -26,6 +26,26 @@ spec:
             - name: model-cache
               mountPath: /cache
       containers:
+        - name: speaches
+          image: docker.io/elevenam/speaches:v0.8.3-fix4-cuda
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          env:
+            - name: SPEACHES_STT_MODEL
+              value: "Systran/faster-whisper-large-v3"
+          resources:
+            requests:
+              memory: "4Gi"
+              cpu: "1"
+              nvidia.com/gpu: "1"
+            limits:
+              memory: "8Gi"
+              cpu: "2"
+              nvidia.com/gpu: "1"
+          volumeMounts:
+            - name: model-cache
+              mountPath: /home/ubuntu/.cache/huggingface/hub
         - name: sidecar
           image: docker.io/elevenam/sidecar:test
           imagePullPolicy: Always
@@ -47,27 +67,13 @@ spec:
               value: "cuda"
           resources:
             requests:
+              memory: "4Gi"
+              cpu: "1"
+              nvidia.com/gpu: "1"
+            limits:
               memory: "8Gi"
               cpu: "2"
               nvidia.com/gpu: "1"
-            limits:
-              memory: "16Gi"
-              cpu: "4"
-              nvidia.com/gpu: "1"
-          livenessProbe:
-            grpc:
-              port: 50051
-            initialDelaySeconds: 120
-            periodSeconds: 30
-            timeoutSeconds: 10
-            failureThreshold: 5
-          readinessProbe:
-            grpc:
-              port: 50051
-            initialDelaySeconds: 60
-            periodSeconds: 10
-            timeoutSeconds: 10
-            failureThreshold: 5
           volumeMounts:
             - name: model-cache
               mountPath: /home/ubuntu/.cache/huggingface/hub
