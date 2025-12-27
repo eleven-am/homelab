@@ -36,7 +36,7 @@ spec:
             - name: GRPC_PORT
               value: "50051"
             - name: WHISPER_MODEL
-              value: "Systran/faster-whisper-large-v3-turbo"
+              value: "deepdml/faster-whisper-large-v3-turbo-ct2"
             - name: WHISPER_DEVICE
               value: "cuda"
             - name: WHISPER_COMPUTE_TYPE
