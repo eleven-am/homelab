@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: speaches-deployment
+  name: hu-sidecar
   labels:
-    app: speaches
-  namespace: speaches
+    app: hu-sidecar
+  namespace: hu
 spec:
   replicas: 1
   strategy:
     type: Recreate
   selector:
     matchLabels:
-      app: speaches
+      app: hu-sidecar
   template:
     metadata:
       labels:
-        app: speaches
+        app: hu-sidecar
     spec:
       runtimeClassName: nvidia
       initContainers:
@@ -26,20 +26,25 @@ spec:
             - name: model-cache
               mountPath: /cache
       containers:
-        - name: speaches
-          image: docker.io/elevenam/speaches:v0.8.3-fix4-cuda
+        - name: sidecar
+          image: docker.io/elevenam/sidecar:test
           imagePullPolicy: Always
           ports:
-            - containerPort: 8000
+            - containerPort: 50051
+              name: grpc
           env:
-            - name: LOOPBACK_HOST_URL
-              value: "http://localhost:8000"
-            - name: SPEACHES_STT_MODEL
+            - name: GRPC_PORT
+              value: "50051"
+            - name: WHISPER_MODEL
               value: "Systran/faster-whisper-large-v3"
-            - name: SPEACHES_TTS_MODEL
-              value: "speaches-ai/Kokoro-82M-v1.0-ONNX"
-            - name: SPEACHES_TTS_VOICE
-              value: "af_heart"
+            - name: WHISPER_DEVICE
+              value: "cuda"
+            - name: WHISPER_COMPUTE_TYPE
+              value: "float16"
+            - name: TTS_MODEL
+              value: "microsoft/VibeVoice-Realtime-0.5B"
+            - name: TTS_DEVICE
+              value: "cuda"
           resources:
             requests:
               memory: "8Gi"
@@ -50,17 +55,15 @@ spec:
               cpu: "4"
               nvidia.com/gpu: "1"
           livenessProbe:
-            httpGet:
-              path: /health
-              port: 8000
+            grpc:
+              port: 50051
             initialDelaySeconds: 120
             periodSeconds: 30
             timeoutSeconds: 10
             failureThreshold: 5
           readinessProbe:
-            httpGet:
-              path: /health
-              port: 8000
+            grpc:
+              port: 50051
             initialDelaySeconds: 60
             periodSeconds: 10
             timeoutSeconds: 10
@@ -72,4 +75,4 @@ spec:
       volumes:
         - name: model-cache
           persistentVolumeClaim:
-            claimName: speaches-model-cache
+            claimName: hu-model-cache
