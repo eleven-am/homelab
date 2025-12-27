@@ -27,7 +27,7 @@ spec:
               mountPath: /cache
       containers:
         - name: sidecar
-          image: docker.io/elevenam/sidecar:v0.1.7
+          image: docker.io/elevenam/sidecar:v0.1.4
           imagePullPolicy: Always
           ports:
             - containerPort: 50051
@@ -41,8 +41,10 @@ spec:
               value: "cuda"
             - name: WHISPER_COMPUTE_TYPE
               value: "float16"
-            - name: TTS_MODEL_ID
-              value: "speaches-ai/Kokoro-82M-v1.0-ONNX"
+            - name: TTS_MODEL
+              value: "microsoft/VibeVoice-Realtime-0.5B"
+            - name: TTS_DEVICE
+              value: "cuda"
           resources:
             requests:
               memory: "4Gi"
