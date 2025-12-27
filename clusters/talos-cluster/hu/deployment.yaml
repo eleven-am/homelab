@@ -27,7 +27,7 @@ spec:
               mountPath: /cache
       containers:
         - name: sidecar
-          image: docker.io/elevenam/sidecar:v0.1.11
+          image: docker.io/elevenam/sidecar:v0.1.12
           imagePullPolicy: Always
           ports:
             - containerPort: 50051
@@ -43,6 +43,8 @@ spec:
               value: "float16"
             - name: TTS_MODEL_ID
               value: "speaches-ai/Kokoro-82M-v1.0-ONNX"
+            - name: TTS_DEVICE
+              value: "cuda"
           resources:
             requests:
               memory: "4Gi"
