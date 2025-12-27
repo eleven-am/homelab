@@ -41,10 +41,8 @@ spec:
               value: "cuda"
             - name: WHISPER_COMPUTE_TYPE
               value: "float16"
-            - name: TTS_MODEL
-              value: "microsoft/VibeVoice-Realtime-0.5B"
-            - name: TTS_DEVICE
-              value: "cuda"
+            - name: TTS_MODEL_ID
+              value: "speaches-ai/Kokoro-82M-v1.0-ONNX"
           resources:
             requests:
               memory: "4Gi"
