@@ -27,10 +27,12 @@ spec:
           env:
             - name: OLLAMA_HOST
               value: "0.0.0.0"
-            - name: OLLAMA_GPU_MEMORY_FRACTION
-              value: "0.5"
+            - name: OLLAMA_MAX_VRAM
+              value: "8589934592"
             - name: OLLAMA_KEEP_ALIVE
               value: "5m"
+            - name: OLLAMA_MAX_LOADED_MODELS
+              value: "1"
           resources:
             requests:
               memory: "32Gi"
