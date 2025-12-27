@@ -47,7 +47,7 @@ spec:
             - name: model-cache
               mountPath: /home/ubuntu/.cache/huggingface/hub
         - name: sidecar
-          image: docker.io/elevenam/sidecar:v0.1.1
+          image: docker.io/elevenam/sidecar:v0.1.2
           imagePullPolicy: Always
           ports:
             - containerPort: 50051
