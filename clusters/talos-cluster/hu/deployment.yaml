@@ -44,7 +44,7 @@ spec:
             - name: TTS_MODEL
               value: "microsoft/VibeVoice-Realtime-0.5B"
             - name: TTS_DEVICE
-              value: "cpu"
+              value: "cuda"
           resources:
             requests:
               memory: "4Gi"
