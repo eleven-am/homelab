@@ -7,6 +7,8 @@ data:
   turnserver.conf: |
     listening-port=3478
     tls-listening-port=5349
+    listening-ip=0.0.0.0
+    relay-ip=0.0.0.0
     min-port=49152
     max-port=49252
     fingerprint
@@ -15,5 +17,3 @@ data:
     log-file=stdout
     simple-log
     no-cli
-    no-tlsv1
-    no-tlsv1_1
