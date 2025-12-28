@@ -46,8 +46,8 @@ spec:
       restartPolicy: Always
       volumes:
         - name: config
-          configMap:
-            name: hu-gateway-config
+          secret:
+            secretName: hu-gateway-config
         - name: data
           persistentVolumeClaim:
             claimName: hu-gateway-data
