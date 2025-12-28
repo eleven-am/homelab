@@ -26,3 +26,407 @@ spec:
       port: 5349
       targetPort: 5349
       protocol: TCP
+    - name: relay-udp-49152
+      port: 49152
+      targetPort: 49152
+      protocol: UDP
+    - name: relay-udp-49153
+      port: 49153
+      targetPort: 49153
+      protocol: UDP
+    - name: relay-udp-49154
+      port: 49154
+      targetPort: 49154
+      protocol: UDP
+    - name: relay-udp-49155
+      port: 49155
+      targetPort: 49155
+      protocol: UDP
+    - name: relay-udp-49156
+      port: 49156
+      targetPort: 49156
+      protocol: UDP
+    - name: relay-udp-49157
+      port: 49157
+      targetPort: 49157
+      protocol: UDP
+    - name: relay-udp-49158
+      port: 49158
+      targetPort: 49158
+      protocol: UDP
+    - name: relay-udp-49159
+      port: 49159
+      targetPort: 49159
+      protocol: UDP
+    - name: relay-udp-49160
+      port: 49160
+      targetPort: 49160
+      protocol: UDP
+    - name: relay-udp-49161
+      port: 49161
+      targetPort: 49161
+      protocol: UDP
+    - name: relay-udp-49162
+      port: 49162
+      targetPort: 49162
+      protocol: UDP
+    - name: relay-udp-49163
+      port: 49163
+      targetPort: 49163
+      protocol: UDP
+    - name: relay-udp-49164
+      port: 49164
+      targetPort: 49164
+      protocol: UDP
+    - name: relay-udp-49165
+      port: 49165
+      targetPort: 49165
+      protocol: UDP
+    - name: relay-udp-49166
+      port: 49166
+      targetPort: 49166
+      protocol: UDP
+    - name: relay-udp-49167
+      port: 49167
+      targetPort: 49167
+      protocol: UDP
+    - name: relay-udp-49168
+      port: 49168
+      targetPort: 49168
+      protocol: UDP
+    - name: relay-udp-49169
+      port: 49169
+      targetPort: 49169
+      protocol: UDP
+    - name: relay-udp-49170
+      port: 49170
+      targetPort: 49170
+      protocol: UDP
+    - name: relay-udp-49171
+      port: 49171
+      targetPort: 49171
+      protocol: UDP
+    - name: relay-udp-49172
+      port: 49172
+      targetPort: 49172
+      protocol: UDP
+    - name: relay-udp-49173
+      port: 49173
+      targetPort: 49173
+      protocol: UDP
+    - name: relay-udp-49174
+      port: 49174
+      targetPort: 49174
+      protocol: UDP
+    - name: relay-udp-49175
+      port: 49175
+      targetPort: 49175
+      protocol: UDP
+    - name: relay-udp-49176
+      port: 49176
+      targetPort: 49176
+      protocol: UDP
+    - name: relay-udp-49177
+      port: 49177
+      targetPort: 49177
+      protocol: UDP
+    - name: relay-udp-49178
+      port: 49178
+      targetPort: 49178
+      protocol: UDP
+    - name: relay-udp-49179
+      port: 49179
+      targetPort: 49179
+      protocol: UDP
+    - name: relay-udp-49180
+      port: 49180
+      targetPort: 49180
+      protocol: UDP
+    - name: relay-udp-49181
+      port: 49181
+      targetPort: 49181
+      protocol: UDP
+    - name: relay-udp-49182
+      port: 49182
+      targetPort: 49182
+      protocol: UDP
+    - name: relay-udp-49183
+      port: 49183
+      targetPort: 49183
+      protocol: UDP
+    - name: relay-udp-49184
+      port: 49184
+      targetPort: 49184
+      protocol: UDP
+    - name: relay-udp-49185
+      port: 49185
+      targetPort: 49185
+      protocol: UDP
+    - name: relay-udp-49186
+      port: 49186
+      targetPort: 49186
+      protocol: UDP
+    - name: relay-udp-49187
+      port: 49187
+      targetPort: 49187
+      protocol: UDP
+    - name: relay-udp-49188
+      port: 49188
+      targetPort: 49188
+      protocol: UDP
+    - name: relay-udp-49189
+      port: 49189
+      targetPort: 49189
+      protocol: UDP
+    - name: relay-udp-49190
+      port: 49190
+      targetPort: 49190
+      protocol: UDP
+    - name: relay-udp-49191
+      port: 49191
+      targetPort: 49191
+      protocol: UDP
+    - name: relay-udp-49192
+      port: 49192
+      targetPort: 49192
+      protocol: UDP
+    - name: relay-udp-49193
+      port: 49193
+      targetPort: 49193
+      protocol: UDP
+    - name: relay-udp-49194
+      port: 49194
+      targetPort: 49194
+      protocol: UDP
+    - name: relay-udp-49195
+      port: 49195
+      targetPort: 49195
+      protocol: UDP
+    - name: relay-udp-49196
+      port: 49196
+      targetPort: 49196
+      protocol: UDP
+    - name: relay-udp-49197
+      port: 49197
+      targetPort: 49197
+      protocol: UDP
+    - name: relay-udp-49198
+      port: 49198
+      targetPort: 49198
+      protocol: UDP
+    - name: relay-udp-49199
+      port: 49199
+      targetPort: 49199
+      protocol: UDP
+    - name: relay-udp-49200
+      port: 49200
+      targetPort: 49200
+      protocol: UDP
+    - name: relay-udp-49201
+      port: 49201
+      targetPort: 49201
+      protocol: UDP
+    - name: relay-udp-49202
+      port: 49202
+      targetPort: 49202
+      protocol: UDP
+    - name: relay-udp-49203
+      port: 49203
+      targetPort: 49203
+      protocol: UDP
+    - name: relay-udp-49204
+      port: 49204
+      targetPort: 49204
+      protocol: UDP
+    - name: relay-udp-49205
+      port: 49205
+      targetPort: 49205
+      protocol: UDP
+    - name: relay-udp-49206
+      port: 49206
+      targetPort: 49206
+      protocol: UDP
+    - name: relay-udp-49207
+      port: 49207
+      targetPort: 49207
+      protocol: UDP
+    - name: relay-udp-49208
+      port: 49208
+      targetPort: 49208
+      protocol: UDP
+    - name: relay-udp-49209
+      port: 49209
+      targetPort: 49209
+      protocol: UDP
+    - name: relay-udp-49210
+      port: 49210
+      targetPort: 49210
+      protocol: UDP
+    - name: relay-udp-49211
+      port: 49211
+      targetPort: 49211
+      protocol: UDP
+    - name: relay-udp-49212
+      port: 49212
+      targetPort: 49212
+      protocol: UDP
+    - name: relay-udp-49213
+      port: 49213
+      targetPort: 49213
+      protocol: UDP
+    - name: relay-udp-49214
+      port: 49214
+      targetPort: 49214
+      protocol: UDP
+    - name: relay-udp-49215
+      port: 49215
+      targetPort: 49215
+      protocol: UDP
+    - name: relay-udp-49216
+      port: 49216
+      targetPort: 49216
+      protocol: UDP
+    - name: relay-udp-49217
+      port: 49217
+      targetPort: 49217
+      protocol: UDP
+    - name: relay-udp-49218
+      port: 49218
+      targetPort: 49218
+      protocol: UDP
+    - name: relay-udp-49219
+      port: 49219
+      targetPort: 49219
+      protocol: UDP
+    - name: relay-udp-49220
+      port: 49220
+      targetPort: 49220
+      protocol: UDP
+    - name: relay-udp-49221
+      port: 49221
+      targetPort: 49221
+      protocol: UDP
+    - name: relay-udp-49222
+      port: 49222
+      targetPort: 49222
+      protocol: UDP
+    - name: relay-udp-49223
+      port: 49223
+      targetPort: 49223
+      protocol: UDP
+    - name: relay-udp-49224
+      port: 49224
+      targetPort: 49224
+      protocol: UDP
+    - name: relay-udp-49225
+      port: 49225
+      targetPort: 49225
+      protocol: UDP
+    - name: relay-udp-49226
+      port: 49226
+      targetPort: 49226
+      protocol: UDP
+    - name: relay-udp-49227
+      port: 49227
+      targetPort: 49227
+      protocol: UDP
+    - name: relay-udp-49228
+      port: 49228
+      targetPort: 49228
+      protocol: UDP
+    - name: relay-udp-49229
+      port: 49229
+      targetPort: 49229
+      protocol: UDP
+    - name: relay-udp-49230
+      port: 49230
+      targetPort: 49230
+      protocol: UDP
+    - name: relay-udp-49231
+      port: 49231
+      targetPort: 49231
+      protocol: UDP
+    - name: relay-udp-49232
+      port: 49232
+      targetPort: 49232
+      protocol: UDP
+    - name: relay-udp-49233
+      port: 49233
+      targetPort: 49233
+      protocol: UDP
+    - name: relay-udp-49234
+      port: 49234
+      targetPort: 49234
+      protocol: UDP
+    - name: relay-udp-49235
+      port: 49235
+      targetPort: 49235
+      protocol: UDP
+    - name: relay-udp-49236
+      port: 49236
+      targetPort: 49236
+      protocol: UDP
+    - name: relay-udp-49237
+      port: 49237
+      targetPort: 49237
+      protocol: UDP
+    - name: relay-udp-49238
+      port: 49238
+      targetPort: 49238
+      protocol: UDP
+    - name: relay-udp-49239
+      port: 49239
+      targetPort: 49239
+      protocol: UDP
+    - name: relay-udp-49240
+      port: 49240
+      targetPort: 49240
+      protocol: UDP
+    - name: relay-udp-49241
+      port: 49241
+      targetPort: 49241
+      protocol: UDP
+    - name: relay-udp-49242
+      port: 49242
+      targetPort: 49242
+      protocol: UDP
+    - name: relay-udp-49243
+      port: 49243
+      targetPort: 49243
+      protocol: UDP
+    - name: relay-udp-49244
+      port: 49244
+      targetPort: 49244
+      protocol: UDP
+    - name: relay-udp-49245
+      port: 49245
+      targetPort: 49245
+      protocol: UDP
+    - name: relay-udp-49246
+      port: 49246
+      targetPort: 49246
+      protocol: UDP
+    - name: relay-udp-49247
+      port: 49247
+      targetPort: 49247
+      protocol: UDP
+    - name: relay-udp-49248
+      port: 49248
+      targetPort: 49248
+      protocol: UDP
+    - name: relay-udp-49249
+      port: 49249
+      targetPort: 49249
+      protocol: UDP
+    - name: relay-udp-49250
+      port: 49250
+      targetPort: 49250
+      protocol: UDP
+    - name: relay-udp-49251
+      port: 49251
+      targetPort: 49251
+      protocol: UDP
+    - name: relay-udp-49252
+      port: 49252
+      targetPort: 49252
+      protocol: UDP
