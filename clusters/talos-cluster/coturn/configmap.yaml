@@ -15,5 +15,5 @@ data:
     lt-cred-mech
     realm=turn.horus
     log-file=stdout
-    simple-log
+    verbose
     no-cli
