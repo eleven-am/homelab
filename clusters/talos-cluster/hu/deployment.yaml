@@ -99,6 +99,16 @@ spec:
               value: "speaches-ai/Kokoro-82M-v1.0-ONNX"
             - name: TTS_DEVICE
               value: "cuda"
+            - name: VAD_THRESHOLD
+              value: "0.7"
+            - name: VAD_MIN_SPEECH_MS
+              value: "400"
+            - name: VAD_MIN_AUDIO_MS
+              value: "700"
+            - name: VAD_SILENCE_MS
+              value: "800"
+            - name: VAD_PAD_MS
+              value: "50"
           resources:
             requests:
               memory: "4Gi"
