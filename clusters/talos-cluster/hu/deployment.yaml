@@ -24,7 +24,7 @@ spec:
               mountPath: /data
       containers:
         - name: gateway
-          image: docker.io/elevenam/hu-gateway:v0.2.4
+          image: docker.io/elevenam/hu-gateway:v0.2.5
           imagePullPolicy: Always
           args: ["serve", "--config", "/config/hu.yaml"]
           ports:
@@ -81,7 +81,7 @@ spec:
               mountPath: /cache
       containers:
         - name: sidecar
-          image: docker.io/elevenam/hu-sidecar:v0.2.4
+          image: docker.io/elevenam/hu-sidecar:v0.2.5
           imagePullPolicy: Always
           ports:
             - containerPort: 50051
