@@ -1,10 +1,64 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: hu-gateway
+  namespace: hu
+  labels:
+    app: hu-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hu-gateway
+  template:
+    metadata:
+      labels:
+        app: hu-gateway
+    spec:
+      initContainers:
+        - name: fix-permissions
+          image: busybox
+          command: ["sh", "-c", "chown -R 1000:1000 /data"]
+          volumeMounts:
+            - name: data
+              mountPath: /data
+      containers:
+        - name: gateway
+          image: docker.io/elevenam/hu-gateway:v0.1.0
+          imagePullPolicy: Always
+          args: ["serve", "-c", "/config/hu.yaml"]
+          ports:
+            - containerPort: 8080
+              name: http
+          volumeMounts:
+            - name: config
+              mountPath: /config
+              readOnly: true
+            - name: data
+              mountPath: /data
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+      restartPolicy: Always
+      volumes:
+        - name: config
+          configMap:
+            name: hu-gateway-config
+        - name: data
+          persistentVolumeClaim:
+            claimName: hu-gateway-data
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
   name: hu-sidecar
+  namespace: hu
   labels:
     app: hu-sidecar
-  namespace: hu
 spec:
   replicas: 1
   strategy:
@@ -27,7 +81,7 @@ spec:
               mountPath: /cache
       containers:
         - name: sidecar
-          image: docker.io/elevenam/sidecar:v0.1.12
+          image: docker.io/elevenam/hu-sidecar:v0.1.0
           imagePullPolicy: Always
           ports:
             - containerPort: 50051
