@@ -40,9 +40,10 @@ spec:
                 echo "ERROR: Failed to get LB IP after 60s"
                 exit 1
               fi
+              POD_IP=$(hostname -i)
               cp /config-template/turnserver.conf /config/turnserver.conf
-              echo "relay-ip=$LB_IP" >> /config/turnserver.conf
-              echo "Configured relay-ip=$LB_IP"
+              echo "external-ip=$LB_IP/$POD_IP" >> /config/turnserver.conf
+              echo "Configured external-ip=$LB_IP/$POD_IP"
           volumeMounts:
             - name: config-template
               mountPath: /config-template
