@@ -41,8 +41,8 @@ spec:
                 exit 1
               fi
               cp /config-template/turnserver.conf /config/turnserver.conf
-              echo "external-ip=$LB_IP" >> /config/turnserver.conf
-              echo "Configured external-ip=$LB_IP"
+              echo "relay-ip=$LB_IP" >> /config/turnserver.conf
+              echo "Configured relay-ip=$LB_IP"
           volumeMounts:
             - name: config-template
               mountPath: /config-template
