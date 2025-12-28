@@ -17,3 +17,4 @@ data:
     no-cli
     no-tlsv1
     no-tlsv1_1
+    external-ip=176.149.222.82/172.198.1.11
