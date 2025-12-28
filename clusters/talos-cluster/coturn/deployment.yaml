@@ -15,12 +15,33 @@ spec:
       labels:
         app: coturn
     spec:
+      serviceAccountName: coturn
+      initContainers:
+        - name: discover-ip
+          image: curlimages/curl:latest
+          command:
+            - sh
+            - -c
+            - |
+              PUBLIC_IP=$(curl -s https://api.ipify.org)
+              LB_IP=$(curl -s -k https://kubernetes.default.svc/api/v1/namespaces/coturn/services/coturn \
+                -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" \
+                | grep -o '"loadBalancer":{"ingress":\[{"ip":"[^"]*"' \
+                | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+')
+              cp /config-template/turnserver.conf /config/turnserver.conf
+              echo "external-ip=$PUBLIC_IP/$LB_IP" >> /config/turnserver.conf
+              echo "Configured external-ip=$PUBLIC_IP/$LB_IP"
+          volumeMounts:
+            - name: config-template
+              mountPath: /config-template
+            - name: config
+              mountPath: /config
       containers:
         - name: coturn
           image: coturn/coturn:latest
           args:
             - -c
-            - /etc/coturn/turnserver.conf
+            - /config/turnserver.conf
             - --user=$(TURN_USER):$(TURN_PASSWORD)
           env:
             - name: TURN_USER
@@ -51,8 +72,7 @@ spec:
               memory: 256Mi
           volumeMounts:
             - name: config
-              mountPath: /etc/coturn/turnserver.conf
-              subPath: turnserver.conf
+              mountPath: /config
           livenessProbe:
             tcpSocket:
               port: 3478
@@ -64,6 +84,8 @@ spec:
             initialDelaySeconds: 5
             periodSeconds: 10
       volumes:
-        - name: config
+        - name: config-template
           configMap:
             name: coturn-config
+        - name: config
+          emptyDir: {}
