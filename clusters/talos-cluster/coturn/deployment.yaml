@@ -59,17 +59,13 @@ spec:
               mountPath: /etc/coturn/turnserver.conf
               subPath: turnserver.conf
           livenessProbe:
-            exec:
-              command:
-                - turnadmin
-                - -p
+            tcpSocket:
+              port: 3478
             initialDelaySeconds: 10
             periodSeconds: 30
           readinessProbe:
-            exec:
-              command:
-                - turnadmin
-                - -p
+            tcpSocket:
+              port: 3478
             initialDelaySeconds: 5
             periodSeconds: 10
       volumes:
