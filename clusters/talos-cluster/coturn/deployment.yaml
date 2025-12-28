@@ -26,13 +26,20 @@ spec:
               apk add --no-cache curl jq >/dev/null 2>&1
               PUBLIC_IP=$(curl -s https://api.ipify.org)
               TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
-              LB_IP=$(curl -s -k \
-                -H "Authorization: Bearer $TOKEN" \
-                https://kubernetes.default.svc/api/v1/namespaces/coturn/services/coturn \
-                | jq -r '.status.loadBalancer.ingress[0].ip // empty')
+              for i in $(seq 1 30); do
+                LB_IP=$(curl -s -k \
+                  -H "Authorization: Bearer $TOKEN" \
+                  https://kubernetes.default.svc/api/v1/namespaces/coturn/services/coturn \
+                  | jq -r '.status.loadBalancer.ingress[0].ip // empty')
+                if [ -n "$LB_IP" ]; then
+                  break
+                fi
+                echo "Waiting for LoadBalancer IP... ($i/30)"
+                sleep 2
+              done
               if [ -z "$LB_IP" ]; then
-                echo "Failed to get LB IP, using fallback"
-                LB_IP="172.198.1.11"
+                echo "ERROR: Failed to get LB IP after 60s"
+                exit 1
               fi
               cp /config-template/turnserver.conf /config/turnserver.conf
               echo "external-ip=$PUBLIC_IP/$LB_IP" >> /config/turnserver.conf
