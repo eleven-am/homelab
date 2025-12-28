@@ -26,7 +26,7 @@ spec:
         - name: gateway
           image: docker.io/elevenam/hu-gateway:v0.2.0
           imagePullPolicy: Always
-          args: ["serve", "-c", "/config/hu.yaml"]
+          args: ["serve", "--config", "/config/hu.yaml"]
           ports:
             - containerPort: 8080
               name: http
