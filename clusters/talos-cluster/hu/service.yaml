@@ -3,8 +3,6 @@ kind: Service
 metadata:
   name: hu-gateway
   namespace: hu
-  annotations:
-    external-dns.alpha.kubernetes.io/hostname: hu.horus
 spec:
   selector:
     app: hu-gateway
@@ -13,7 +11,7 @@ spec:
       targetPort: 8080
       name: http
       protocol: TCP
-  type: LoadBalancer
+  type: ClusterIP
 ---
 apiVersion: v1
 kind: Service
