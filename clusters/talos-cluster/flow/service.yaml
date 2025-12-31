@@ -11,6 +11,9 @@ spec:
     - name: http
       port: 8080
       targetPort: 8080
+    - name: raft
+      port: 9191
+      targetPort: 9191
     - name: grpc
       port: 9192
       targetPort: 9192
