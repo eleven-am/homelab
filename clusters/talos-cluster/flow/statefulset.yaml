@@ -91,7 +91,7 @@ spec:
               echo "Database initialization complete!"
       containers:
         - name: flow
-          image: zot.maix.ovh/flow:v0.1.25
+          image: zot.maix.ovh/flow:v0.1.26
           ports:
             - name: http
               containerPort: 8080
