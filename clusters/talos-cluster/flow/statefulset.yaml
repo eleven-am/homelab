@@ -91,7 +91,7 @@ spec:
               echo "Database initialization complete!"
       containers:
         - name: flow
-          image: zot.maix.ovh/flow:v0.1.27
+          image: zot.maix.ovh/flow:v0.1.28
           ports:
             - name: http
               containerPort: 8080
@@ -167,6 +167,8 @@ spec:
             # K8s bootstrap (graft auto-detects service name and ordinal from hostname)
             - name: K8S_REPLICAS
               value: "3"
+            - name: K8S_HEADLESS_SERVICE
+              value: "flow-headless"
           volumeMounts:
             - name: flow-data
               mountPath: /data
