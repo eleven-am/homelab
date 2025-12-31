@@ -91,7 +91,7 @@ spec:
               echo "Database initialization complete!"
       containers:
         - name: flow
-          image: zot.maix.ovh/flow:v0.1.26
+          image: zot.maix.ovh/flow:v0.1.27
           ports:
             - name: http
               containerPort: 8080
@@ -164,9 +164,9 @@ spec:
                 secretKeyRef:
                   name: flow-secret
                   key: SECRET_KEY
-            # Cluster peers for Raft
-            - name: CLUSTER_PEERS
-              value: "flow-0.flow-headless.flow.svc.cluster.local:9192,flow-1.flow-headless.flow.svc.cluster.local:9192,flow-2.flow-headless.flow.svc.cluster.local:9192"
+            # K8s bootstrap (graft auto-detects service name and ordinal from hostname)
+            - name: K8S_REPLICAS
+              value: "3"
           volumeMounts:
             - name: flow-data
               mountPath: /data
