@@ -168,7 +168,7 @@ spec:
             - name: K8S_REPLICAS
               value: "3"
             - name: K8S_HEADLESS_SERVICE
-              value: "flow-headless"
+              value: "flow-headless.flow.svc.cluster.local"
           volumeMounts:
             - name: flow-data
               mountPath: /data
