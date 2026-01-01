@@ -4,6 +4,7 @@ metadata:
   name: flow-headless
   namespace: flow
 spec:
+  publishNotReadyAddresses: true
   clusterIP: None
   selector:
     app: flow
