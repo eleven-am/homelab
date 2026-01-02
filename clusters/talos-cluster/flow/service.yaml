@@ -12,6 +12,9 @@ spec:
     - name: http
       port: 8080
       targetPort: 8080
+    - name: gossip
+      port: 7946
+      targetPort: 7946
     - name: raft
       port: 9191
       targetPort: 9191

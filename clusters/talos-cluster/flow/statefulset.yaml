@@ -91,10 +91,12 @@ spec:
               echo "Database initialization complete!"
       containers:
         - name: flow
-          image: zot.maix.ovh/flow:v0.1.55
+          image: zot.maix.ovh/flow:v0.1.56
           ports:
             - name: http
               containerPort: 8080
+            - name: gossip
+              containerPort: 7946
             - name: raft
               containerPort: 9191
             - name: grpc
