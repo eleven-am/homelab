@@ -15,12 +15,6 @@ spec:
     - name: gossip
       port: 7946
       targetPort: 7946
-    - name: raft
-      port: 9191
-      targetPort: 9191
-    - name: grpc
-      port: 9192
-      targetPort: 9192
 ---
 apiVersion: v1
 kind: Service

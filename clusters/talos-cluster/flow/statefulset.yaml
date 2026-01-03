@@ -91,16 +91,12 @@ spec:
               echo "Database initialization complete!"
       containers:
         - name: flow
-          image: zot.maix.ovh/flow:v0.1.60
+          image: zot.maix.ovh/flow:v0.1.61
           ports:
             - name: http
               containerPort: 8080
             - name: gossip
               containerPort: 7946
-            - name: raft
-              containerPort: 9191
-            - name: grpc
-              containerPort: 9192
           env:
             - name: POD_NAME
               valueFrom:
@@ -114,8 +110,6 @@ spec:
               value: "flow-cluster"
             - name: WORKFLOW_DATA_DIR
               value: "/data"
-            - name: WORKFLOW_GRPC_PORT
-              value: "9192"
             - name: PORT
               value: "8080"
             - name: ENV
