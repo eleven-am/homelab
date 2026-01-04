@@ -1,0 +1,198 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ada
+  namespace: ada
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ada
+  template:
+    metadata:
+      labels:
+        app: ada
+    spec:
+      imagePullSecrets:
+        - name: zot-pull-secret
+      initContainers:
+        - name: init-db
+          image: postgres:16-alpine
+          env:
+            - name: PGHOST
+              value: "postgres-service.postgres.svc.cluster.local"
+            - name: PGPORT
+              value: "5432"
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_USER
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+            - name: ADA_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: ada-secret
+                  key: DB_USER
+            - name: ADA_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ada-secret
+                  key: DB_PASSWORD
+            - name: ADA_DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: ada-secret
+                  key: DB_NAME
+          command:
+            - sh
+            - -c
+            - |
+              echo "Checking if user $ADA_DB_USER exists..."
+              USER_EXISTS=$(psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='$ADA_DB_USER'")
+              if [ "$USER_EXISTS" != "1" ]; then
+                echo "Creating user $ADA_DB_USER..."
+                psql -c "CREATE USER $ADA_DB_USER WITH PASSWORD '$ADA_DB_PASSWORD' CREATEDB;"
+              else
+                echo "User $ADA_DB_USER already exists, updating password..."
+                psql -c "ALTER USER $ADA_DB_USER WITH PASSWORD '$ADA_DB_PASSWORD' CREATEDB;"
+              fi
+
+              echo "Checking if database $ADA_DB_NAME exists..."
+              DB_EXISTS=$(psql -tAc "SELECT 1 FROM pg_database WHERE datname='$ADA_DB_NAME'")
+              if [ "$DB_EXISTS" != "1" ]; then
+                echo "Creating database $ADA_DB_NAME..."
+                psql -c "CREATE DATABASE $ADA_DB_NAME OWNER $ADA_DB_USER;"
+              else
+                echo "Database $ADA_DB_NAME already exists"
+              fi
+
+              echo "Granting privileges..."
+              psql -c "GRANT ALL PRIVILEGES ON DATABASE $ADA_DB_NAME TO $ADA_DB_USER;"
+              echo "Database initialization complete!"
+      containers:
+        - name: ada
+          image: zot.maix.ovh/ada:v0.0.1
+          args: ["server"]
+          ports:
+            - name: http
+              containerPort: 8080
+            - name: grpc
+              containerPort: 9090
+          env:
+            # Server
+            - name: REST_ADDR
+              value: ":8080"
+            - name: GRPC_ADDR
+              value: ":9090"
+            # Postgres
+            - name: POSTGRES_HOST
+              value: "postgres-service.postgres.svc.cluster.local"
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: POSTGRES_SSLMODE
+              value: "disable"
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: ada-secret
+                  key: DB_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ada-secret
+                  key: DB_PASSWORD
+            - name: POSTGRES_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: ada-secret
+                  key: DB_NAME
+            # Redis
+            - name: REDIS_ADDR
+              value: "redis-service.redis.svc.cluster.local:6379"
+            # Neo4j
+            - name: NEO4J_URI
+              value: "bolt://neo4j.neo4j.svc.cluster.local:7687"
+            - name: NEO4J_USER
+              value: "neo4j"
+            - name: NEO4J_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ada-secret
+                  key: NEO4J_PASSWORD
+            - name: NEO4J_DATABASE
+              value: "neo4j"
+            # Qdrant
+            - name: QDRANT_HOST
+              value: "qdrant-service.qdrant.svc.cluster.local"
+            - name: QDRANT_PORT
+              value: "6333"
+            # S3 / MinIO
+            - name: S3_ENDPOINT
+              value: "http://minio-service.minio.svc.cluster.local:9000"
+            - name: S3_REGION
+              value: "us-east-1"
+            - name: S3_BUCKET_PREFIX
+              value: "ada"
+            - name: S3_USE_PATH_STYLE
+              value: "true"
+            - name: S3_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ada-secret
+                  key: S3_ACCESS_KEY
+            - name: S3_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ada-secret
+                  key: S3_SECRET_KEY
+            # LLM - OpenRouter
+            - name: LLM_PROVIDER
+              value: "openai"
+            - name: LLM_MODEL
+              value: "meta-llama/llama-3.3-70b-instruct:free"
+            - name: LLM_BASE_URL
+              value: "https://openrouter.ai/api/v1"
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ada-secret
+                  key: OPENAI_API_KEY
+            # Task-specific models
+            - name: EXTRACTION_MODEL
+              value: "meta-llama/llama-3.3-70b-instruct:free"
+            - name: SYNTHESIS_MODEL
+              value: "meta-llama/llama-3.3-70b-instruct:free"
+            # Embedding - Ollama
+            - name: EMBEDDING_PROVIDER
+              value: "ollama"
+            - name: EMBEDDING_MODEL
+              value: "mxbai-embed-large:latest"
+            - name: EMBEDDING_BASE_URL
+              value: "http://ollama-service.ollama.svc.cluster.local:11434"
+            - name: EMBEDDING_DIMENSION
+              value: "1024"
+            # Memory limits
+            - name: GOMEMLIMIT
+              value: "900MiB"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5

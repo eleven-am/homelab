@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: temporal-postgres-data
+  namespace: temporal
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  storageClassName: blizzard-storage
+  resources:
+    requests:
+      storage: 10Gi

@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: temporal-admin-tools
+  namespace: temporal
+  labels:
+    app: temporal-admin-tools
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: temporal-admin-tools
+  template:
+    metadata:
+      labels:
+        app: temporal-admin-tools
+    spec:
+      containers:
+        - name: temporal-admin-tools
+          image: temporalio/admin-tools:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: TEMPORAL_ADDRESS
+              value: temporal-server:7233
+          stdin: true
+          tty: true
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
