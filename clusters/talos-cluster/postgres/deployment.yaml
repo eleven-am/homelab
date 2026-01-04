@@ -92,7 +92,7 @@ spec:
     spec:
       containers:
         - name: pgbouncer
-          image: pgbouncer/pgbouncer:1.23.0
+          image: pgbouncer/pgbouncer:1.15.0
           command:
             - /opt/pgbouncer/pgbouncer
             - /etc/pgbouncer/pgbouncer.ini
@@ -167,6 +167,8 @@ spec:
             - max_connections=200
             - -c
             - shared_buffers=256MB
+            - -c
+            - password_encryption=md5
           ports:
             - containerPort: 5432
           env:
