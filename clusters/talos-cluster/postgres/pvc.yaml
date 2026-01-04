@@ -25,3 +25,17 @@ spec:
   resources:
     requests:
       storage: 10Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pgvector-data
+  namespace: postgres
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  storageClassName: blizzard-storage
+  resources:
+    requests:
+      storage: 10Gi

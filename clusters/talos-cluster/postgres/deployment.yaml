@@ -132,3 +132,80 @@ spec:
             items:
               - key: userlist.txt
                 path: userlist.txt
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pgvector-deployment
+  namespace: postgres
+  labels:
+    app: pgvector-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pgvector-deployment
+  template:
+    metadata:
+      labels:
+        app: pgvector-deployment
+    spec:
+      containers:
+        - name: pgvector
+          image: pgvector/pgvector:pg17
+          imagePullPolicy: IfNotPresent
+          command:
+            - docker-entrypoint.sh
+            - postgres
+            - -c
+            - wal_level=logical
+            - -c
+            - max_wal_senders=10
+            - -c
+            - max_replication_slots=10
+            - -c
+            - max_connections=200
+            - -c
+            - shared_buffers=256MB
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_DB
+          livenessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -h
+                - localhost
+                - -U
+                - postgres
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+          volumeMounts:
+            - name: pgvector-data
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: pgvector-data
+          persistentVolumeClaim:
+            claimName: pgvector-data
