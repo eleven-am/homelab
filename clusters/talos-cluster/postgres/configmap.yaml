@@ -6,7 +6,7 @@ metadata:
 data:
   pgbouncer.ini: |
     [databases]
-    * = host=postgres-service port=5432
+    * = host=pgvector-service port=5432
 
     [pgbouncer]
     listen_addr = 0.0.0.0

@@ -64,7 +64,7 @@ spec:
             - name: DATABASE_HOST
               value: pgbouncer-service.postgres.svc.cluster.local
             - name: DIRECT_DATABASE_HOST
-              value: postgres-service.postgres.svc.cluster.local
+              value: pgvector-service.postgres.svc.cluster.local
             - name: DATABASE_PORT
               value: "5432"
             - name: DATABASE_NAME
