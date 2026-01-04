@@ -24,9 +24,15 @@ spec:
               name: http
           env:
             - name: TEMPORAL_ADDRESS
-              value: temporal-server:7233
+              value: temporal-server.temporal.svc.cluster.local:7233
             - name: TEMPORAL_CORS_ORIGINS
               value: https://temporal.horus.maix.ovh
+            - name: TEMPORAL_UI_PORT
+              value: "8080"
+            - name: TEMPORAL_SERVER_PORT
+              value: ""
+            - name: TEMPORAL_POSTGRES_PORT
+              value: ""
           livenessProbe:
             httpGet:
               path: /
