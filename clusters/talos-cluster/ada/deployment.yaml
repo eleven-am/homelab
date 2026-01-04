@@ -76,7 +76,7 @@ spec:
               echo "Database initialization complete!"
       containers:
         - name: ada
-          image: zot.maix.ovh/ada:v0.0.2
+          image: zot.maix.ovh/ada:v0.0.3
           args: ["server"]
           ports:
             - name: http
@@ -150,6 +150,12 @@ spec:
                 secretKeyRef:
                   name: ada-secret
                   key: S3_SECRET_KEY
+            # Seed API Key (creates admin key on first start)
+            - name: SEED_TENANT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: ada-secret
+                  key: SEED_TENANT_ID
             # LLM - OpenRouter
             - name: LLM_PROVIDER
               value: "openai"
