@@ -92,7 +92,7 @@ spec:
     spec:
       containers:
         - name: pgbouncer
-          image: pgbouncer/pgbouncer:1.15.0
+          image: pgbouncer/pgbouncer:1.23.0
           command:
             - /opt/pgbouncer/pgbouncer
             - /etc/pgbouncer/pgbouncer.ini
