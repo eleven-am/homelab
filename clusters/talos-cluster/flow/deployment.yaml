@@ -16,20 +16,6 @@ spec:
       imagePullSecrets:
         - name: zot-pull-secret
       initContainers:
-        - name: fix-permissions
-          image: busybox:1.35
-          command:
-            - sh
-            - -c
-            - |
-              mkdir -p /data
-              chown -R 65534:65534 /data
-              chmod -R 755 /data
-          volumeMounts:
-            - name: flow-data
-              mountPath: /data
-          securityContext:
-            runAsUser: 0
         - name: init-db
           image: postgres:15-alpine
           env:
@@ -94,8 +80,6 @@ spec:
           ports:
             - name: http
               containerPort: 8080
-            - name: grpc
-              containerPort: 9192
           env:
             - name: ENV
               value: "production"
@@ -145,26 +129,19 @@ spec:
                 secretKeyRef:
                   name: flow-secret
                   key: SECRET_KEY
-            - name: WORKFLOW_NODE_ID
-              value: "flow-node-1"
-            - name: WORKFLOW_CLUSTER_ID
-              value: "flow-cluster"
-            - name: WORKFLOW_DATA_DIR
-              value: "/data"
-            - name: WORKFLOW_GRPC_PORT
-              value: "9192"
-            - name: GOMEMLIMIT
-              value: "1200MiB"
-          volumeMounts:
-            - name: flow-data
-              mountPath: /data
+            - name: TEMPORAL_HOST_PORT
+              value: "temporal-server.temporal.svc.cluster.local:7233"
+            - name: TEMPORAL_NAMESPACE
+              value: "default"
+            - name: TEMPORAL_TASK_QUEUE
+              value: "flow-pipeline"
           resources:
             requests:
-              cpu: 100m
-              memory: 256Mi
+              cpu: 50m
+              memory: 128Mi
             limits:
-              cpu: 1000m
-              memory: 1536Mi
+              cpu: 500m
+              memory: 512Mi
           livenessProbe:
             tcpSocket:
               port: http
@@ -175,7 +152,3 @@ spec:
               port: http
             initialDelaySeconds: 5
             periodSeconds: 5
-      volumes:
-        - name: flow-data
-          persistentVolumeClaim:
-            claimName: flow-data
