@@ -76,7 +76,7 @@ spec:
               echo "Database initialization complete!"
       containers:
         - name: ada
-          image: zot.maix.ovh/ada:v0.0.7
+          image: zot.maix.ovh/ada:v0.0.8
           args: ["server"]
           ports:
             - name: http
