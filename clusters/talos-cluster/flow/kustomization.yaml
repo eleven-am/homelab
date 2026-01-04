@@ -3,7 +3,6 @@ kind: Kustomization
 namespace: flow
 resources:
   - namespace.yaml
-  - rabbitmq-cluster.yaml
   - secret.yaml
   - deployment.yaml
   - service.yaml
