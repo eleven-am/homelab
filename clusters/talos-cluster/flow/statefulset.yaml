@@ -91,7 +91,7 @@ spec:
               echo "Database initialization complete!"
       containers:
         - name: flow
-          image: zot.maix.ovh/flow:v0.1.67
+          image: zot.maix.ovh/flow:v0.1.68
           ports:
             - name: http
               containerPort: 8080
@@ -167,6 +167,8 @@ spec:
               value: "3"
             - name: K8S_HEADLESS_SERVICE
               value: "flow-headless.flow.svc.cluster.local"
+            - name: GOMEMLIMIT
+              value: "900MiB"
           volumeMounts:
             - name: flow-data
               mountPath: /data
