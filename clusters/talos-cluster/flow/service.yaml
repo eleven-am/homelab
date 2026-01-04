@@ -1,24 +1,6 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: flow-headless
-  namespace: flow
-spec:
-  publishNotReadyAddresses: true
-  clusterIP: None
-  selector:
-    app: flow
-  ports:
-    - name: http
-      port: 8080
-      targetPort: 8080
-    - name: gossip
-      port: 7946
-      targetPort: 7946
----
-apiVersion: v1
-kind: Service
-metadata:
   name: flow-service
   namespace: flow
 spec:
@@ -28,3 +10,6 @@ spec:
     - name: http
       port: 80
       targetPort: 8080
+    - name: grpc
+      port: 9192
+      targetPort: 9192

@@ -1,11 +1,10 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: flow
   namespace: flow
 spec:
-  serviceName: flow-headless
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: flow
@@ -76,7 +75,7 @@ spec:
                 echo "User $FLOW_DB_USER already exists, updating password..."
                 psql -c "ALTER USER $FLOW_DB_USER WITH PASSWORD '$FLOW_DB_PASSWORD' CREATEDB;"
               fi
-              
+
               echo "Checking if database $FLOW_DB_NAME exists..."
               DB_EXISTS=$(psql -tAc "SELECT 1 FROM pg_database WHERE datname='$FLOW_DB_NAME'")
               if [ "$DB_EXISTS" != "1" ]; then
@@ -85,42 +84,29 @@ spec:
               else
                 echo "Database $FLOW_DB_NAME already exists"
               fi
-              
+
               echo "Granting privileges..."
               psql -c "GRANT ALL PRIVILEGES ON DATABASE $FLOW_DB_NAME TO $FLOW_DB_USER;"
               echo "Database initialization complete!"
       containers:
         - name: flow
-          image: zot.maix.ovh/flow:v0.1.72
+          image: zot.maix.ovh/flow:v0.1.73
           ports:
             - name: http
               containerPort: 8080
-            - name: gossip
-              containerPort: 7946
+            - name: grpc
+              containerPort: 9192
           env:
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-            - name: WORKFLOW_NODE_ID
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-            - name: WORKFLOW_CLUSTER_ID
-              value: "flow-cluster"
-            - name: WORKFLOW_DATA_DIR
-              value: "/data"
-            - name: PORT
-              value: "8080"
             - name: ENV
               value: "production"
+            - name: PORT
+              value: "8080"
             - name: LOG_LEVEL
               value: "info"
             - name: AUTO_MIGRATE
               value: "true"
             - name: ALLOWED_ORIGINS
               value: "https://flow.maix.ovh"
-            # Database (direct connection, not via pgbouncer)
             - name: DB_HOST
               value: "postgres-service.postgres.svc.cluster.local"
             - name: DB_PORT
@@ -142,16 +128,13 @@ spec:
                 secretKeyRef:
                   name: flow-secret
                   key: DB_NAME
-            # Redis
             - name: REDIS_URL
               value: "redis://redis-service.redis.svc.cluster.local:6379/1"
-            # RabbitMQ (credentials from operator-created secret)
             - name: RABBITMQ_URL
               valueFrom:
                 secretKeyRef:
                   name: flow-rabbitmq-default-user
                   key: connection_string
-            # Secrets
             - name: ENCRYPTION_KEY
               valueFrom:
                 secretKeyRef:
@@ -162,11 +145,14 @@ spec:
                 secretKeyRef:
                   name: flow-secret
                   key: SECRET_KEY
-            # K8s bootstrap (graft auto-detects service name and ordinal from hostname)
-            - name: K8S_REPLICAS
-              value: "3"
-            - name: K8S_HEADLESS_SERVICE
-              value: "flow-headless.flow.svc.cluster.local"
+            - name: WORKFLOW_NODE_ID
+              value: "flow-node-1"
+            - name: WORKFLOW_CLUSTER_ID
+              value: "flow-cluster"
+            - name: WORKFLOW_DATA_DIR
+              value: "/data"
+            - name: WORKFLOW_GRPC_PORT
+              value: "9192"
             - name: GOMEMLIMIT
               value: "1200MiB"
           volumeMounts:
@@ -189,12 +175,7 @@ spec:
               port: http
             initialDelaySeconds: 5
             periodSeconds: 5
-  volumeClaimTemplates:
-    - metadata:
-        name: flow-data
-      spec:
-        accessModes: ["ReadWriteOnce"]
-        storageClassName: blizzard-storage
-        resources:
-          requests:
-            storage: 2Gi
+      volumes:
+        - name: flow-data
+          persistentVolumeClaim:
+            claimName: flow-data

@@ -5,6 +5,7 @@ resources:
   - namespace.yaml
   - rabbitmq-cluster.yaml
   - secret.yaml
-  - statefulset.yaml
+  - pvc.yaml
+  - deployment.yaml
   - service.yaml
   - httproute.yaml
