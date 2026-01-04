@@ -37,6 +37,8 @@ kind: Service
 metadata:
   name: pgvector-service
   namespace: postgres
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: pgvector.horus
 spec:
   selector:
     app: pgvector-deployment
@@ -45,4 +47,4 @@ spec:
       targetPort: 5432
       name: postgres
       protocol: TCP
-  type: ClusterIP
+  type: LoadBalancer
