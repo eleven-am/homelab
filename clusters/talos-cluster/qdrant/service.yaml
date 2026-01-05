@@ -3,6 +3,8 @@ kind: Service
 metadata:
   name: qdrant-service
   namespace: qdrant
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: qdrant.horus
 spec:
   selector:
     app: qdrant
@@ -13,4 +15,4 @@ spec:
   - name: grpc
     port: 6334
     targetPort: 6334
-  type: ClusterIP
+  type: LoadBalancer
