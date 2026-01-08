@@ -230,9 +230,9 @@ def is_html5_compatible(probe: ProbeResult) -> bool:
 
 def needs_hdr_tonemap(probe: ProbeResult) -> bool:
     for v in probe.video_streams:
-        if v.color_transfer in ("smpte2084", "arib-std-b67", "bt2020-10", "bt2020-12"):
+        if v.color_transfer in ("smpte2084", "arib-std-b67"):
             return True
-        if v.bit_depth and v.bit_depth > 8:
+        if v.bit_depth and v.bit_depth >= 10 and v.color_transfer in ("bt2020-10", "bt2020-12"):
             return True
     return False
 
@@ -254,17 +254,14 @@ def build_ffmpeg_command(
     if v:
         if v.codec_name != "h264":
             needs_transcode = True
-        elif v.bit_depth and v.bit_depth > 8:
+        elif v.bit_depth and v.bit_depth >= 10:
             needs_transcode = True
 
     if needs_transcode:
-        vf_filters = []
         if needs_hdr_tonemap(probe):
-            vf_filters.append("zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p")
-        else:
-            vf_filters.append("format=yuv420p")
-
-        cmd.extend(["-vf", ",".join(vf_filters)])
+            cmd.extend(["-vf", "zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p"])
+        elif use_gpu:
+            cmd.extend(["-vf", "format=yuv420p"])
 
         if use_gpu:
             cmd.extend([
