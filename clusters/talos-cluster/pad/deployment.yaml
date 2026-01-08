@@ -5,7 +5,7 @@ metadata:
   namespace: pad
   labels:
     app: pad
-    version: v1.0.1
+    version: v1.0.2
 spec:
   replicas: 1
   strategy:
@@ -20,7 +20,7 @@ spec:
     metadata:
       labels:
         app: pad
-        version: v1.0.1
+        version: v1.0.2
     spec:
       securityContext:
         fsGroup: 65534
@@ -44,7 +44,7 @@ spec:
 
       containers:
         - name: pad
-          image: elevenam/pad:1.0.1
+          image: elevenam/pad:1.0.2
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
