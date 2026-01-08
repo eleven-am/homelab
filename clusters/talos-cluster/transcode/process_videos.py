@@ -181,7 +181,20 @@ def probe_file(file_path: Path) -> Optional[ProbeResult]:
         return None
 
 
+VIDEO_EXTENSIONS = {
+    ".mp4", ".mkv", ".avi", ".mov", ".wmv", ".flv", ".webm",
+    ".m4v", ".mpg", ".mpeg", ".3gp", ".3g2", ".ts", ".mts",
+    ".m2ts", ".vob", ".ogv", ".divx", ".xvid", ".rm", ".rmvb",
+    ".asf", ".f4v",
+}
+
+
 def is_video_file(file_path: Path) -> bool:
+    ext = file_path.suffix.lower()
+    if ext in VIDEO_EXTENSIONS:
+        return True
+    if ext in {".txt", ".nfo", ".jpg", ".jpeg", ".png", ".srt", ".sub", ".idx", ".ass", ".ssa"}:
+        return False
     try:
         result = subprocess.run(
             ["file", "-b", "--mime-type", str(file_path)],
