@@ -309,15 +309,15 @@ def format_time(seconds: float) -> str:
     return f"{minutes}:{secs:02d}"
 
 
-def parse_ffmpeg_progress(line: str, duration: float, filename: str) -> Optional[str]:
+def parse_ffmpeg_progress(line: str, duration: float, filename: str) -> tuple[Optional[str], float]:
     if "time=" not in line or "speed=" not in line:
-        return None
+        return None, 0
 
     time_match = re.search(r"time=(\d+):(\d+):(\d+\.?\d*)", line)
     speed_match = re.search(r"speed=\s*(\d+\.?\d*)x", line)
 
     if not time_match:
-        return None
+        return None, 0
 
     hours, minutes, seconds = time_match.groups()
     current_time = int(hours) * 3600 + int(minutes) * 60 + float(seconds)
@@ -330,7 +330,7 @@ def parse_ffmpeg_progress(line: str, duration: float, filename: str) -> Optional
     speed = speed_match.group(1) if speed_match else "?"
 
     short_name = filename[:50] + "..." if len(filename) > 50 else filename
-    return f"  [{percent:5.1f}%] {short_name} ({format_time(current_time)}/{format_time(duration)}) @ {speed}x"
+    return f"  [{percent:5.1f}%] {short_name} ({format_time(current_time)}/{format_time(duration)}) @ {speed}x", percent
 
 
 def convert_video(
@@ -364,21 +364,20 @@ def convert_video(
             text=True,
         )
 
-        last_progress = ""
+        last_milestone = 0
         for line in process.stdout:
             line = line.strip()
             if not line:
                 continue
 
-            progress = parse_ffmpeg_progress(line, probe.duration, input_path.name)
-            if progress and progress != last_progress:
-                print(f"\r{progress}", end="", flush=True)
-                last_progress = progress
+            progress, percent = parse_ffmpeg_progress(line, probe.duration, input_path.name)
+            if progress:
+                milestone = int(percent // 25) * 25
+                if milestone > last_milestone:
+                    print(progress, flush=True)
+                    last_milestone = milestone
             elif "error" in line.lower() or "warning" in line.lower():
-                print(f"\n  {line}", flush=True)
-
-        if last_progress:
-            print()
+                print(f"  {line}", flush=True)
 
         process.wait(timeout=7200)
 
