@@ -9,15 +9,17 @@ spec:
   concurrencyPolicy: Forbid
   jobTemplate:
     spec:
-      backoffLimit: 0
+      backoffLimit: 1
       parallelism: 1
       completions: 1
       template:
         spec:
+          runtimeClassName: nvidia
           containers:
             - name: video-processor
               image: elevenam/video_processor:latest
               args:
+                - "--gpu"
                 - "-c"
                 - "--log-level"
                 - "INFO"
@@ -26,6 +28,15 @@ spec:
                 - "-i"
                 - "/data/downloads/"
                 - "/data"
+              resources:
+                requests:
+                  memory: "2Gi"
+                  cpu: "1000m"
+                  nvidia.com/gpu: "1"
+                limits:
+                  memory: "8Gi"
+                  cpu: "4000m"
+                  nvidia.com/gpu: "1"
               volumeMounts:
                 - name: video-volume
                   mountPath: /data

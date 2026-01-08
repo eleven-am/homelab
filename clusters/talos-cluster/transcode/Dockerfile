@@ -1,19 +1,18 @@
-FROM alpine:3.20
+FROM nvidia/cuda:12.3.1-runtime-ubuntu22.04
 
-# Install required packages
-RUN apk add --no-cache \
+ENV DEBIAN_FRONTEND=noninteractive
+ENV NVIDIA_VISIBLE_DEVICES=all
+ENV NVIDIA_DRIVER_CAPABILITIES=compute,video,utility
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 \
+    python3-pip \
     ffmpeg \
     file \
-    bash
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy the script into the container
-COPY process_videos.sh /usr/local/bin/process_videos.sh
+COPY process_videos.py /usr/local/bin/process_videos.py
+RUN chmod +x /usr/local/bin/process_videos.py
 
-# Make the script executable
-RUN chmod +x /usr/local/bin/process_videos.sh
-
-# Set the entrypoint to the script
-ENTRYPOINT ["/usr/local/bin/process_videos.sh"]
-
-# Default command is to process the /data directory
+ENTRYPOINT ["python3", "/usr/local/bin/process_videos.py"]
 CMD ["/data"]

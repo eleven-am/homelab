@@ -13,7 +13,7 @@ DATE_TAG=$(date +"%Y-%m-%d-%H-%M")
 
 # Build the Docker image with the current date-time tag
 echo "Building Docker image..."
-docker buildx build --platform linux/amd64 -t elevenam/video_processor:"$DATE_TAG" .
+docker buildx build --platform linux/amd64 --load -t elevenam/video_processor:"$DATE_TAG" .
 check_status "Failed to build Docker image"
 
 # Tag the newly built image as 'latest'
