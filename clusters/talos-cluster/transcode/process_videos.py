@@ -233,10 +233,6 @@ def build_ffmpeg_command(
     preset: str,
 ) -> list[str]:
     cmd = ["ffmpeg", "-hide_banner", "-loglevel", "error", "-y"]
-
-    if use_gpu:
-        cmd.extend(["-hwaccel", "cuda", "-hwaccel_output_format", "cuda"])
-
     cmd.extend(["-i", str(input_path)])
 
     v = probe.video_streams[0] if probe.video_streams else None
@@ -249,11 +245,15 @@ def build_ffmpeg_command(
             needs_transcode = True
 
     if needs_transcode:
+        vf_filters = []
+        if needs_hdr_tonemap(probe):
+            vf_filters.append("zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p")
+        else:
+            vf_filters.append("format=yuv420p")
+
+        cmd.extend(["-vf", ",".join(vf_filters)])
+
         if use_gpu:
-            if needs_hdr_tonemap(probe):
-                cmd.extend([
-                    "-vf", "scale_cuda=-2:720,hwdownload,format=nv12,tonemap=tonemap=hable:desat=0,hwupload_cuda",
-                ])
             cmd.extend([
                 "-c:v", "h264_nvenc",
                 "-preset", "p4",
@@ -261,13 +261,6 @@ def build_ffmpeg_command(
                 "-profile:v", "high",
             ])
         else:
-            vf_filters = []
-            if needs_hdr_tonemap(probe):
-                vf_filters.append("zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p")
-            else:
-                vf_filters.append("format=yuv420p")
-
-            cmd.extend(["-vf", ",".join(vf_filters)])
             cmd.extend([
                 "-c:v", "libx264",
                 "-preset", preset,
