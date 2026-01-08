@@ -300,6 +300,39 @@ def build_ffmpeg_command(
     return cmd
 
 
+def format_time(seconds: float) -> str:
+    hours = int(seconds // 3600)
+    minutes = int((seconds % 3600) // 60)
+    secs = int(seconds % 60)
+    if hours > 0:
+        return f"{hours}:{minutes:02d}:{secs:02d}"
+    return f"{minutes}:{secs:02d}"
+
+
+def parse_ffmpeg_progress(line: str, duration: float, filename: str) -> Optional[str]:
+    if "time=" not in line or "speed=" not in line:
+        return None
+
+    time_match = re.search(r"time=(\d+):(\d+):(\d+\.?\d*)", line)
+    speed_match = re.search(r"speed=\s*(\d+\.?\d*)x", line)
+
+    if not time_match:
+        return None
+
+    hours, minutes, seconds = time_match.groups()
+    current_time = int(hours) * 3600 + int(minutes) * 60 + float(seconds)
+
+    if duration > 0:
+        percent = min(100, (current_time / duration) * 100)
+    else:
+        percent = 0
+
+    speed = speed_match.group(1) if speed_match else "?"
+
+    short_name = filename[:50] + "..." if len(filename) > 50 else filename
+    return f"  [{percent:5.1f}%] {short_name} ({format_time(current_time)}/{format_time(duration)}) @ {speed}x"
+
+
 def convert_video(
     input_path: Path,
     temp_dir: Path,
@@ -331,10 +364,21 @@ def convert_video(
             text=True,
         )
 
+        last_progress = ""
         for line in process.stdout:
             line = line.strip()
-            if line:
-                print(f"  {line}", flush=True)
+            if not line:
+                continue
+
+            progress = parse_ffmpeg_progress(line, probe.duration, input_path.name)
+            if progress and progress != last_progress:
+                print(f"\r{progress}", end="", flush=True)
+                last_progress = progress
+            elif "error" in line.lower() or "warning" in line.lower():
+                print(f"\n  {line}", flush=True)
+
+        if last_progress:
+            print()
 
         process.wait(timeout=7200)
 
