@@ -245,7 +245,7 @@ def build_ffmpeg_command(
     crf: int,
     preset: str,
 ) -> list[str]:
-    cmd = ["ffmpeg", "-hide_banner", "-loglevel", "error", "-y"]
+    cmd = ["ffmpeg", "-hide_banner", "-loglevel", "warning", "-stats", "-y"]
     cmd.extend(["-i", str(input_path)])
 
     v = probe.video_streams[0] if probe.video_streams else None
@@ -327,15 +327,22 @@ def convert_video(
     logger.debug(f"Command: {' '.join(cmd)}")
 
     try:
-        result = subprocess.run(
+        process = subprocess.Popen(
             cmd,
-            capture_output=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
             text=True,
-            timeout=7200,
         )
 
-        if result.returncode != 0:
-            logger.error(f"Conversion failed: {result.stderr}")
+        for line in process.stdout:
+            line = line.strip()
+            if line:
+                print(f"  {line}", flush=True)
+
+        process.wait(timeout=7200)
+
+        if process.returncode != 0:
+            logger.error(f"Conversion failed for {input_path.name}")
             if temp_output.exists():
                 temp_output.unlink()
             return False, None
