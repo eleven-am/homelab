@@ -76,7 +76,7 @@ spec:
               echo "Database initialization complete!"
       containers:
         - name: ada
-          image: zot.maix.ovh/ada:v0.1.0
+          image: zot.maix.ovh/ada:v0.1.1
           args: ["server"]
           ports:
             - name: http
@@ -130,7 +130,7 @@ spec:
             - name: QDRANT_HOST
               value: "qdrant-service.qdrant.svc.cluster.local"
             - name: QDRANT_PORT
-              value: "6333"
+              value: "6334"
             # S3 / MinIO
             - name: S3_ENDPOINT
               value: "http://minio-service.minio.svc.cluster.local:9000"
@@ -222,7 +222,7 @@ spec:
         - name: zot-pull-secret
       containers:
         - name: ada-worker
-          image: zot.maix.ovh/ada:v0.1.0
+          image: zot.maix.ovh/ada:v0.1.1
           args: ["worker"]
           env:
             # Postgres
@@ -266,7 +266,7 @@ spec:
             - name: QDRANT_HOST
               value: "qdrant-service.qdrant.svc.cluster.local"
             - name: QDRANT_PORT
-              value: "6333"
+              value: "6334"
             # S3 / MinIO
             - name: S3_ENDPOINT
               value: "http://minio-service.minio.svc.cluster.local:9000"
