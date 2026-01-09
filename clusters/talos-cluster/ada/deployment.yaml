@@ -160,7 +160,7 @@ spec:
             - name: LLM_PROVIDER
               value: "openai"
             - name: LLM_MODEL
-              value: "meta-llama/llama-3.3-70b-instruct:free"
+              value: "mistral/mistral-small-24b-instruct-2501:free"
             - name: LLM_BASE_URL
               value: "https://openrouter.ai/api/v1"
             - name: OPENAI_API_KEY
@@ -170,9 +170,9 @@ spec:
                   key: OPENAI_API_KEY
             # Task-specific models
             - name: EXTRACTION_MODEL
-              value: "meta-llama/llama-3.3-70b-instruct:free"
+              value: "mistral/mistral-small-24b-instruct-2501:free"
             - name: SYNTHESIS_MODEL
-              value: "meta-llama/llama-3.3-70b-instruct:free"
+              value: "mistral/mistral-small-24b-instruct-2501:free"
             # Embedding - Ollama
             - name: EMBEDDING_PROVIDER
               value: "ollama"
@@ -290,7 +290,7 @@ spec:
             - name: LLM_PROVIDER
               value: "openai"
             - name: LLM_MODEL
-              value: "meta-llama/llama-3.3-70b-instruct:free"
+              value: "mistral/mistral-small-24b-instruct-2501:free"
             - name: LLM_BASE_URL
               value: "https://openrouter.ai/api/v1"
             - name: OPENAI_API_KEY
@@ -300,9 +300,9 @@ spec:
                   key: OPENAI_API_KEY
             # Task-specific models
             - name: EXTRACTION_MODEL
-              value: "meta-llama/llama-3.3-70b-instruct:free"
+              value: "mistral/mistral-small-24b-instruct-2501:free"
             - name: SYNTHESIS_MODEL
-              value: "meta-llama/llama-3.3-70b-instruct:free"
+              value: "mistral/mistral-small-24b-instruct-2501:free"
             # Embedding - Ollama
             - name: EMBEDDING_PROVIDER
               value: "ollama"
