@@ -76,7 +76,7 @@ spec:
               echo "Database initialization complete!"
       containers:
         - name: ada
-          image: zot.maix.ovh/ada:v0.1.4
+          image: zot.maix.ovh/ada:v0.1.5
           args: ["server"]
           ports:
             - name: http
@@ -222,7 +222,7 @@ spec:
         - name: zot-pull-secret
       containers:
         - name: ada-worker
-          image: zot.maix.ovh/ada:v0.1.4
+          image: zot.maix.ovh/ada:v0.1.5
           args: ["worker"]
           env:
             # Postgres
