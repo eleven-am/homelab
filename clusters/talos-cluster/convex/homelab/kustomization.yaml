@@ -1,0 +1,133 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../base
+  - secret.yaml
+
+patches:
+  - target:
+      kind: Deployment
+      name: convex-base-backend
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: convex-homelab-backend
+      - op: replace
+        path: /metadata/labels/app
+        value: convex-homelab-backend
+      - op: replace
+        path: /spec/selector/matchLabels/app
+        value: convex-homelab-backend
+      - op: replace
+        path: /spec/template/metadata/labels/app
+        value: convex-homelab-backend
+      - op: replace
+        path: /spec/template/spec/initContainers/0/env/0/value
+        value: convex_homelab
+      - op: replace
+        path: /spec/template/spec/initContainers/0/env/1/valueFrom/secretKeyRef/name
+        value: convex-homelab-secret
+      - op: replace
+        path: /spec/template/spec/containers/0/env/0/value
+        value: convex-homelab
+      - op: replace
+        path: /spec/template/spec/containers/0/env/1/valueFrom/secretKeyRef/name
+        value: convex-homelab-secret
+      - op: replace
+        path: /spec/template/spec/containers/0/env/2/valueFrom/secretKeyRef/name
+        value: convex-homelab-secret
+      - op: replace
+        path: /spec/template/spec/containers/0/env/3/value
+        value: https://convex-homelab-api.maix.ovh
+      - op: replace
+        path: /spec/template/spec/containers/0/env/4/value
+        value: https://convex-homelab-webhook.maix.ovh
+      - op: replace
+        path: /spec/template/spec/volumes/0/persistentVolumeClaim/claimName
+        value: convex-homelab-data
+  - target:
+      kind: Deployment
+      name: convex-base-dashboard
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: convex-homelab-dashboard
+      - op: replace
+        path: /metadata/labels/app
+        value: convex-homelab-dashboard
+      - op: replace
+        path: /spec/selector/matchLabels/app
+        value: convex-homelab-dashboard
+      - op: replace
+        path: /spec/template/metadata/labels/app
+        value: convex-homelab-dashboard
+      - op: replace
+        path: /spec/template/spec/containers/0/env/0/value
+        value: https://convex-homelab-api.maix.ovh
+  - target:
+      kind: Service
+      name: convex-base-backend
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: convex-homelab-backend
+      - op: replace
+        path: /spec/selector/app
+        value: convex-homelab-backend
+  - target:
+      kind: Service
+      name: convex-base-dashboard
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: convex-homelab-dashboard
+      - op: replace
+        path: /spec/selector/app
+        value: convex-homelab-dashboard
+  - target:
+      kind: PersistentVolumeClaim
+      name: convex-base-data
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: convex-homelab-data
+  - target:
+      kind: HTTPRoute
+      name: convex-base-dashboard-route
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: convex-homelab-dashboard-route
+      - op: replace
+        path: /spec/hostnames/0
+        value: convex-homelab.maix.ovh
+      - op: replace
+        path: /spec/rules/0/backendRefs/0/name
+        value: convex-homelab-dashboard
+  - target:
+      kind: HTTPRoute
+      name: convex-base-api-route
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: convex-homelab-api-route
+      - op: replace
+        path: /spec/hostnames/0
+        value: convex-homelab-api.maix.ovh
+      - op: replace
+        path: /spec/rules/0/backendRefs/0/name
+        value: convex-homelab-backend
+  - target:
+      kind: HTTPRoute
+      name: convex-base-webhook-route
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: convex-homelab-webhook-route
+      - op: replace
+        path: /spec/hostnames/0
+        value: convex-homelab-webhook.maix.ovh
+      - op: replace
+        path: /spec/rules/0/backendRefs/0/name
+        value: convex-homelab-backend

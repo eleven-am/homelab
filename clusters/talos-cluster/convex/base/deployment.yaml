@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: convex-backend
+  name: convex-base-backend
   namespace: convex
   labels:
-    app: convex-backend
+    app: convex-base-backend
 spec:
   replicas: 1
   strategy:
     type: Recreate
   selector:
     matchLabels:
-      app: convex-backend
+      app: convex-base-backend
   template:
     metadata:
       labels:
-        app: convex-backend
+        app: convex-base-backend
     spec:
       initContainers:
         - name: init-db
@@ -28,7 +28,15 @@ spec:
                 echo "Waiting for postgres..."
                 sleep 2
               done
-              PGPASSWORD=postgrespw psql -h postgres-service.postgres.svc.cluster.local -U postgres -tc "SELECT 1 FROM pg_database WHERE datname = 'convex_homelab'" | grep -q 1 || PGPASSWORD=postgrespw psql -h postgres-service.postgres.svc.cluster.local -U postgres -c "CREATE DATABASE convex_homelab"
+              PGPASSWORD=$POSTGRES_PASSWORD psql -h postgres-service.postgres.svc.cluster.local -U postgres -tc "SELECT 1 FROM pg_database WHERE datname = '$DB_NAME'" | grep -q 1 || PGPASSWORD=$POSTGRES_PASSWORD psql -h postgres-service.postgres.svc.cluster.local -U postgres -c "CREATE DATABASE $DB_NAME"
+          env:
+            - name: DB_NAME
+              value: "convex_base"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: convex-base-secret
+                  key: POSTGRES_PASSWORD
       containers:
         - name: backend
           image: ghcr.io/get-convex/convex-backend:latest
@@ -40,21 +48,21 @@ spec:
               name: site
           env:
             - name: INSTANCE_NAME
-              value: "convex-homelab"
+              value: "convex-base"
             - name: INSTANCE_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: convex-secret
+                  name: convex-base-secret
                   key: INSTANCE_SECRET
             - name: POSTGRES_URL
               valueFrom:
                 secretKeyRef:
-                  name: convex-secret
+                  name: convex-base-secret
                   key: POSTGRES_URL
             - name: CONVEX_CLOUD_ORIGIN
-              value: "https://convex-api.maix.ovh"
+              value: "https://convex-base-api.maix.ovh"
             - name: CONVEX_SITE_ORIGIN
-              value: "https://convex-webhook.maix.ovh"
+              value: "https://convex-base-webhook.maix.ovh"
             - name: DISABLE_BEACON
               value: "true"
             - name: RUST_LOG
@@ -88,24 +96,24 @@ spec:
       volumes:
         - name: convex-data
           persistentVolumeClaim:
-            claimName: convex-data
+            claimName: convex-base-data
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: convex-dashboard
+  name: convex-base-dashboard
   namespace: convex
   labels:
-    app: convex-dashboard
+    app: convex-base-dashboard
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: convex-dashboard
+      app: convex-base-dashboard
   template:
     metadata:
       labels:
-        app: convex-dashboard
+        app: convex-base-dashboard
     spec:
       containers:
         - name: dashboard
@@ -116,7 +124,7 @@ spec:
               name: http
           env:
             - name: NEXT_PUBLIC_DEPLOYMENT_URL
-              value: "https://convex-api.maix.ovh"
+              value: "https://convex-base-api.maix.ovh"
           resources:
             requests:
               cpu: 100m

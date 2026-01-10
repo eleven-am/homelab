@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: convex-data
+  name: convex-base-data
   namespace: convex
 spec:
   accessModes:

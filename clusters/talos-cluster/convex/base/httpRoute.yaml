@@ -1,59 +1,59 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: convex-dashboard-route
+  name: convex-base-dashboard-route
   namespace: convex
 spec:
   parentRefs:
     - name: cloudflare-gateway
       namespace: cloudflare-gateway
   hostnames:
-    - "convex.maix.ovh"
+    - "convex-base.maix.ovh"
   rules:
     - matches:
         - path:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: convex-dashboard
+        - name: convex-base-dashboard
           port: 6791
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: convex-api-route
+  name: convex-base-api-route
   namespace: convex
 spec:
   parentRefs:
     - name: cloudflare-gateway
       namespace: cloudflare-gateway
   hostnames:
-    - "convex-api.maix.ovh"
+    - "convex-base-api.maix.ovh"
   rules:
     - matches:
         - path:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: convex-backend
+        - name: convex-base-backend
           port: 3210
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: convex-webhook-route
+  name: convex-base-webhook-route
   namespace: convex
 spec:
   parentRefs:
     - name: cloudflare-gateway
       namespace: cloudflare-gateway
   hostnames:
-    - "convex-webhook.maix.ovh"
+    - "convex-base-webhook.maix.ovh"
   rules:
     - matches:
         - path:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: convex-backend
+        - name: convex-base-backend
           port: 3211

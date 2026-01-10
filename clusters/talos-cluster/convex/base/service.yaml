@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: convex-backend
+  name: convex-base-backend
   namespace: convex
 spec:
   selector:
-    app: convex-backend
+    app: convex-base-backend
   ports:
     - port: 3210
       targetPort: 3210
@@ -18,11 +18,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: convex-dashboard
+  name: convex-base-dashboard
   namespace: convex
 spec:
   selector:
-    app: convex-dashboard
+    app: convex-base-dashboard
   ports:
     - port: 6791
       targetPort: 6791
