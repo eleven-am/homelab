@@ -34,11 +34,11 @@ spec:
                 secretKeyRef:
                   name: convex-secret
                   key: INSTANCE_SECRET
-            - name: DATABASE_URL
+            - name: POSTGRES_URL
               valueFrom:
                 secretKeyRef:
                   name: convex-secret
-                  key: DATABASE_URL
+                  key: POSTGRES_URL
             - name: CONVEX_CLOUD_ORIGIN
               value: "https://convex-api.maix.ovh"
             - name: CONVEX_SITE_ORIGIN
