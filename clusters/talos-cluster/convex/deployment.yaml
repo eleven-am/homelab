@@ -47,6 +47,10 @@ spec:
               value: "true"
             - name: RUST_LOG
               value: "info"
+            - name: DO_NOT_REQUIRE_SSL
+              value: "true"
+            - name: PGSSLMODE
+              value: "disable"
           resources:
             requests:
               cpu: 200m
