@@ -54,7 +54,7 @@ spec:
             - name: CONVEX_CLOUD_ORIGIN
               value: "https://convex-api.maix.ovh"
             - name: CONVEX_SITE_ORIGIN
-              value: "https://convex-site.maix.ovh"
+              value: "https://convex-webhook.maix.ovh"
             - name: DISABLE_BEACON
               value: "true"
             - name: RUST_LOG
