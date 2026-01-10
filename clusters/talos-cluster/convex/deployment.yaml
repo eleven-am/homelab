@@ -1,0 +1,122 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: convex-backend
+  namespace: convex
+  labels:
+    app: convex-backend
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: convex-backend
+  template:
+    metadata:
+      labels:
+        app: convex-backend
+    spec:
+      containers:
+        - name: backend
+          image: ghcr.io/get-convex/convex-backend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3210
+              name: api
+            - containerPort: 3211
+              name: site
+          env:
+            - name: INSTANCE_NAME
+              value: "convex-homelab"
+            - name: INSTANCE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: convex-secret
+                  key: INSTANCE_SECRET
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: convex-secret
+                  key: DATABASE_URL
+            - name: CONVEX_CLOUD_ORIGIN
+              value: "https://convex-api.maix.ovh"
+            - name: CONVEX_SITE_ORIGIN
+              value: "https://convex-site.maix.ovh"
+            - name: DISABLE_BEACON
+              value: "true"
+            - name: RUST_LOG
+              value: "info"
+          resources:
+            requests:
+              cpu: 200m
+              memory: 512Mi
+            limits:
+              cpu: 2000m
+              memory: 2Gi
+          volumeMounts:
+            - name: convex-data
+              mountPath: /convex/data
+          livenessProbe:
+            httpGet:
+              path: /version
+              port: 3210
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /version
+              port: 3210
+            initialDelaySeconds: 10
+            periodSeconds: 5
+      volumes:
+        - name: convex-data
+          persistentVolumeClaim:
+            claimName: convex-data
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: convex-dashboard
+  namespace: convex
+  labels:
+    app: convex-dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: convex-dashboard
+  template:
+    metadata:
+      labels:
+        app: convex-dashboard
+    spec:
+      containers:
+        - name: dashboard
+          image: ghcr.io/get-convex/convex-dashboard:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 6791
+              name: http
+          env:
+            - name: NEXT_PUBLIC_DEPLOYMENT_URL
+              value: "https://convex-api.maix.ovh"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 6791
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 6791
+            initialDelaySeconds: 5
+            periodSeconds: 5
