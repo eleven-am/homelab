@@ -17,6 +17,18 @@ spec:
       labels:
         app: convex-backend
     spec:
+      initContainers:
+        - name: init-db
+          image: postgres:17
+          command:
+            - sh
+            - -c
+            - |
+              until pg_isready -h postgres-service.postgres.svc.cluster.local -U postgres; do
+                echo "Waiting for postgres..."
+                sleep 2
+              done
+              PGPASSWORD=postgrespw psql -h postgres-service.postgres.svc.cluster.local -U postgres -tc "SELECT 1 FROM pg_database WHERE datname = 'convex_homelab'" | grep -q 1 || PGPASSWORD=postgrespw psql -h postgres-service.postgres.svc.cluster.local -U postgres -c "CREATE DATABASE convex_homelab"
       containers:
         - name: backend
           image: ghcr.io/get-convex/convex-backend:latest
