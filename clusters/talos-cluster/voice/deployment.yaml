@@ -68,7 +68,7 @@ spec:
               mountPath: /cache
       containers:
         - name: voice-agent
-          image: docker.io/elevenam/voice-agent:v0.0.2
+          image: docker.io/elevenam/voice-agent:v0.0.3
           imagePullPolicy: Always
           ports:
             - containerPort: 8000
@@ -136,7 +136,7 @@ spec:
               mountPath: /cache
       containers:
         - name: voice-agent
-          image: docker.io/elevenam/voice-agent:v0.0.2
+          image: docker.io/elevenam/voice-agent:v0.0.3
           imagePullPolicy: Always
           command: ["python", "-m", "voice_agent.main", "agent"]
           env:
