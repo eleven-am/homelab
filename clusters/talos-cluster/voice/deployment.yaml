@@ -1,0 +1,186 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: livekit-server
+  namespace: voice
+  labels:
+    app: livekit-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: livekit-server
+  template:
+    metadata:
+      labels:
+        app: livekit-server
+    spec:
+      containers:
+        - name: livekit
+          image: livekit/livekit-server:latest
+          args: ["--config", "/etc/livekit.yaml"]
+          ports:
+            - containerPort: 7880
+              name: http
+            - containerPort: 7881
+              name: tcp
+          volumeMounts:
+            - name: config
+              mountPath: /etc/livekit.yaml
+              subPath: livekit.yaml
+              readOnly: true
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "200m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+      volumes:
+        - name: config
+          configMap:
+            name: livekit-config
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: voice-agent-api
+  namespace: voice
+  labels:
+    app: voice-agent-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: voice-agent-api
+  template:
+    metadata:
+      labels:
+        app: voice-agent-api
+    spec:
+      runtimeClassName: nvidia
+      initContainers:
+        - name: fix-permissions
+          image: busybox
+          command: ["sh", "-c", "chown -R 1000:1000 /cache"]
+          volumeMounts:
+            - name: model-cache
+              mountPath: /cache
+      containers:
+        - name: voice-agent
+          image: docker.io/elevenam/voice-agent:v0.0.2
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+              name: http
+          env:
+            - name: WHISPER_MODEL_ID
+              value: "deepdml/faster-whisper-large-v3-turbo-ct2"
+            - name: WHISPER_DEVICE
+              value: "cuda"
+            - name: WHISPER_COMPUTE_TYPE
+              value: "float16"
+            - name: TTS_MODEL_ID
+              value: "speaches-ai/Kokoro-82M-v1.0-ONNX"
+            - name: TTS_DEFAULT_VOICE
+              value: "af_heart"
+            - name: MODEL_TTL
+              value: "300"
+            - name: API_HOST
+              value: "0.0.0.0"
+            - name: API_PORT
+              value: "8000"
+          resources:
+            requests:
+              memory: "4Gi"
+              cpu: "1"
+              nvidia.com/gpu: "1"
+            limits:
+              memory: "8Gi"
+              cpu: "2"
+              nvidia.com/gpu: "1"
+          volumeMounts:
+            - name: model-cache
+              mountPath: /home/ubuntu/.cache/huggingface/hub
+      volumes:
+        - name: model-cache
+          persistentVolumeClaim:
+            claimName: voice-agent-model-cache
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: voice-agent-livekit
+  namespace: voice
+  labels:
+    app: voice-agent-livekit
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: voice-agent-livekit
+  template:
+    metadata:
+      labels:
+        app: voice-agent-livekit
+    spec:
+      runtimeClassName: nvidia
+      initContainers:
+        - name: fix-permissions
+          image: busybox
+          command: ["sh", "-c", "chown -R 1000:1000 /cache"]
+          volumeMounts:
+            - name: model-cache
+              mountPath: /cache
+      containers:
+        - name: voice-agent
+          image: docker.io/elevenam/voice-agent:v0.0.2
+          imagePullPolicy: Always
+          command: ["python", "-m", "voice_agent.main", "agent"]
+          env:
+            - name: WHISPER_MODEL_ID
+              value: "deepdml/faster-whisper-large-v3-turbo-ct2"
+            - name: WHISPER_DEVICE
+              value: "cuda"
+            - name: WHISPER_COMPUTE_TYPE
+              value: "float16"
+            - name: TTS_MODEL_ID
+              value: "speaches-ai/Kokoro-82M-v1.0-ONNX"
+            - name: TTS_DEFAULT_VOICE
+              value: "af_heart"
+            - name: MODEL_TTL
+              value: "300"
+            - name: LIVEKIT_URL
+              value: "ws://livekit-server:7880"
+            - name: LIVEKIT_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: livekit-credentials
+                  key: LIVEKIT_API_KEY
+            - name: LIVEKIT_API_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: livekit-credentials
+                  key: LIVEKIT_API_SECRET
+            - name: GATEWAY_URL
+              value: "gateway:50051"
+            - name: GATEWAY_FALLBACK_ENABLED
+              value: "true"
+          resources:
+            requests:
+              memory: "4Gi"
+              cpu: "1"
+              nvidia.com/gpu: "1"
+            limits:
+              memory: "8Gi"
+              cpu: "2"
+              nvidia.com/gpu: "1"
+          volumeMounts:
+            - name: model-cache
+              mountPath: /home/ubuntu/.cache/huggingface/hub
+      volumes:
+        - name: model-cache
+          persistentVolumeClaim:
+            claimName: voice-agent-model-cache

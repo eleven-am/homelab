@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: livekit-server
+  namespace: voice
+spec:
+  selector:
+    app: livekit-server
+  ports:
+    - port: 7880
+      targetPort: 7880
+      name: http
+      protocol: TCP
+    - port: 7881
+      targetPort: 7881
+      name: tcp
+      protocol: TCP
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: voice-agent-api
+  namespace: voice
+spec:
+  selector:
+    app: voice-agent-api
+  ports:
+    - port: 8000
+      targetPort: 8000
+      name: http
+      protocol: TCP
+  type: ClusterIP
