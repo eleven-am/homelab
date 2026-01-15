@@ -70,7 +70,7 @@ spec:
               mountPath: /cache
       containers:
         - name: voice-agent
-          image: docker.io/elevenam/voice-agent:v0.0.6
+          image: docker.io/elevenam/voice-agent:v0.0.7
           imagePullPolicy: Always
           command: ["voice-agent", "both"]
           ports:
@@ -107,6 +107,11 @@ spec:
                 secretKeyRef:
                   name: livekit-credentials
                   key: LIVEKIT_API_SECRET
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: livekit-credentials
+                  key: API_KEY
             - name: GATEWAY_URL
               value: "gateway:50051"
             - name: GATEWAY_FALLBACK_ENABLED
