@@ -40,9 +40,14 @@ spec:
                 echo "ERROR: Failed to get LB IP after 60s"
                 exit 1
               fi
+              PUBLIC_IP=$(curl -s --max-time 5 https://api.ipify.org || curl -s --max-time 5 https://ifconfig.me)
+              if [ -z "$PUBLIC_IP" ]; then
+                echo "WARNING: Could not determine public IP, using LB IP only"
+                PUBLIC_IP=$LB_IP
+              fi
               cp /config-template/turnserver.conf /config/turnserver.conf
-              echo "external-ip=$LB_IP" >> /config/turnserver.conf
-              echo "Configured external-ip=$LB_IP"
+              echo "external-ip=$PUBLIC_IP/$LB_IP" >> /config/turnserver.conf
+              echo "Configured external-ip=$PUBLIC_IP/$LB_IP"
           volumeMounts:
             - name: config-template
               mountPath: /config-template
