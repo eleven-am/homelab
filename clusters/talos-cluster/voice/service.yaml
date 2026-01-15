@@ -20,11 +20,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: voice-agent-api
+  name: voice-agent
   namespace: voice
 spec:
   selector:
-    app: voice-agent-api
+    app: voice-agent
   ports:
     - port: 8000
       targetPort: 8000
