@@ -70,7 +70,7 @@ spec:
               mountPath: /cache
       containers:
         - name: voice-agent
-          image: docker.io/elevenam/voice-agent:v0.0.8
+          image: docker.io/elevenam/voice-agent:v0.0.9
           imagePullPolicy: Always
           command: ["voice-agent", "both"]
           ports:
@@ -91,6 +91,8 @@ spec:
               value: "0"
             - name: TTS_MODEL_TTL
               value: "0"
+            - name: PRELOAD_MODELS
+              value: "true"
             - name: API_HOST
               value: "0.0.0.0"
             - name: API_PORT
