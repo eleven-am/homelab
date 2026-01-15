@@ -5,6 +5,7 @@ metadata:
   namespace: coturn
   annotations:
     external-dns.alpha.kubernetes.io/hostname: turn.horus
+    io.cilium/lb-ipam-ips: "172.198.1.55"
 spec:
   selector:
     app: coturn

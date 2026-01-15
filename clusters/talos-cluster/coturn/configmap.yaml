@@ -12,7 +12,7 @@ data:
     min-port=49152
     max-port=49252
     fingerprint
-    lt-cred-mech
+    use-auth-secret
     realm=turn.horus
     log-file=stdout
     verbose
@@ -21,4 +21,3 @@ data:
     allowed-peer-ip=172.16.0.0-172.31.255.255
     allowed-peer-ip=192.168.0.0-192.168.255.255
     allow-loopback-peers
-    user=turnuser:ynuD1eLlHIFUCVNThtmAyAL+hmdoU918

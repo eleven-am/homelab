@@ -54,18 +54,13 @@ spec:
           args:
             - -c
             - /config/turnserver.conf
-            - --user=$(TURN_USER):$(TURN_PASSWORD)
+            - --static-auth-secret=$(TURN_SECRET)
           env:
-            - name: TURN_USER
+            - name: TURN_SECRET
               valueFrom:
                 secretKeyRef:
                   name: coturn-secret
-                  key: TURN_USER
-            - name: TURN_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: coturn-secret
-                  key: TURN_PASSWORD
+                  key: TURN_SECRET
           ports:
             - containerPort: 3478
               protocol: UDP
