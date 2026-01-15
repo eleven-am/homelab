@@ -70,7 +70,7 @@ spec:
               mountPath: /cache
       containers:
         - name: voice-agent
-          image: docker.io/elevenam/voice-agent:v0.0.4
+          image: docker.io/elevenam/voice-agent:v0.0.5
           imagePullPolicy: Always
           command: ["voice-agent", "both"]
           ports:
@@ -87,8 +87,10 @@ spec:
               value: "speaches-ai/Kokoro-82M-v1.0-ONNX"
             - name: TTS_DEFAULT_VOICE
               value: "af_heart"
-            - name: MODEL_TTL
-              value: "300"
+            - name: WHISPER_MODEL_TTL
+              value: "0"
+            - name: TTS_MODEL_TTL
+              value: "0"
             - name: API_HOST
               value: "0.0.0.0"
             - name: API_PORT
