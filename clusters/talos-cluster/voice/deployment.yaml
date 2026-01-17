@@ -132,3 +132,68 @@ spec:
         - name: model-cache
           persistentVolumeClaim:
             claimName: voice-agent-model-cache
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway
+  namespace: voice
+  labels:
+    app: gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      containers:
+        - name: gateway
+          image: docker.io/elevenam/voice-backend:v0.0.1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              name: http
+            - containerPort: 50051
+              name: grpc
+          env:
+            - name: SERVER_ADDR
+              value: ":8080"
+            - name: GRPC_ADDR
+              value: ":50051"
+            - name: DATABASE_DSN
+              valueFrom:
+                secretKeyRef:
+                  name: gateway-secrets
+                  key: DATABASE_DSN
+            - name: REDIS_ADDR
+              value: "redis-service.redis:6379"
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: gateway-secrets
+                  key: REDIS_PASSWORD
+                  optional: true
+            - name: QDRANT_HOST
+              value: "qdrant-service.qdrant"
+            - name: QDRANT_PORT
+              value: "6334"
+            - name: HMAC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: gateway-secrets
+                  key: HMAC_KEY
+            - name: COOKIE_SECURE
+              value: "true"
+            - name: COOKIE_DOMAIN
+              value: "maix.ovh"
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"

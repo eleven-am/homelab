@@ -31,3 +31,22 @@ spec:
       name: http
       protocol: TCP
   type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway
+  namespace: voice
+spec:
+  selector:
+    app: gateway
+  ports:
+    - port: 8080
+      targetPort: 8080
+      name: http
+      protocol: TCP
+    - port: 50051
+      targetPort: 50051
+      name: grpc
+      protocol: TCP
+  type: ClusterIP
