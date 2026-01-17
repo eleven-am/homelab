@@ -78,7 +78,7 @@ spec:
               name: http
           env:
             - name: PARAKEET_MODEL_ID
-              value: "nvidia/parakeet-tdt-1.1b"
+              value: "nvidia/parakeet-tdt-0.6b-v3"
             - name: PARAKEET_DEVICE
               value: "cuda"
             - name: TTS_MODEL_ID
