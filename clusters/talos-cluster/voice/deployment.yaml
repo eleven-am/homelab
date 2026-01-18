@@ -152,7 +152,7 @@ spec:
     spec:
       containers:
         - name: gateway
-          image: docker.io/elevenam/voice-backend:v0.0.4
+          image: docker.io/elevenam/voice-backend:v0.0.5
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -190,6 +190,18 @@ spec:
               value: "true"
             - name: COOKIE_DOMAIN
               value: "maix.ovh"
+            - name: LIVEKIT_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: livekit-credentials
+                  key: LIVEKIT_API_KEY
+            - name: LIVEKIT_API_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: livekit-credentials
+                  key: LIVEKIT_API_SECRET
+            - name: LIVEKIT_URL
+              value: "wss://livekit.maix.ovh"
           resources:
             requests:
               memory: "128Mi"
