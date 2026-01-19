@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: voice-agent-model-cache
+  name: voice-sidecar-model-cache
   namespace: voice
 spec:
   accessModes:

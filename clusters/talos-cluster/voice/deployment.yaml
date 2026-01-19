@@ -1,64 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: livekit-server
+  name: voice-sidecar
   namespace: voice
   labels:
-    app: livekit-server
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: livekit-server
-  template:
-    metadata:
-      labels:
-        app: livekit-server
-    spec:
-      containers:
-        - name: livekit
-          image: livekit/livekit-server:latest
-          args: ["--config", "/etc/livekit.yaml"]
-          ports:
-            - containerPort: 7880
-              name: http
-            - containerPort: 7881
-              name: tcp
-          volumeMounts:
-            - name: config
-              mountPath: /etc/livekit.yaml
-              subPath: livekit.yaml
-              readOnly: true
-          resources:
-            requests:
-              memory: "256Mi"
-              cpu: "200m"
-            limits:
-              memory: "512Mi"
-              cpu: "500m"
-      volumes:
-        - name: config
-          configMap:
-            name: livekit-config
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: voice-agent
-  namespace: voice
-  labels:
-    app: voice-agent
+    app: voice-sidecar
 spec:
   replicas: 1
   strategy:
     type: Recreate
   selector:
     matchLabels:
-      app: voice-agent
+      app: voice-sidecar
   template:
     metadata:
       labels:
-        app: voice-agent
+        app: voice-sidecar
     spec:
       runtimeClassName: nvidia
       initContainers:
@@ -69,52 +26,24 @@ spec:
             - name: model-cache
               mountPath: /cache
       containers:
-        - name: voice-agent
-          image: docker.io/elevenam/voice-agent:v0.0.37
+        - name: voice-sidecar
+          image: docker.io/elevenam/voice-sidecar:dev
           imagePullPolicy: Always
-          command: ["voice-agent", "both"]
           ports:
-            - containerPort: 8000
-              name: http
+            - containerPort: 50051
+              name: grpc
           env:
-            - name: PARAKEET_MODEL_ID
-              value: "nvidia/parakeet-tdt-0.6b-v3"
-            - name: PARAKEET_DEVICE
+            - name: GRPC_PORT
+              value: "50051"
+            - name: STT_DEVICE
               value: "cuda"
+            - name: PARAKEET_MODEL_ID
+              value: "nemo-parakeet-tdt-0.6b-v3"
             - name: TTS_MODEL_ID
               value: "speaches-ai/Kokoro-82M-v1.0-ONNX"
             - name: TTS_DEFAULT_VOICE
               value: "af_heart"
-            - name: PARAKEET_MODEL_TTL
-              value: "0"
-            - name: TTS_MODEL_TTL
-              value: "0"
             - name: PRELOAD_MODELS
-              value: "true"
-            - name: API_HOST
-              value: "0.0.0.0"
-            - name: API_PORT
-              value: "8000"
-            - name: LIVEKIT_URL
-              value: "ws://livekit-server:7880"
-            - name: LIVEKIT_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: livekit-credentials
-                  key: LIVEKIT_API_KEY
-            - name: LIVEKIT_API_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: livekit-credentials
-                  key: LIVEKIT_API_SECRET
-            - name: API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: livekit-credentials
-                  key: API_KEY
-            - name: GATEWAY_URL
-              value: "gateway:50051"
-            - name: GATEWAY_FALLBACK_ENABLED
               value: "true"
           resources:
             requests:
@@ -127,11 +56,11 @@ spec:
               nvidia.com/gpu: "1"
           volumeMounts:
             - name: model-cache
-              mountPath: /root/.cache/huggingface/hub
+              mountPath: /home/ubuntu/.cache/huggingface/hub
       volumes:
         - name: model-cache
           persistentVolumeClaim:
-            claimName: voice-agent-model-cache
+            claimName: voice-sidecar-model-cache
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -152,7 +81,7 @@ spec:
     spec:
       containers:
         - name: gateway
-          image: docker.io/elevenam/voice-backend:v0.0.6
+          image: docker.io/elevenam/voice-backend:dev
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -190,18 +119,26 @@ spec:
               value: "true"
             - name: COOKIE_DOMAIN
               value: "maix.ovh"
-            - name: LIVEKIT_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: livekit-credentials
-                  key: LIVEKIT_API_KEY
-            - name: LIVEKIT_API_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: livekit-credentials
-                  key: LIVEKIT_API_SECRET
-            - name: LIVEKIT_URL
-              value: "wss://livekit.maix.ovh"
+            - name: STT_ADDRESS
+              value: "voice-sidecar:50051"
+            - name: TTS_ADDRESS
+              value: "voice-sidecar:50051"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            timeoutSeconds: 10
+            failureThreshold: 3
           resources:
             requests:
               memory: "128Mi"
