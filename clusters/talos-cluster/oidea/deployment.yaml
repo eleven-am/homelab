@@ -6,7 +6,7 @@ metadata:
     app: oidea
   namespace: oidea
 spec:
-  replicas: 2
+  replicas: 1
   strategy:
     type: RollingUpdate
     rollingUpdate:
