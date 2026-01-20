@@ -125,9 +125,7 @@ spec:
               value: "true"
             - name: COOKIE_DOMAIN
               value: "maix.ovh"
-            - name: STT_ADDRESS
-              value: "voice-sidecar:50051"
-            - name: TTS_ADDRESS
+            - name: SIDECAR_ADDRESS
               value: "voice-sidecar:50051"
           livenessProbe:
             httpGet:
