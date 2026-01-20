@@ -45,6 +45,10 @@ spec:
               value: "af_heart"
             - name: TTS_DEVICE
               value: "cuda"
+            - name: TTS_MODEL_TTL
+              value: "0"
+            - name: STT_MODEL_TTL
+              value: "0"
             - name: PRELOAD_MODELS
               value: "true"
           resources:
