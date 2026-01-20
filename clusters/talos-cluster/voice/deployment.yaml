@@ -51,6 +51,8 @@ spec:
               value: "0"
             - name: PRELOAD_MODELS
               value: "true"
+            - name: TORCH_CPP_LOG_LEVEL
+              value: "ERROR"
           resources:
             requests:
               memory: "8Gi"
@@ -136,6 +138,8 @@ spec:
                   key: HMAC_KEY
             - name: TURN_REALM
               value: "turn.horus"
+            - name: LOG_LEVEL
+              value: "debug"
           livenessProbe:
             httpGet:
               path: /health
