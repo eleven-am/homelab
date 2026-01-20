@@ -128,7 +128,7 @@ spec:
             - name: SIDECAR_ADDRESS
               value: "voice-sidecar:50051"
             - name: TURN_SERVER
-              value: "172.198.1.55:3478"
+              value: "172.198.1.55:3478,turn.maix.ovh:3478"
             - name: TURN_SECRET
               valueFrom:
                 secretKeyRef:
