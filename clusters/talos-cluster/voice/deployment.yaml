@@ -89,7 +89,7 @@ spec:
     spec:
       containers:
         - name: gateway
-          image: docker.io/elevenam/voice-backend:v0.1.8
+          image: docker.io/elevenam/voice-backend:v0.1.9
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
