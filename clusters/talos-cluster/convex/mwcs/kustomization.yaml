@@ -1,0 +1,133 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../base
+  - secret.yaml
+
+patches:
+  - target:
+      kind: Deployment
+      name: convex-base-backend
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: convex-mwcs-backend
+      - op: replace
+        path: /metadata/labels/app
+        value: convex-mwcs-backend
+      - op: replace
+        path: /spec/selector/matchLabels/app
+        value: convex-mwcs-backend
+      - op: replace
+        path: /spec/template/metadata/labels/app
+        value: convex-mwcs-backend
+      - op: replace
+        path: /spec/template/spec/initContainers/0/env/0/value
+        value: convex_mwcs
+      - op: replace
+        path: /spec/template/spec/initContainers/0/env/1/valueFrom/secretKeyRef/name
+        value: convex-mwcs-secret
+      - op: replace
+        path: /spec/template/spec/containers/0/env/0/value
+        value: convex-mwcs
+      - op: replace
+        path: /spec/template/spec/containers/0/env/1/valueFrom/secretKeyRef/name
+        value: convex-mwcs-secret
+      - op: replace
+        path: /spec/template/spec/containers/0/env/2/valueFrom/secretKeyRef/name
+        value: convex-mwcs-secret
+      - op: replace
+        path: /spec/template/spec/containers/0/env/3/value
+        value: https://convex-mwcs-api.maix.ovh
+      - op: replace
+        path: /spec/template/spec/containers/0/env/4/value
+        value: https://convex-mwcs-webhook.maix.ovh
+      - op: replace
+        path: /spec/template/spec/volumes/0/persistentVolumeClaim/claimName
+        value: convex-mwcs-data
+  - target:
+      kind: Deployment
+      name: convex-base-dashboard
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: convex-mwcs-dashboard
+      - op: replace
+        path: /metadata/labels/app
+        value: convex-mwcs-dashboard
+      - op: replace
+        path: /spec/selector/matchLabels/app
+        value: convex-mwcs-dashboard
+      - op: replace
+        path: /spec/template/metadata/labels/app
+        value: convex-mwcs-dashboard
+      - op: replace
+        path: /spec/template/spec/containers/0/env/0/value
+        value: https://convex-mwcs-api.maix.ovh
+  - target:
+      kind: Service
+      name: convex-base-backend
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: convex-mwcs-backend
+      - op: replace
+        path: /spec/selector/app
+        value: convex-mwcs-backend
+  - target:
+      kind: Service
+      name: convex-base-dashboard
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: convex-mwcs-dashboard
+      - op: replace
+        path: /spec/selector/app
+        value: convex-mwcs-dashboard
+  - target:
+      kind: PersistentVolumeClaim
+      name: convex-base-data
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: convex-mwcs-data
+  - target:
+      kind: HTTPRoute
+      name: convex-base-dashboard-route
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: convex-mwcs-dashboard-route
+      - op: replace
+        path: /spec/hostnames/0
+        value: convex-mwcs.maix.ovh
+      - op: replace
+        path: /spec/rules/0/backendRefs/0/name
+        value: convex-mwcs-dashboard
+  - target:
+      kind: HTTPRoute
+      name: convex-base-api-route
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: convex-mwcs-api-route
+      - op: replace
+        path: /spec/hostnames/0
+        value: convex-mwcs-api.maix.ovh
+      - op: replace
+        path: /spec/rules/0/backendRefs/0/name
+        value: convex-mwcs-backend
+  - target:
+      kind: HTTPRoute
+      name: convex-base-webhook-route
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: convex-mwcs-webhook-route
+      - op: replace
+        path: /spec/hostnames/0
+        value: convex-mwcs-webhook.maix.ovh
+      - op: replace
+        path: /spec/rules/0/backendRefs/0/name
+        value: convex-mwcs-backend
