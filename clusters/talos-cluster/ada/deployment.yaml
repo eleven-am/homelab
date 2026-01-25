@@ -76,7 +76,7 @@ spec:
               echo "Database initialization complete!"
       containers:
         - name: ada
-          image: zot.maix.ovh/ada:v0.1.7
+          image: zot.maix.ovh/ada:v0.2.0
           args: ["server"]
           ports:
             - name: http
@@ -156,28 +156,24 @@ spec:
                 secretKeyRef:
                   name: ada-secret
                   key: SEED_TENANT_ID
-            # LLM - OpenRouter
+            # LLM - OpenAI Direct
             - name: LLM_PROVIDER
               value: "openai"
             - name: LLM_MODEL
-              value: "mistralai/mistral-small-24b-instruct-2501"
-            - name: LLM_BASE_URL
-              value: "https://openrouter.ai/api/v1"
+              value: "gpt-4o"
             - name: OPENAI_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: ada-secret
                   key: OPENAI_API_KEY
-            # Task-specific models
+            # Extraction
             - name: EXTRACTION_MODEL
-              value: "mistralai/mistral-small-24b-instruct-2501"
-            - name: SYNTHESIS_MODEL
-              value: "mistralai/mistral-small-24b-instruct-2501"
+              value: "gpt-4o"
             # Embedding - Ollama
             - name: EMBEDDING_PROVIDER
               value: "ollama"
             - name: EMBEDDING_MODEL
-              value: "mxbai-embed-large:latest"
+              value: "bge-m3:latest"
             - name: EMBEDDING_BASE_URL
               value: "http://ollama-service.ollama.svc.cluster.local:11434"
             - name: EMBEDDING_DIMENSION
@@ -202,123 +198,3 @@ spec:
               port: http
             initialDelaySeconds: 5
             periodSeconds: 5
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: ada-worker
-  namespace: ada
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: ada-worker
-  template:
-    metadata:
-      labels:
-        app: ada-worker
-    spec:
-      imagePullSecrets:
-        - name: zot-pull-secret
-      containers:
-        - name: ada-worker
-          image: zot.maix.ovh/ada:v0.1.7
-          args: ["worker"]
-          env:
-            # Postgres
-            - name: POSTGRES_HOST
-              value: "postgres-service.postgres.svc.cluster.local"
-            - name: POSTGRES_PORT
-              value: "5432"
-            - name: POSTGRES_SSLMODE
-              value: "disable"
-            - name: POSTGRES_USER
-              valueFrom:
-                secretKeyRef:
-                  name: ada-secret
-                  key: DB_USER
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: ada-secret
-                  key: DB_PASSWORD
-            - name: POSTGRES_DATABASE
-              valueFrom:
-                secretKeyRef:
-                  name: ada-secret
-                  key: DB_NAME
-            # Redis
-            - name: REDIS_ADDR
-              value: "redis-service.redis.svc.cluster.local:6379"
-            # Neo4j
-            - name: NEO4J_URI
-              value: "bolt://neo4j.neo4j.svc.cluster.local:7687"
-            - name: NEO4J_USER
-              value: "neo4j"
-            - name: NEO4J_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: ada-secret
-                  key: NEO4J_PASSWORD
-            - name: NEO4J_DATABASE
-              value: "neo4j"
-            # Qdrant
-            - name: QDRANT_HOST
-              value: "qdrant-service.qdrant.svc.cluster.local"
-            - name: QDRANT_PORT
-              value: "6334"
-            # S3 / MinIO
-            - name: S3_ENDPOINT
-              value: "http://minio-service.minio.svc.cluster.local:9000"
-            - name: S3_REGION
-              value: "us-east-1"
-            - name: S3_BUCKET_PREFIX
-              value: "ada"
-            - name: S3_USE_PATH_STYLE
-              value: "true"
-            - name: S3_ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: ada-secret
-                  key: S3_ACCESS_KEY
-            - name: S3_SECRET_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: ada-secret
-                  key: S3_SECRET_KEY
-            # LLM - OpenRouter
-            - name: LLM_PROVIDER
-              value: "openai"
-            - name: LLM_MODEL
-              value: "mistralai/mistral-small-24b-instruct-2501"
-            - name: LLM_BASE_URL
-              value: "https://openrouter.ai/api/v1"
-            - name: OPENAI_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: ada-secret
-                  key: OPENAI_API_KEY
-            # Task-specific models
-            - name: EXTRACTION_MODEL
-              value: "mistralai/mistral-small-24b-instruct-2501"
-            - name: SYNTHESIS_MODEL
-              value: "mistralai/mistral-small-24b-instruct-2501"
-            # Embedding - Ollama
-            - name: EMBEDDING_PROVIDER
-              value: "ollama"
-            - name: EMBEDDING_MODEL
-              value: "mxbai-embed-large:latest"
-            - name: EMBEDDING_BASE_URL
-              value: "http://ollama-service.ollama.svc.cluster.local:11434"
-            - name: EMBEDDING_DIMENSION
-              value: "1024"
-            # Memory limits
-            - name: GOMEMLIMIT
-              value: "1800MiB"
-          resources:
-            requests:
-              cpu: 200m
-              memory: 512Mi
-            limits:
-              cpu: 2000m
-              memory: 2Gi

@@ -5,7 +5,7 @@ metadata:
   namespace: flow
 spec:
   selector:
-    app: flow
+    app: flow-api
   ports:
     - name: http
       port: 80

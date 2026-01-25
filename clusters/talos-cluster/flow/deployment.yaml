@@ -1,17 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: flow
+  name: flow-api
   namespace: flow
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: flow
+      app: flow-api
   template:
     metadata:
       labels:
-        app: flow
+        app: flow-api
     spec:
       imagePullSecrets:
         - name: zot-pull-secret
@@ -75,8 +75,8 @@ spec:
               psql -c "GRANT ALL PRIVILEGES ON DATABASE $FLOW_DB_NAME TO $FLOW_DB_USER;"
               echo "Database initialization complete!"
       containers:
-        - name: flow
-          image: zot.maix.ovh/flow:v0.1.71
+        - name: flow-api
+          image: zot.maix.ovh/flow:v0.2.1
           ports:
             - name: http
               containerPort: 8080
@@ -124,12 +124,11 @@ spec:
                 secretKeyRef:
                   name: flow-secret
                   key: SECRET_KEY
-            - name: TEMPORAL_HOST_PORT
-              value: "temporal-server.temporal.svc.cluster.local:7233"
-            - name: TEMPORAL_NAMESPACE
-              value: "default"
-            - name: TEMPORAL_TASK_QUEUE
-              value: "flow-pipeline"
+            - name: RABBITMQ_URL
+              valueFrom:
+                secretKeyRef:
+                  name: flow-secret
+                  key: RABBITMQ_URL
           resources:
             requests:
               cpu: 50m
@@ -147,3 +146,216 @@ spec:
               port: http
             initialDelaySeconds: 5
             periodSeconds: 5
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flow-core
+  namespace: flow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flow-core
+  template:
+    metadata:
+      labels:
+        app: flow-core
+    spec:
+      imagePullSecrets:
+        - name: zot-pull-secret
+      containers:
+        - name: flow-core
+          image: zot.maix.ovh/flow-core:v0.2.1
+          env:
+            - name: ENV
+              value: "production"
+            - name: LOG_LEVEL
+              value: "info"
+            - name: DB_HOST
+              value: "postgres-service.postgres.svc.cluster.local"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_SSL_MODE
+              value: "disable"
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: flow-secret
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: flow-secret
+                  key: DB_PASSWORD
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: flow-secret
+                  key: DB_NAME
+            - name: REDIS_URL
+              value: "redis://redis-service.redis.svc.cluster.local:6379/1"
+            - name: ENCRYPTION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: flow-secret
+                  key: ENCRYPTION_KEY
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: flow-secret
+                  key: SECRET_KEY
+            - name: RABBITMQ_URL
+              valueFrom:
+                secretKeyRef:
+                  name: flow-secret
+                  key: RABBITMQ_URL
+          resources:
+            requests:
+              cpu: 25m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flow-streaming
+  namespace: flow
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: flow-streaming
+  template:
+    metadata:
+      labels:
+        app: flow-streaming
+    spec:
+      imagePullSecrets:
+        - name: zot-pull-secret
+      containers:
+        - name: flow-streaming
+          image: zot.maix.ovh/flow-streaming:v0.2.1
+          env:
+            - name: ENV
+              value: "production"
+            - name: LOG_LEVEL
+              value: "info"
+            - name: DB_HOST
+              value: "postgres-service.postgres.svc.cluster.local"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_SSL_MODE
+              value: "disable"
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: flow-secret
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: flow-secret
+                  key: DB_PASSWORD
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: flow-secret
+                  key: DB_NAME
+            - name: REDIS_URL
+              value: "redis://redis-service.redis.svc.cluster.local:6379/1"
+            - name: ENCRYPTION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: flow-secret
+                  key: ENCRYPTION_KEY
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: flow-secret
+                  key: SECRET_KEY
+            - name: RABBITMQ_URL
+              valueFrom:
+                secretKeyRef:
+                  name: flow-secret
+                  key: RABBITMQ_URL
+          resources:
+            requests:
+              cpu: 25m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flow-stage-worker
+  namespace: flow
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: flow-stage-worker
+  template:
+    metadata:
+      labels:
+        app: flow-stage-worker
+    spec:
+      imagePullSecrets:
+        - name: zot-pull-secret
+      containers:
+        - name: flow-stage-worker
+          image: zot.maix.ovh/flow-stage-worker:v0.2.1
+          env:
+            - name: ENV
+              value: "production"
+            - name: LOG_LEVEL
+              value: "info"
+            - name: DB_HOST
+              value: "postgres-service.postgres.svc.cluster.local"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_SSL_MODE
+              value: "disable"
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: flow-secret
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: flow-secret
+                  key: DB_PASSWORD
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: flow-secret
+                  key: DB_NAME
+            - name: REDIS_URL
+              value: "redis://redis-service.redis.svc.cluster.local:6379/1"
+            - name: ENCRYPTION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: flow-secret
+                  key: ENCRYPTION_KEY
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: flow-secret
+                  key: SECRET_KEY
+            - name: RABBITMQ_URL
+              valueFrom:
+                secretKeyRef:
+                  name: flow-secret
+                  key: RABBITMQ_URL
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi

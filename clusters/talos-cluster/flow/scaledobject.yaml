@@ -1,0 +1,48 @@
+apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  name: flow-rabbitmq-auth
+  namespace: flow
+spec:
+  secretTargetRef:
+    - parameter: host
+      name: flow-secret
+      key: RABBITMQ_URL
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: flow-streaming-scaler
+  namespace: flow
+spec:
+  scaleTargetRef:
+    name: flow-streaming
+  minReplicaCount: 0
+  maxReplicaCount: 5
+  cooldownPeriod: 300
+  triggers:
+    - type: redis
+      metadata:
+        address: redis-service.redis.svc.cluster.local:6379
+        listName: streaming:triggers:count
+        listLength: "1"
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: flow-stage-worker-scaler
+  namespace: flow
+spec:
+  scaleTargetRef:
+    name: flow-stage-worker
+  minReplicaCount: 0
+  maxReplicaCount: 10
+  cooldownPeriod: 60
+  triggers:
+    - type: rabbitmq
+      metadata:
+        queueName: stages
+        mode: QueueLength
+        value: "5"
+      authenticationRef:
+        name: flow-rabbitmq-auth
