@@ -27,7 +27,7 @@ spec:
               mountPath: /cache
       containers:
         - name: voice-sidecar
-          image: docker.io/elevenam/voice-sidecar:v0.1.19
+          image: docker.io/elevenam/voice-sidecar:v0.0.1
           imagePullPolicy: Always
           ports:
             - containerPort: 50051
@@ -89,9 +89,42 @@ spec:
       labels:
         app: gateway
     spec:
+      initContainers:
+        - name: init-postgres-db
+          image: postgres:16-alpine
+          command:
+            - sh
+            - -c
+            - |
+              until pg_isready -h postgres-service.postgres -p 5432 -U postgres; do
+                echo "Waiting for postgres..."
+                sleep 2
+              done
+              PGPASSWORD="$PG_ADMIN_PASSWORD" psql -h postgres-service.postgres -p 5432 -U postgres -tc \
+                "SELECT 1 FROM pg_roles WHERE rolname = 'voice-gateway'" | grep -q 1 || \
+              PGPASSWORD="$PG_ADMIN_PASSWORD" psql -h postgres-service.postgres -p 5432 -U postgres -c \
+                "CREATE USER \"voice-gateway\" WITH PASSWORD '$DB_PASSWORD'"
+              PGPASSWORD="$PG_ADMIN_PASSWORD" psql -h postgres-service.postgres -p 5432 -U postgres -tc \
+                "SELECT 1 FROM pg_database WHERE datname = 'voice'" | grep -q 1 || \
+              PGPASSWORD="$PG_ADMIN_PASSWORD" psql -h postgres-service.postgres -p 5432 -U postgres -c \
+                "CREATE DATABASE voice OWNER \"voice-gateway\""
+              PGPASSWORD="$PG_ADMIN_PASSWORD" psql -h postgres-service.postgres -p 5432 -U postgres -c \
+                "GRANT ALL PRIVILEGES ON DATABASE voice TO \"voice-gateway\""
+              echo "Database 'voice' and user 'voice-gateway' ready"
+          env:
+            - name: PG_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: gateway-secrets
+                  key: DB_PASSWORD
       containers:
         - name: gateway
-          image: docker.io/elevenam/voice-backend:v0.1.17
+          image: zot.maix.ovh/voice-gateway:v0.0.1
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -131,6 +164,8 @@ spec:
               value: "maix.ovh"
             - name: SIDECAR_ADDRESS
               value: "voice-sidecar:50051"
+            - name: MEMORY_ADDRESS
+              value: "memory:50051"
             - name: TURN_SERVER
               value: "172.198.1.55:3478,turn.maix.ovh:3478"
             - name: TURN_SECRET
@@ -165,3 +200,252 @@ spec:
             limits:
               memory: "256Mi"
               cpu: "500m"
+      imagePullSecrets:
+        - name: zot-pull-secret
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: memory
+  namespace: voice
+  labels:
+    app: memory
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: memory
+  template:
+    metadata:
+      labels:
+        app: memory
+    spec:
+      initContainers:
+        - name: init-postgres-db
+          image: postgres:16-alpine
+          command:
+            - sh
+            - -c
+            - |
+              until pg_isready -h postgres-service.postgres -p 5432 -U postgres; do
+                echo "Waiting for postgres..."
+                sleep 2
+              done
+              PGPASSWORD="$PG_ADMIN_PASSWORD" psql -h postgres-service.postgres -p 5432 -U postgres -tc \
+                "SELECT 1 FROM pg_roles WHERE rolname = 'voice-memory'" | grep -q 1 || \
+              PGPASSWORD="$PG_ADMIN_PASSWORD" psql -h postgres-service.postgres -p 5432 -U postgres -c \
+                "CREATE USER \"voice-memory\" WITH PASSWORD '$DB_PASSWORD'"
+              PGPASSWORD="$PG_ADMIN_PASSWORD" psql -h postgres-service.postgres -p 5432 -U postgres -tc \
+                "SELECT 1 FROM pg_database WHERE datname = 'memory'" | grep -q 1 || \
+              PGPASSWORD="$PG_ADMIN_PASSWORD" psql -h postgres-service.postgres -p 5432 -U postgres -c \
+                "CREATE DATABASE memory OWNER \"voice-memory\""
+              PGPASSWORD="$PG_ADMIN_PASSWORD" psql -h postgres-service.postgres -p 5432 -U postgres -c \
+                "GRANT ALL PRIVILEGES ON DATABASE memory TO \"voice-memory\""
+              echo "Database 'memory' and user 'voice-memory' ready"
+          env:
+            - name: PG_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: memory-secrets
+                  key: POSTGRES_PASSWORD
+        - name: init-minio-user
+          image: minio/mc:latest
+          command:
+            - sh
+            - -c
+            - |
+              mc alias set minio http://minio-service.minio:9000 "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD"
+              mc admin user info minio memory-minio 2>/dev/null || \
+                mc admin user add minio memory-minio "$S3_SECRET_KEY"
+              cat > /tmp/memory-policy.json << 'EOF'
+              {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Action": [
+                      "s3:GetBucketLocation",
+                      "s3:ListBucket",
+                      "s3:ListBucketMultipartUploads"
+                    ],
+                    "Resource": ["arn:aws:s3:::memory-*"]
+                  },
+                  {
+                    "Effect": "Allow",
+                    "Action": [
+                      "s3:CreateBucket",
+                      "s3:DeleteBucket",
+                      "s3:GetObject",
+                      "s3:PutObject",
+                      "s3:DeleteObject",
+                      "s3:ListMultipartUploadParts",
+                      "s3:AbortMultipartUpload"
+                    ],
+                    "Resource": ["arn:aws:s3:::memory-*/*", "arn:aws:s3:::memory-*"]
+                  }
+                ]
+              }
+              EOF
+              mc admin policy create minio memory-policy /tmp/memory-policy.json 2>/dev/null || \
+                mc admin policy info minio memory-policy
+              mc admin policy attach minio memory-policy --user memory-minio 2>/dev/null || true
+              echo "Minio user 'memory-minio' ready"
+          env:
+            - name: MINIO_ROOT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: memory-secrets
+                  key: MINIO_ROOT_USER
+            - name: MINIO_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: memory-secrets
+                  key: MINIO_ROOT_PASSWORD
+            - name: S3_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: memory-secrets
+                  key: S3_SECRET_KEY
+        - name: init-neo4j-user
+          image: neo4j:5-enterprise
+          command:
+            - sh
+            - -c
+            - |
+              until cypher-shell -a bolt://neo4j.neo4j:7687 -u neo4j -p "$NEO4J_ADMIN_PASSWORD" "RETURN 1" 2>/dev/null; do
+                echo "Waiting for neo4j..."
+                sleep 2
+              done
+              cypher-shell -a bolt://neo4j.neo4j:7687 -u neo4j -p "$NEO4J_ADMIN_PASSWORD" \
+                "SHOW USERS YIELD user WHERE user = 'voice-memory' RETURN user" 2>/dev/null | grep -q voice-memory || \
+              cypher-shell -a bolt://neo4j.neo4j:7687 -u neo4j -p "$NEO4J_ADMIN_PASSWORD" \
+                "CREATE USER \`voice-memory\` SET PASSWORD '$NEO4J_PASSWORD' SET PASSWORD CHANGE NOT REQUIRED"
+              cypher-shell -a bolt://neo4j.neo4j:7687 -u neo4j -p "$NEO4J_ADMIN_PASSWORD" \
+                "GRANT ROLE admin TO \`voice-memory\`" 2>/dev/null || true
+              echo "Neo4j user 'voice-memory' ready"
+          env:
+            - name: NEO4J_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: memory-secrets
+                  key: NEO4J_ADMIN_PASSWORD
+            - name: NEO4J_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: memory-secrets
+                  key: NEO4J_PASSWORD
+      containers:
+        - name: memory
+          image: zot.maix.ovh/voice-memory:v0.0.1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 50051
+              name: grpc
+          env:
+            - name: GRPC_ADDR
+              value: ":50051"
+            - name: LOG_LEVEL
+              value: "info"
+            - name: NEO4J_URI
+              value: "bolt://neo4j.neo4j:7687"
+            - name: NEO4J_USER
+              valueFrom:
+                secretKeyRef:
+                  name: memory-secrets
+                  key: NEO4J_USER
+            - name: NEO4J_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: memory-secrets
+                  key: NEO4J_PASSWORD
+            - name: NEO4J_DATABASE
+              value: "neo4j"
+            - name: POSTGRES_HOST
+              value: "pgbouncer-service.postgres"
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: memory-secrets
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: memory-secrets
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DATABASE
+              value: "memory"
+            - name: POSTGRES_SSLMODE
+              value: "disable"
+            - name: REDIS_ADDR
+              value: "redis-service.redis:6379"
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: gateway-secrets
+                  key: REDIS_PASSWORD
+                  optional: true
+            - name: QDRANT_HOST
+              value: "qdrant-service.qdrant"
+            - name: QDRANT_PORT
+              value: "6334"
+            - name: S3_ENDPOINT
+              value: "http://minio-service.minio:9000"
+            - name: S3_REGION
+              value: "us-east-1"
+            - name: S3_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: memory-secrets
+                  key: S3_ACCESS_KEY
+            - name: S3_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: memory-secrets
+                  key: S3_SECRET_KEY
+            - name: S3_BUCKET_PREFIX
+              value: "memory"
+            - name: S3_USE_PATH_STYLE
+              value: "true"
+            - name: LLM_PROVIDER
+              value: "anthropic"
+            - name: LLM_MODEL
+              value: "claude-haiku-4-5-20251101"
+            - name: ANTHROPIC_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: memory-secrets
+                  key: ANTHROPIC_API_KEY
+            - name: USE_OLLAMA_EMBED
+              value: "true"
+            - name: OLLAMA_BASE_URL
+              value: "http://ollama-service.ollama.svc.cluster.local:11434"
+            - name: OLLAMA_MODEL
+              value: "bge-m3:latest"
+            - name: EMBEDDING_DIMENSION
+              value: "1024"
+          livenessProbe:
+            grpc:
+              port: 50051
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            grpc:
+              port: 50051
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+      imagePullSecrets:
+        - name: zot-pull-secret
