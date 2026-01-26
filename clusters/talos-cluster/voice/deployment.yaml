@@ -27,7 +27,7 @@ spec:
               mountPath: /cache
       containers:
         - name: voice-sidecar
-          image: docker.io/elevenam/voice-sidecar:v0.1.12
+          image: docker.io/elevenam/voice-sidecar:v0.1.13
           imagePullPolicy: Always
           ports:
             - containerPort: 50051
@@ -89,7 +89,7 @@ spec:
     spec:
       containers:
         - name: gateway
-          image: docker.io/elevenam/voice-backend:v0.1.12
+          image: docker.io/elevenam/voice-backend:v0.1.13
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
