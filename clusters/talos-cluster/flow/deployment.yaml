@@ -166,7 +166,7 @@ spec:
         - name: zot-pull-secret
       containers:
         - name: flow-core
-          image: zot.maix.ovh/flow-core:v0.2.1
+          image: zot.maix.ovh/flow-core:v0.2.2
           env:
             - name: ENV
               value: "production"
