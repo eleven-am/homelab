@@ -5,3 +5,4 @@ resources:
   - small-cluster.yaml
   - service.yaml
   - httpRoute.yaml
+  - secret-patch.yaml

@@ -6,8 +6,8 @@ metadata:
 spec:
   secretTargetRef:
     - parameter: host
-      name: flow-secret
-      key: RABBITMQ_URL
+      name: rabbitmq-small-default-user
+      key: connection_string
 ---
 apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
