@@ -100,16 +100,23 @@ spec:
                 echo "Waiting for postgres..."
                 sleep 2
               done
-              PGPASSWORD="$PG_ADMIN_PASSWORD" psql -h postgres-service.postgres -p 5432 -U postgres -tc \
+              export PGPASSWORD="$PG_ADMIN_PASSWORD"
+              psql -h postgres-service.postgres -p 5432 -U postgres -tc \
                 "SELECT 1 FROM pg_roles WHERE rolname = 'voice-gateway'" | grep -q 1 || \
-              PGPASSWORD="$PG_ADMIN_PASSWORD" psql -h postgres-service.postgres -p 5432 -U postgres -c \
-                "CREATE USER \"voice-gateway\" WITH PASSWORD '$DB_PASSWORD'"
-              PGPASSWORD="$PG_ADMIN_PASSWORD" psql -h postgres-service.postgres -p 5432 -U postgres -tc \
+              psql -h postgres-service.postgres -p 5432 -U postgres -c \
+                "CREATE USER \"voice-gateway\" WITH PASSWORD '${DB_PASSWORD}'"
+              psql -h postgres-service.postgres -p 5432 -U postgres -c \
+                "ALTER USER \"voice-gateway\" WITH PASSWORD '${DB_PASSWORD}'"
+              psql -h postgres-service.postgres -p 5432 -U postgres -tc \
                 "SELECT 1 FROM pg_database WHERE datname = 'voice'" | grep -q 1 || \
-              PGPASSWORD="$PG_ADMIN_PASSWORD" psql -h postgres-service.postgres -p 5432 -U postgres -c \
+              psql -h postgres-service.postgres -p 5432 -U postgres -c \
                 "CREATE DATABASE voice OWNER \"voice-gateway\""
-              PGPASSWORD="$PG_ADMIN_PASSWORD" psql -h postgres-service.postgres -p 5432 -U postgres -c \
+              psql -h postgres-service.postgres -p 5432 -U postgres -c \
                 "GRANT ALL PRIVILEGES ON DATABASE voice TO \"voice-gateway\""
+              psql -h postgres-service.postgres -p 5432 -U postgres -d voice -c \
+                "GRANT ALL ON SCHEMA public TO \"voice-gateway\""
+              psql -h postgres-service.postgres -p 5432 -U postgres -d voice -c \
+                "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO \"voice-gateway\""
               echo "Database 'voice' and user 'voice-gateway' ready"
           env:
             - name: PG_ADMIN_PASSWORD
@@ -231,16 +238,23 @@ spec:
                 echo "Waiting for postgres..."
                 sleep 2
               done
-              PGPASSWORD="$PG_ADMIN_PASSWORD" psql -h postgres-service.postgres -p 5432 -U postgres -tc \
+              export PGPASSWORD="$PG_ADMIN_PASSWORD"
+              psql -h postgres-service.postgres -p 5432 -U postgres -tc \
                 "SELECT 1 FROM pg_roles WHERE rolname = 'voice-memory'" | grep -q 1 || \
-              PGPASSWORD="$PG_ADMIN_PASSWORD" psql -h postgres-service.postgres -p 5432 -U postgres -c \
-                "CREATE USER \"voice-memory\" WITH PASSWORD '$DB_PASSWORD'"
-              PGPASSWORD="$PG_ADMIN_PASSWORD" psql -h postgres-service.postgres -p 5432 -U postgres -tc \
+              psql -h postgres-service.postgres -p 5432 -U postgres -c \
+                "CREATE USER \"voice-memory\" WITH PASSWORD '${DB_PASSWORD}'"
+              psql -h postgres-service.postgres -p 5432 -U postgres -c \
+                "ALTER USER \"voice-memory\" WITH PASSWORD '${DB_PASSWORD}'"
+              psql -h postgres-service.postgres -p 5432 -U postgres -tc \
                 "SELECT 1 FROM pg_database WHERE datname = 'memory'" | grep -q 1 || \
-              PGPASSWORD="$PG_ADMIN_PASSWORD" psql -h postgres-service.postgres -p 5432 -U postgres -c \
+              psql -h postgres-service.postgres -p 5432 -U postgres -c \
                 "CREATE DATABASE memory OWNER \"voice-memory\""
-              PGPASSWORD="$PG_ADMIN_PASSWORD" psql -h postgres-service.postgres -p 5432 -U postgres -c \
+              psql -h postgres-service.postgres -p 5432 -U postgres -c \
                 "GRANT ALL PRIVILEGES ON DATABASE memory TO \"voice-memory\""
+              psql -h postgres-service.postgres -p 5432 -U postgres -d memory -c \
+                "GRANT ALL ON SCHEMA public TO \"voice-memory\""
+              psql -h postgres-service.postgres -p 5432 -U postgres -d memory -c \
+                "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO \"voice-memory\""
               echo "Database 'memory' and user 'voice-memory' ready"
           env:
             - name: PG_ADMIN_PASSWORD
