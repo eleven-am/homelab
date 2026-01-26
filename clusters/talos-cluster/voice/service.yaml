@@ -16,11 +16,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: gateway
+  name: voice-gateway
   namespace: voice
 spec:
   selector:
-    app: gateway
+    app: voice-gateway
   ports:
     - port: 8080
       targetPort: 8080
@@ -35,11 +35,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: memory
+  name: voice-memory
   namespace: voice
 spec:
   selector:
-    app: memory
+    app: voice-memory
   ports:
     - port: 50051
       targetPort: 50051
