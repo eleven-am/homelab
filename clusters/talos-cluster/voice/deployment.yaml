@@ -27,7 +27,7 @@ spec:
               mountPath: /cache
       containers:
         - name: voice-sidecar
-          image: docker.io/elevenam/voice-sidecar:v0.1.17
+          image: docker.io/elevenam/voice-sidecar:v0.1.18
           imagePullPolicy: Always
           ports:
             - containerPort: 50051
