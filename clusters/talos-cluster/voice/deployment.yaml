@@ -40,7 +40,7 @@ spec:
             - name: PARAKEET_MODEL_ID
               value: "nemo-parakeet-tdt-0.6b-v3"
             - name: TTS_MODEL_ID
-              value: "Qwen/Qwen3-TTS-12Hz-0.6B-Base"
+              value: "speaches-ai/Kokoro-82M-v1.0-ONNX"
             - name: VOICES_DIR
               value: "/home/ubuntu/.cache/huggingface/hub/voices"
             - name: TTS_DEVICE
