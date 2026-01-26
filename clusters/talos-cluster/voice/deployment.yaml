@@ -53,6 +53,8 @@ spec:
               value: "true"
             - name: TORCH_CPP_LOG_LEVEL
               value: "ERROR"
+            - name: PYTORCH_ALLOC_CONF
+              value: "expandable_segments:True"
           resources:
             requests:
               memory: "8Gi"
