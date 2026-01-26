@@ -27,7 +27,7 @@ spec:
               mountPath: /cache
       containers:
         - name: voice-sidecar
-          image: docker.io/elevenam/voice-sidecar:v0.1.16
+          image: docker.io/elevenam/voice-sidecar:v0.1.17
           imagePullPolicy: Always
           ports:
             - containerPort: 50051
@@ -40,9 +40,9 @@ spec:
             - name: PARAKEET_MODEL_ID
               value: "nemo-parakeet-tdt-0.6b-v3"
             - name: TTS_MODEL_ID
-              value: "speaches-ai/Kokoro-82M-v1.0-ONNX"
-            - name: TTS_DEFAULT_VOICE
-              value: "af_heart"
+              value: "Qwen/Qwen3-TTS-12Hz-0.6B-Base"
+            - name: VOICES_DIR
+              value: "/home/ubuntu/.cache/huggingface/hub/voices"
             - name: TTS_DEVICE
               value: "cuda"
             - name: TTS_MODEL_TTL
@@ -89,7 +89,7 @@ spec:
     spec:
       containers:
         - name: gateway
-          image: docker.io/elevenam/voice-backend:v0.1.16
+          image: docker.io/elevenam/voice-backend:v0.1.17
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
