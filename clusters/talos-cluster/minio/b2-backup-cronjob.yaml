@@ -25,7 +25,7 @@ spec:
                   mc alias set minio http://minio-service.minio:9000 "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD"
 
                   echo "Configuring B2 alias..."
-                  mc alias set b2 https://s3.us-west-004.backblazeb2.com "$B2_KEY_ID" "$B2_APPLICATION_KEY"
+                  mc alias set b2 https://s3.eu-central-003.backblazeb2.com "$B2_KEY_ID" "$B2_APPLICATION_KEY"
 
                   echo "Mirroring postgres-backups..."
                   mc mirror --overwrite minio/postgres-backups b2/$B2_BUCKET/postgres-backups
