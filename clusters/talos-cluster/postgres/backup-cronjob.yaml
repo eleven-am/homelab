@@ -1,0 +1,63 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: postgres-backup
+  namespace: postgres
+spec:
+  schedule: "0 0,6,12,18 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: backup
+              image: bitnami/postgresql:17
+              command: ["/bin/bash", "-c"]
+              args:
+                - |
+                  set -e
+                  TIMESTAMP=$(date +%Y-%m-%d-%H%M)
+                  BACKUP_FILE="backup-${TIMESTAMP}.sql.gz"
+
+                  pg_dumpall -h postgres-service -U "$POSTGRES_USER" | gzip > "/tmp/${BACKUP_FILE}"
+
+                  curl -sS https://dl.min.io/client/mc/release/linux-amd64/mc -o /tmp/mc
+                  chmod +x /tmp/mc
+                  /tmp/mc alias set minio http://minio-service.minio:9000 "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD"
+                  /tmp/mc cp "/tmp/${BACKUP_FILE}" "minio/postgres-backups/${BACKUP_FILE}"
+
+                  /tmp/mc rm --older-than 14d --force "minio/postgres-backups/"
+
+                  echo "Backup ${BACKUP_FILE} completed"
+              env:
+                - name: POSTGRES_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgres-secret
+                      key: POSTGRES_USER
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgres-secret
+                      key: POSTGRES_PASSWORD
+                - name: MINIO_ROOT_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: minio-secret
+                      key: MINIO_ROOT_USER
+                - name: MINIO_ROOT_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: minio-secret
+                      key: MINIO_ROOT_PASSWORD
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 256Mi
+                limits:
+                  cpu: 500m
+                  memory: 512Mi
