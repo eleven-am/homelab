@@ -4,7 +4,9 @@ resources:
   - namespace.yaml
   - pvc.yaml
   - secret.yaml
+  - b2-backup-secret.yaml
   - deployment.yaml
   - service.yaml
   - httpRoute.yaml
+  - b2-backup-cronjob.yaml
 

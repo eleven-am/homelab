@@ -1,0 +1,72 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: b2-backup-mirror
+  namespace: minio
+spec:
+  schedule: "0 5 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: mirror
+              image: minio/mc:latest
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  set -e
+
+                  echo "Configuring MinIO alias..."
+                  mc alias set minio http://minio-service.minio:9000 "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD"
+
+                  echo "Configuring B2 alias..."
+                  mc alias set b2 https://s3.us-west-004.backblazeb2.com "$B2_KEY_ID" "$B2_APPLICATION_KEY"
+
+                  echo "Mirroring postgres-backups..."
+                  mc mirror --overwrite minio/postgres-backups b2/$B2_BUCKET/postgres-backups
+
+                  echo "Mirroring neo4j-backups..."
+                  mc mirror --overwrite minio/neo4j-backups b2/$B2_BUCKET/neo4j-backups
+
+                  echo "Mirroring qdrant-backups..."
+                  mc mirror --overwrite minio/qdrant-backups b2/$B2_BUCKET/qdrant-backups
+
+                  echo "B2 backup mirror completed"
+              env:
+                - name: MINIO_ROOT_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: minio-secret
+                      key: MINIO_ROOT_USER
+                - name: MINIO_ROOT_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: minio-secret
+                      key: MINIO_ROOT_PASSWORD
+                - name: B2_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: b2-backup-secret
+                      key: B2_KEY_ID
+                - name: B2_APPLICATION_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: b2-backup-secret
+                      key: B2_APPLICATION_KEY
+                - name: B2_BUCKET
+                  valueFrom:
+                    secretKeyRef:
+                      name: b2-backup-secret
+                      key: B2_BUCKET
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 64Mi
+                limits:
+                  cpu: 500m
+                  memory: 256Mi
