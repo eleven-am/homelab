@@ -15,7 +15,7 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: backup
-              image: bitnami/postgresql:17
+              image: pgvector/pgvector:pg17
               command: ["/bin/bash", "-c"]
               args:
                 - |
