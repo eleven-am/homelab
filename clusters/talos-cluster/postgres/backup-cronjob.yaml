@@ -15,7 +15,7 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: backup
-              image: pgvector/pgvector:pg17
+              image: postgres:17
               command: ["/bin/bash", "-c"]
               args:
                 - |
@@ -25,6 +25,7 @@ spec:
 
                   pg_dumpall -h postgres-service -U "$POSTGRES_USER" | gzip > "/tmp/${BACKUP_FILE}"
 
+                  apt-get update && apt-get install -y curl
                   curl -sS https://dl.min.io/client/mc/release/linux-amd64/mc -o /tmp/mc
                   chmod +x /tmp/mc
                   /tmp/mc alias set minio http://minio-service.minio:9000 "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD"
@@ -57,7 +58,7 @@ spec:
               resources:
                 requests:
                   cpu: 100m
-                  memory: 256Mi
-                limits:
-                  cpu: 500m
                   memory: 512Mi
+                limits:
+                  cpu: "1"
+                  memory: 4Gi
