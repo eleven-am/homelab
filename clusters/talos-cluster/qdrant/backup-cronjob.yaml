@@ -1,0 +1,70 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: qdrant-backup
+  namespace: qdrant
+spec:
+  schedule: "0 4 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: backup
+              image: curlimages/curl:latest
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  set -e
+                  TIMESTAMP=$(date +%Y-%m-%d-%H%M)
+                  QDRANT_URL="http://qdrant-service.qdrant:6333"
+
+                  echo "Creating Qdrant snapshot..."
+                  SNAPSHOT=$(curl -sS -X POST "${QDRANT_URL}/snapshots" | grep -o '"name":"[^"]*"' | head -1 | cut -d'"' -f4)
+
+                  if [ -z "$SNAPSHOT" ]; then
+                    echo "Failed to create snapshot"
+                    exit 1
+                  fi
+                  echo "Snapshot created: ${SNAPSHOT}"
+
+                  echo "Installing mc..."
+                  wget -q https://dl.min.io/client/mc/release/linux-amd64/mc -O /tmp/mc
+                  chmod +x /tmp/mc
+
+                  echo "Downloading snapshot..."
+                  curl -sS "${QDRANT_URL}/snapshots/${SNAPSHOT}" -o "/tmp/${SNAPSHOT}"
+
+                  echo "Uploading to MinIO..."
+                  /tmp/mc alias set minio http://minio-service.minio:9000 "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD"
+                  /tmp/mc cp "/tmp/${SNAPSHOT}" "minio/qdrant-backups/qdrant-backup-${TIMESTAMP}.snapshot"
+
+                  echo "Cleaning up old snapshots from Qdrant..."
+                  curl -sS -X DELETE "${QDRANT_URL}/snapshots/${SNAPSHOT}" || true
+
+                  echo "Cleaning up old backups from MinIO..."
+                  /tmp/mc rm --older-than 14d --force "minio/qdrant-backups/" || true
+
+                  echo "Backup qdrant-backup-${TIMESTAMP}.snapshot completed"
+              env:
+                - name: MINIO_ROOT_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: minio-secret
+                      key: MINIO_ROOT_USER
+                - name: MINIO_ROOT_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: minio-secret
+                      key: MINIO_ROOT_PASSWORD
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 128Mi
+                limits:
+                  cpu: 500m
+                  memory: 512Mi

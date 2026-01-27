@@ -1,0 +1,132 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: neo4j-backup
+  namespace: neo4j
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: neo4j-backup
+  namespace: neo4j
+rules:
+  - apiGroups: ["apps"]
+    resources: ["statefulsets", "statefulsets/scale"]
+    verbs: ["get", "patch"]
+  - apiGroups: [""]
+    resources: ["pods", "pods/exec", "pods/log"]
+    verbs: ["get", "list", "watch", "create", "delete"]
+  - apiGroups: ["batch"]
+    resources: ["jobs"]
+    verbs: ["get", "list", "watch", "create", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: neo4j-backup
+  namespace: neo4j
+subjects:
+  - kind: ServiceAccount
+    name: neo4j-backup
+    namespace: neo4j
+roleRef:
+  kind: Role
+  name: neo4j-backup
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: neo4j-backup
+  namespace: neo4j
+spec:
+  schedule: "0 3 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: neo4j-backup
+          restartPolicy: OnFailure
+          containers:
+            - name: backup-controller
+              image: bitnami/kubectl:latest
+              command: ["/bin/bash", "-c"]
+              args:
+                - |
+                  set -e
+                  TIMESTAMP=$(date +%Y-%m-%d-%H%M)
+                  BACKUP_JOB="neo4j-backup-${TIMESTAMP}"
+
+                  echo "Scaling down neo4j..."
+                  kubectl scale statefulset neo4j --replicas=0 -n neo4j
+                  echo "Waiting for neo4j-0 to terminate..."
+                  kubectl wait --for=delete pod/neo4j-0 -n neo4j --timeout=180s || true
+                  sleep 5
+
+                  echo "Creating backup job..."
+                  kubectl apply -f - <<EOF
+                  apiVersion: batch/v1
+                  kind: Job
+                  metadata:
+                    name: ${BACKUP_JOB}
+                    namespace: neo4j
+                  spec:
+                    ttlSecondsAfterFinished: 300
+                    template:
+                      spec:
+                        restartPolicy: Never
+                        containers:
+                          - name: backup
+                            image: neo4j:5.26.17
+                            command: ["/bin/bash", "-c"]
+                            args:
+                              - |
+                                set -e
+                                apt-get update && apt-get install -y -qq curl > /dev/null 2>&1
+                                curl -sS https://dl.min.io/client/mc/release/linux-amd64/mc -o /usr/local/bin/mc
+                                chmod +x /usr/local/bin/mc
+                                mc alias set minio http://minio-service.minio:9000 "\$MINIO_ROOT_USER" "\$MINIO_ROOT_PASSWORD"
+                                neo4j-admin database dump neo4j --to-stdout | gzip | mc pipe "minio/neo4j-backups/neo4j-backup-${TIMESTAMP}.dump.gz"
+                                mc rm --older-than 14d --force "minio/neo4j-backups/" || true
+                                echo "Backup complete"
+                            env:
+                              - name: MINIO_ROOT_USER
+                                valueFrom:
+                                  secretKeyRef:
+                                    name: minio-secret
+                                    key: MINIO_ROOT_USER
+                              - name: MINIO_ROOT_PASSWORD
+                                valueFrom:
+                                  secretKeyRef:
+                                    name: minio-secret
+                                    key: MINIO_ROOT_PASSWORD
+                            volumeMounts:
+                              - name: neo4j-data
+                                mountPath: /data
+                            resources:
+                              limits:
+                                cpu: "1"
+                                memory: 2Gi
+                        volumes:
+                          - name: neo4j-data
+                            persistentVolumeClaim:
+                              claimName: data-neo4j-0
+                  EOF
+
+                  echo "Waiting for backup job to complete..."
+                  kubectl wait --for=condition=complete job/${BACKUP_JOB} -n neo4j --timeout=600s
+
+                  echo "Scaling up neo4j..."
+                  kubectl scale statefulset neo4j --replicas=1 -n neo4j
+
+                  echo "Backup completed successfully"
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 64Mi
+                limits:
+                  cpu: 200m
+                  memory: 128Mi
