@@ -19,19 +19,18 @@ spec:
               command: ["/bin/bash", "-c"]
               args:
                 - |
-                  set -e
+                  set -eo pipefail
                   TIMESTAMP=$(date +%Y-%m-%d-%H%M)
                   BACKUP_FILE="backup-${TIMESTAMP}.sql.gz"
 
-                  pg_dumpall -h postgres-service -U "$POSTGRES_USER" | gzip > "/tmp/${BACKUP_FILE}"
+                  apt-get update && apt-get install -y -qq curl > /dev/null 2>&1
+                  curl -sS https://dl.min.io/client/mc/release/linux-amd64/mc -o /usr/local/bin/mc
+                  chmod +x /usr/local/bin/mc
+                  mc alias set minio http://minio-service.minio:9000 "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD"
 
-                  apt-get update && apt-get install -y curl
-                  curl -sS https://dl.min.io/client/mc/release/linux-amd64/mc -o /tmp/mc
-                  chmod +x /tmp/mc
-                  /tmp/mc alias set minio http://minio-service.minio:9000 "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD"
-                  /tmp/mc cp "/tmp/${BACKUP_FILE}" "minio/postgres-backups/${BACKUP_FILE}"
+                  pg_dumpall -h postgres-service -U "$POSTGRES_USER" | gzip | mc pipe "minio/postgres-backups/${BACKUP_FILE}"
 
-                  /tmp/mc rm --older-than 14d --force "minio/postgres-backups/"
+                  mc rm --older-than 14d --force "minio/postgres-backups/" || true
 
                   echo "Backup ${BACKUP_FILE} completed"
               env:
@@ -58,7 +57,7 @@ spec:
               resources:
                 requests:
                   cpu: 100m
-                  memory: 512Mi
+                  memory: 256Mi
                 limits:
                   cpu: "1"
-                  memory: 4Gi
+                  memory: 512Mi
