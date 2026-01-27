@@ -27,7 +27,7 @@ spec:
               mountPath: /cache
       containers:
         - name: voice-sidecar
-          image: docker.io/elevenam/voice-sidecar:v0.0.3
+          image: docker.io/elevenam/voice-sidecar:v0.0.4
           imagePullPolicy: Always
           ports:
             - containerPort: 50051
@@ -131,7 +131,7 @@ spec:
                   key: DB_PASSWORD
       containers:
         - name: voice-gateway
-          image: zot.maix.ovh/voice-gateway:v0.0.3
+          image: zot.maix.ovh/voice-gateway:v0.0.4
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -361,7 +361,7 @@ spec:
                   key: NEO4J_PASSWORD
       containers:
         - name: voice-memory
-          image: zot.maix.ovh/voice-memory:v0.0.3
+          image: zot.maix.ovh/voice-memory:v0.0.4
           imagePullPolicy: Always
           ports:
             - containerPort: 50051
