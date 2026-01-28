@@ -40,13 +40,19 @@ spec:
             - name: PARAKEET_MODEL_ID
               value: "nemo-parakeet-tdt-0.6b-v3"
             - name: TTS_MODEL_ID
+              value: "speaches-ai/Kokoro-82M-v1.0-ONNX"
+            - name: TTS_CLONE_MODEL_ID
               value: "Qwen/Qwen3-TTS-12Hz-0.6B-Base"
             - name: VOICES_DIR
               value: "/home/ubuntu/.cache/huggingface/hub/voices"
             - name: TTS_DEVICE
               value: "cuda"
+            - name: TTS_CLONE_DEVICE
+              value: "cuda"
             - name: TTS_MODEL_TTL
               value: "0"
+            - name: TTS_CLONE_TTL
+              value: "300"
             - name: STT_MODEL_TTL
               value: "0"
             - name: PRELOAD_MODELS
