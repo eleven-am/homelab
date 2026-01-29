@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: convex-base-backend
+  name: convex-backend
   namespace: convex
   labels:
-    app: convex-base-backend
+    app: convex-backend
 spec:
   replicas: 1
   strategy:
     type: Recreate
   selector:
     matchLabels:
-      app: convex-base-backend
+      app: convex-backend
   template:
     metadata:
       labels:
-        app: convex-base-backend
+        app: convex-backend
     spec:
       initContainers:
         - name: init-db
@@ -35,7 +35,7 @@ spec:
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: convex-base-secret
+                  name: convex-secret
                   key: POSTGRES_PASSWORD
       containers:
         - name: backend
@@ -52,17 +52,17 @@ spec:
             - name: INSTANCE_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: convex-base-secret
+                  name: convex-secret
                   key: INSTANCE_SECRET
             - name: POSTGRES_URL
               valueFrom:
                 secretKeyRef:
-                  name: convex-base-secret
+                  name: convex-secret
                   key: POSTGRES_URL
             - name: CONVEX_CLOUD_ORIGIN
               value: "https://convex-base-api.maix.ovh"
             - name: CONVEX_SITE_ORIGIN
-              value: "https://convex-base-webhook.maix.ovh"
+              value: "https://convex-base-site.maix.ovh"
             - name: DISABLE_BEACON
               value: "true"
             - name: RUST_LOG
@@ -96,51 +96,4 @@ spec:
       volumes:
         - name: convex-data
           persistentVolumeClaim:
-            claimName: convex-base-data
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: convex-base-dashboard
-  namespace: convex
-  labels:
-    app: convex-base-dashboard
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: convex-base-dashboard
-  template:
-    metadata:
-      labels:
-        app: convex-base-dashboard
-    spec:
-      containers:
-        - name: dashboard
-          image: ghcr.io/get-convex/convex-dashboard:latest
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 6791
-              name: http
-          env:
-            - name: NEXT_PUBLIC_DEPLOYMENT_URL
-              value: "https://convex-base-api.maix.ovh"
-          resources:
-            requests:
-              cpu: 100m
-              memory: 256Mi
-            limits:
-              cpu: 500m
-              memory: 512Mi
-          livenessProbe:
-            httpGet:
-              path: /
-              port: 6791
-            initialDelaySeconds: 15
-            periodSeconds: 10
-          readinessProbe:
-            httpGet:
-              path: /
-              port: 6791
-            initialDelaySeconds: 5
-            periodSeconds: 5
+            claimName: convex-data

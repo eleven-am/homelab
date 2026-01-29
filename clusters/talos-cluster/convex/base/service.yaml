@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: convex-base-backend
+  name: convex-backend
   namespace: convex
 spec:
   selector:
-    app: convex-base-backend
+    app: convex-backend
   ports:
     - port: 3210
       targetPort: 3210
@@ -13,18 +13,4 @@ spec:
     - port: 3211
       targetPort: 3211
       name: site
-  type: ClusterIP
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: convex-base-dashboard
-  namespace: convex
-spec:
-  selector:
-    app: convex-base-dashboard
-  ports:
-    - port: 6791
-      targetPort: 6791
-      name: http
   type: ClusterIP

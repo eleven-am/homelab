@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: convex-dashboard
+  namespace: convex
+  labels:
+    app: convex-dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: convex-dashboard
+  template:
+    metadata:
+      labels:
+        app: convex-dashboard
+    spec:
+      containers:
+        - name: dashboard
+          image: ghcr.io/get-convex/convex-dashboard:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 6791
+              name: http
+          env:
+            - name: NEXT_PUBLIC_DEPLOYMENT_URL
+              value: "https://convex-readable-api.maix.ovh"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 6791
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 6791
+            initialDelaySeconds: 5
+            periodSeconds: 5
