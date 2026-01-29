@@ -46,3 +46,18 @@ spec:
       name: grpc
       protocol: TCP
   type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: voice-api
+  namespace: voice
+spec:
+  selector:
+    app: voice-api
+  ports:
+    - port: 7171
+      targetPort: 7171
+      name: http
+      protocol: TCP
+  type: ClusterIP
