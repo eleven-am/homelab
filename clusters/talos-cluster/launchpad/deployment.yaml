@@ -50,3 +50,5 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: launchpad-data
+      imagePullSecrets:
+        - name: zot-pull-secret
