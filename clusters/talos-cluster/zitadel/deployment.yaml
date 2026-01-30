@@ -77,7 +77,8 @@ spec:
           image: ghcr.io/zitadel/zitadel:latest
           args:
             - "start-from-init"
-            - "--masterkeyFromEnv"
+            - "--masterkey"
+            - "$(ZITADEL_MASTERKEY)"
           ports:
             - containerPort: 8080
               name: http
