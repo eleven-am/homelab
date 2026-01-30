@@ -76,7 +76,7 @@ spec:
         - name: zitadel
           image: ghcr.io/zitadel/zitadel:latest
           args:
-            - "start-from-init"
+            - "start"
             - "--masterkeyFromEnv"
             - "--config"
             - "/config/config.yaml"
