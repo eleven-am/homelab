@@ -75,7 +75,6 @@ spec:
       containers:
         - name: zitadel
           image: ghcr.io/zitadel/zitadel:latest
-          command: ["zitadel"]
           args:
             - "start-from-init"
             - "--masterkeyFromEnv"
