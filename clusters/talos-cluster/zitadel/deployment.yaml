@@ -76,13 +76,8 @@ spec:
         - name: zitadel
           image: ghcr.io/zitadel/zitadel:latest
           args:
-            - "start"
+            - "start-from-init"
             - "--masterkeyFromEnv"
-            - "--config"
-            - "/config/config.yaml"
-          volumeMounts:
-            - name: config
-              mountPath: /config
           ports:
             - containerPort: 8080
               name: http
@@ -92,6 +87,14 @@ spec:
                 secretKeyRef:
                   name: zitadel-secret
                   key: MASTERKEY
+            - name: ZITADEL_EXTERNALDOMAIN
+              value: "auth.maix.ovh"
+            - name: ZITADEL_EXTERNALSECURE
+              value: "true"
+            - name: ZITADEL_EXTERNALPORT
+              value: "443"
+            - name: ZITADEL_TLS_ENABLED
+              value: "false"
             - name: ZITADEL_DATABASE_POSTGRES_HOST
               value: "postgres-service.postgres.svc.cluster.local"
             - name: ZITADEL_DATABASE_POSTGRES_PORT
@@ -132,6 +135,8 @@ spec:
                 secretKeyRef:
                   name: zitadel-secret
                   key: ADMIN_PASSWORD
+            - name: ZITADEL_FIRSTINSTANCE_ORG_HUMAN_PASSWORDCHANGEREQUIRED
+              value: "false"
           resources:
             requests:
               cpu: 100m
@@ -155,7 +160,3 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 3
-      volumes:
-        - name: config
-          configMap:
-            name: zitadel-config
