@@ -78,8 +78,6 @@ spec:
           args:
             - "start-from-init"
             - "--masterkeyFromEnv"
-            - "--tlsMode"
-            - "external"
             - "--config"
             - "/config/config.yaml"
           volumeMounts:
