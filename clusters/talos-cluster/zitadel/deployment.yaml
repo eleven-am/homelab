@@ -120,6 +120,8 @@ spec:
                   key: POSTGRES_PASSWORD
             - name: ZITADEL_DATABASE_POSTGRES_ADMIN_SSL_MODE
               value: "disable"
+            - name: ZITADEL_PORT
+              value: "8080"
             - name: ZITADEL_EXTERNALDOMAIN
               value: "auth.maix.ovh"
             - name: ZITADEL_EXTERNALPORT
