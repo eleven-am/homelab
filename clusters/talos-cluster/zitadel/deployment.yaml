@@ -138,6 +138,8 @@ spec:
                   key: ADMIN_PASSWORD
             - name: ZITADEL_FIRSTINSTANCE_ORG_HUMAN_PASSWORDCHANGEREQUIRED
               value: "false"
+            - name: ZITADEL_DEFAULTINSTANCE_FEATURES_LOGINV2_REQUIRED
+              value: "false"
           resources:
             requests:
               cpu: 100m
