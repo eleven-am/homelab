@@ -91,8 +91,6 @@ spec:
               value: "auth.maix.ovh"
             - name: ZITADEL_EXTERNALSECURE
               value: "true"
-            - name: ZITADEL_EXTERNALPORT
-              value: "443"
             - name: ZITADEL_TLS_ENABLED
               value: "false"
             - name: ZITADEL_DATABASE_POSTGRES_HOST
