@@ -108,6 +108,18 @@ spec:
                   key: DB_PASSWORD
             - name: ZITADEL_DATABASE_POSTGRES_USER_SSL_MODE
               value: "disable"
+            - name: ZITADEL_DATABASE_POSTGRES_ADMIN_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_USER
+            - name: ZITADEL_DATABASE_POSTGRES_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+            - name: ZITADEL_DATABASE_POSTGRES_ADMIN_SSL_MODE
+              value: "disable"
             - name: ZITADEL_EXTERNALDOMAIN
               value: "auth.maix.ovh"
             - name: ZITADEL_EXTERNALPORT
