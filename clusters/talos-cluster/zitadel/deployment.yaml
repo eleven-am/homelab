@@ -78,6 +78,11 @@ spec:
           args:
             - "start-from-init"
             - "--masterkeyFromEnv"
+            - "--config"
+            - "/config/config.yaml"
+          volumeMounts:
+            - name: config
+              mountPath: /config
           ports:
             - containerPort: 8080
               name: http
@@ -120,14 +125,6 @@ spec:
                   key: POSTGRES_PASSWORD
             - name: ZITADEL_DATABASE_POSTGRES_ADMIN_SSL_MODE
               value: "disable"
-            - name: ZITADEL_PORT
-              value: "8080"
-            - name: ZITADEL_EXTERNALDOMAIN
-              value: "auth.maix.ovh"
-            - name: ZITADEL_EXTERNALPORT
-              value: "443"
-            - name: ZITADEL_EXTERNALSECURE
-              value: "true"
             - name: ZITADEL_FIRSTINSTANCE_ORG_HUMAN_USERNAME
               value: "admin"
             - name: ZITADEL_FIRSTINSTANCE_ORG_HUMAN_PASSWORD
@@ -158,3 +155,7 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 3
+      volumes:
+        - name: config
+          configMap:
+            name: zitadel-config
