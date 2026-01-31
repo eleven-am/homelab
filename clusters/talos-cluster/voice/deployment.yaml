@@ -196,6 +196,28 @@ spec:
               value: "http://ollama-service.ollama.svc.cluster.local:11434"
             - name: VISION_MODEL
               value: "qwen2.5vl"
+            - name: ZITADEL_DOMAIN
+              value: "auth.maix.ovh"
+            - name: ZITADEL_PROJECT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: gateway-secrets
+                  key: ZITADEL_PROJECT_ID
+            - name: ZITADEL_PAT
+              valueFrom:
+                secretKeyRef:
+                  name: gateway-secrets
+                  key: ZITADEL_PAT
+            - name: ZITADEL_GITHUB_IDP
+              valueFrom:
+                secretKeyRef:
+                  name: gateway-secrets
+                  key: ZITADEL_GITHUB_IDP
+            - name: ZITADEL_GOOGLE_IDP
+              valueFrom:
+                secretKeyRef:
+                  name: gateway-secrets
+                  key: ZITADEL_GOOGLE_IDP
           livenessProbe:
             httpGet:
               path: /health
