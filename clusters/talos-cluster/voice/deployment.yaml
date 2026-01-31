@@ -147,6 +147,8 @@ spec:
           env:
             - name: SERVER_ADDR
               value: ":8080"
+            - name: BASE_URL
+              value: "https://voice.maix.ovh"
             - name: GRPC_ADDR
               value: ":50051"
             - name: DATABASE_DSN
