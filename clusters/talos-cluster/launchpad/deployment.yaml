@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: launchpad
-          image: zot.maix.ovh/launchpad:v0.1.1
+          image: zot.maix.ovh/launchpad:v0.1.2
           resources:
             requests:
               memory: "128Mi"
