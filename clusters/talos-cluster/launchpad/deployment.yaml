@@ -31,6 +31,21 @@ spec:
               value: "8080"
             - name: DATA_PATH
               value: "/data"
+            - name: MASTER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: launchpad-secrets
+                  key: MASTER_KEY
+            - name: JWT_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: launchpad-secrets
+                  key: JWT_PRIVATE_KEY
+            - name: RESEND_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: launchpad-secrets
+                  key: RESEND_API_KEY
           volumeMounts:
             - name: data
               mountPath: /data
