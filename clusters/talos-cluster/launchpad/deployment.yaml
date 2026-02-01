@@ -43,6 +43,11 @@ spec:
                 secretKeyRef:
                   name: launchpad-secrets
                   key: RESEND_API_KEY
+            - name: ENCRYPTION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: launchpad-secrets
+                  key: ENCRYPTION_KEY
           volumeMounts:
             - name: data
               mountPath: /data
