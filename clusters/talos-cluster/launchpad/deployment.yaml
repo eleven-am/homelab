@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: launchpad
-          image: zot.maix.ovh/launchpad:v0.2.0
+          image: zot.maix.ovh/launchpad:v0.1.7
           imagePullPolicy: Always
           resources:
             requests:
