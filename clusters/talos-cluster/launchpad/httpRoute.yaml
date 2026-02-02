@@ -29,6 +29,7 @@ spec:
       namespace: cloudflare-gateway
   hostnames:
     - "readable.maix.ovh"
+    - "ferret.maix.ovh"
   rules:
     - matches:
         - path:
