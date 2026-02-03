@@ -205,6 +205,11 @@ spec:
                 secretKeyRef:
                   name: gateway-secrets
                   key: LAUNCHPAD_API_KEY
+            - name: UPLOAD_DIR
+              value: "/data/uploads"
+          volumeMounts:
+            - name: uploads
+              mountPath: /data/uploads
           livenessProbe:
             httpGet:
               path: /health
@@ -228,6 +233,10 @@ spec:
             limits:
               memory: "256Mi"
               cpu: "500m"
+      volumes:
+        - name: uploads
+          persistentVolumeClaim:
+            claimName: voice-gateway-uploads
       imagePullSecrets:
         - name: zot-pull-secret
 ---
