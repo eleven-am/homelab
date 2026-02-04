@@ -34,7 +34,7 @@ spec:
             - name: DATA_PATH
               value: "/data"
             - name: SITE_URL
-              value: "https://launchpad.horus.maix.ovh"
+              value: "https://launchpad.maix.ovh"
             - name: JWT_PRIVATE_KEY
               valueFrom:
                 secretKeyRef:

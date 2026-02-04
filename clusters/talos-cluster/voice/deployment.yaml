@@ -205,7 +205,7 @@ spec:
             - name: VISION_MODEL
               value: "qwen2.5vl"
             - name: LAUNCHPAD_URL
-              value: "https://launchpad.horus.maix.ovh"
+              value: "https://launchpad.maix.ovh"
             - name: LAUNCHPAD_API_KEY
               valueFrom:
                 secretKeyRef:
