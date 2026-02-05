@@ -17,7 +17,8 @@ spec:
         - name: zot-pull-secret
       containers:
         - name: janus
-          image: zot.maix.ovh/janus:v0.0.1
+          image: zot.maix.ovh/janus:latest
+          imagePullPolicy: Always
           ports:
             - name: http
               containerPort: 3000
