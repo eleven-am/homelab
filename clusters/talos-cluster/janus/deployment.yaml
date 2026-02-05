@@ -42,16 +42,6 @@ spec:
                 secretKeyRef:
                   name: janus-secret
                   key: GOOGLE_CLIENT_SECRET
-            - name: MICROSOFT_CLIENT_ID
-              valueFrom:
-                secretKeyRef:
-                  name: janus-secret
-                  key: MICROSOFT_CLIENT_ID
-            - name: MICROSOFT_CLIENT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: janus-secret
-                  key: MICROSOFT_CLIENT_SECRET
             - name: BETTER_AUTH_SECRET
               valueFrom:
                 secretKeyRef:
