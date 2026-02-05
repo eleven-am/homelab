@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: janus
+  namespace: janus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: janus
+  template:
+    metadata:
+      labels:
+        app: janus
+    spec:
+      imagePullSecrets:
+        - name: zot-pull-secret
+      containers:
+        - name: janus
+          image: zot.maix.ovh/janus:v0.0.1
+          ports:
+            - name: http
+              containerPort: 3000
+          env:
+            - name: PORT
+              value: "3000"
+            - name: APP_URL
+              value: "https://janus.maix.ovh"
+            - name: DATABASE_PATH
+              value: "/data/janus.db"
+            - name: HU_URL
+              value: "https://voice.maix.ovh"
+            - name: HU_PRIVATE_KEY_PATH
+              value: "/data/private.pem"
+            - name: GOOGLE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: janus-secret
+                  key: GOOGLE_CLIENT_ID
+            - name: GOOGLE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: janus-secret
+                  key: GOOGLE_CLIENT_SECRET
+            - name: MICROSOFT_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: janus-secret
+                  key: MICROSOFT_CLIENT_ID
+            - name: MICROSOFT_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: janus-secret
+                  key: MICROSOFT_CLIENT_SECRET
+            - name: BETTER_AUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: janus-secret
+                  key: BETTER_AUTH_SECRET
+            - name: ANTHROPIC_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: janus-secret
+                  key: ANTHROPIC_API_KEY
+            - name: HU_AGENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: janus-secret
+                  key: HU_AGENT_ID
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: hu-key
+              mountPath: /data/private.pem
+              subPath: private.pem
+              readOnly: true
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: janus-data
+        - name: hu-key
+          secret:
+            secretName: janus-secret
+            items:
+              - key: private.pem
+                path: private.pem

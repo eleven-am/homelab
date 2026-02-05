@@ -1,0 +1,19 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: janus-route
+  namespace: janus
+spec:
+  parentRefs:
+    - name: cloudflare-gateway
+      namespace: cloudflare-gateway
+  hostnames:
+    - "janus.maix.ovh"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: janus-service
+          port: 80
