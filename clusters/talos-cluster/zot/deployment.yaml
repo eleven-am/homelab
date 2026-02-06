@@ -64,11 +64,16 @@ spec:
         - name: data
           mountPath: /var/lib/zot
         args: ["serve", "/etc/zot/config.json"]
+        startupProbe:
+          httpGet:
+            path: /v2/
+            port: registry
+          periodSeconds: 10
+          failureThreshold: 30
         readinessProbe:
           httpGet:
             path: /v2/
             port: registry
-          initialDelaySeconds: 5
           periodSeconds: 10
         livenessProbe:
           httpGet:
