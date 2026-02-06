@@ -64,13 +64,26 @@ spec:
         - name: data
           mountPath: /var/lib/zot
         args: ["serve", "/etc/zot/config.json"]
+        readinessProbe:
+          httpGet:
+            path: /v2/
+            port: registry
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /v2/
+            port: registry
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          failureThreshold: 3
         resources:
           requests:
-            memory: "64Mi"
-            cpu: "50m"
+            memory: "512Mi"
+            cpu: "100m"
           limits:
-            memory: "256Mi"
-            cpu: "200m"
+            memory: "1Gi"
+            cpu: "500m"
       volumes:
       - name: config-template
         configMap:
