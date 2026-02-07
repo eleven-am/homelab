@@ -76,7 +76,7 @@ spec:
               echo "Database initialization complete!"
       containers:
         - name: flow-api
-          image: zot.maix.ovh/flow-server:v0.2.6
+          image: zot.maix.ovh/flow-server:v0.2.7
           ports:
             - name: http
               containerPort: 8080
@@ -166,7 +166,7 @@ spec:
         - name: zot-pull-secret
       containers:
         - name: flow-core
-          image: zot.maix.ovh/flow-core:v0.2.6
+          image: zot.maix.ovh/flow-core:v0.2.7
           env:
             - name: ENV
               value: "production"
@@ -237,7 +237,7 @@ spec:
         - name: zot-pull-secret
       containers:
         - name: flow-streaming
-          image: zot.maix.ovh/flow-streaming:v0.2.6
+          image: zot.maix.ovh/flow-streaming:v0.2.7
           env:
             - name: ENV
               value: "production"
@@ -308,7 +308,7 @@ spec:
         - name: zot-pull-secret
       containers:
         - name: flow-stage-worker
-          image: zot.maix.ovh/flow-stage-worker:v0.2.6
+          image: zot.maix.ovh/flow-stage-worker:v0.2.7
           env:
             - name: ENV
               value: "production"
