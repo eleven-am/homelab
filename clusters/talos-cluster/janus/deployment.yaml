@@ -24,7 +24,7 @@ spec:
               mountPath: /data
       containers:
         - name: janus
-          image: zot.maix.ovh/janus:v0.0.3
+          image: zot.maix.ovh/janus:v0.0.4
           imagePullPolicy: Always
           ports:
             - name: http
