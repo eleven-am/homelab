@@ -21,6 +21,8 @@ spec:
           args:
             - --addr
             - tcp://0.0.0.0:1234
+            - --addr
+            - unix:///run/buildkit/buildkitd.sock
             - --tlscacert
             - /certs/ca.pem
             - --tlscert
