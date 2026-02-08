@@ -143,7 +143,7 @@ spec:
                   key: DB_PASSWORD
       containers:
         - name: voice-gateway
-          image: zot.maix.ovh/voice-gateway:v0.0.5
+          image: zot.maix.ovh/voice-gateway:v0.0.7
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -519,7 +519,7 @@ spec:
     spec:
       containers:
         - name: voice-api
-          image: zot.maix.ovh/voice-api:v0.0.5
+          image: zot.maix.ovh/voice-api:v0.0.7
           imagePullPolicy: Always
           ports:
             - containerPort: 7171
