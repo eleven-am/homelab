@@ -6,7 +6,7 @@ metadata:
     app: frames-deployment
   namespace: frames
 spec:
-  replicas: 2
+  replicas: 1
   strategy:
     type: RollingUpdate
     rollingUpdate:
