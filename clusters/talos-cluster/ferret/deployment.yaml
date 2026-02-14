@@ -40,6 +40,13 @@ spec:
               value: "http://browserless-service.browserless.svc.cluster.local:3000"
             - name: FLARESOLVERR_URL
               value: "http://prowlarr-service.prowlarr.svc.cluster.local:8191"
+            - name: STTUBE_URL
+              value: "http://convex-readable-backend.convex.svc.cluster.local:3210/http/api/sttube"
+            - name: STTUBE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ferret-secrets
+                  key: STTUBE_API_KEY
             - name: GEMINI_API_KEY
               valueFrom:
                 secretKeyRef:
