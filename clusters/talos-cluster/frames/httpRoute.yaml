@@ -5,10 +5,10 @@ metadata:
   namespace: frames
 spec:
   parentRefs:
-    - name: cloudflare-gateway
-      namespace: cloudflare-gateway
+    - name: envoy-gateway
+      namespace: gateway
   hostnames:
-    - "frames.maix.ovh"
+    - "frames.horus.maix.ovh"
   rules:
     - matches:
         - path:
