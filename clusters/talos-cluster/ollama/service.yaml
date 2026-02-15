@@ -4,6 +4,7 @@ metadata:
   name: ollama-service
   namespace: ollama
 spec:
+  type: LoadBalancer
   selector:
     app: ollama
   ports:
