@@ -1,0 +1,91 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../base
+  - secret.yaml
+
+patches:
+  - target:
+      kind: Deployment
+      name: convex-backend
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: convex-vote-wise-backend
+      - op: replace
+        path: /metadata/labels/app
+        value: convex-vote-wise-backend
+      - op: replace
+        path: /spec/selector/matchLabels/app
+        value: convex-vote-wise-backend
+      - op: replace
+        path: /spec/template/metadata/labels/app
+        value: convex-vote-wise-backend
+      - op: replace
+        path: /spec/template/spec/initContainers/0/env/0/value
+        value: convex_vote_wise
+      - op: replace
+        path: /spec/template/spec/initContainers/0/env/1/valueFrom/secretKeyRef/name
+        value: convex-vote-wise-secret
+      - op: replace
+        path: /spec/template/spec/containers/0/env/0/value
+        value: convex-vote-wise
+      - op: replace
+        path: /spec/template/spec/containers/0/env/1/valueFrom/secretKeyRef/name
+        value: convex-vote-wise-secret
+      - op: replace
+        path: /spec/template/spec/containers/0/env/2/valueFrom/secretKeyRef/name
+        value: convex-vote-wise-secret
+      - op: replace
+        path: /spec/template/spec/containers/0/env/3/value
+        value: https://convex-vote-wise-api.maix.ovh
+      - op: replace
+        path: /spec/template/spec/containers/0/env/4/value
+        value: https://convex-vote-wise-site.maix.ovh
+      - op: replace
+        path: /spec/template/spec/volumes/0/persistentVolumeClaim/claimName
+        value: convex-vote-wise-data
+  - target:
+      kind: Service
+      name: convex-backend
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: convex-vote-wise-backend
+      - op: replace
+        path: /spec/selector/app
+        value: convex-vote-wise-backend
+  - target:
+      kind: PersistentVolumeClaim
+      name: convex-data
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: convex-vote-wise-data
+  - target:
+      kind: HTTPRoute
+      name: convex-api-route
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: convex-vote-wise-api-route
+      - op: replace
+        path: /spec/hostnames/0
+        value: convex-vote-wise-api.maix.ovh
+      - op: replace
+        path: /spec/rules/0/backendRefs/0/name
+        value: convex-vote-wise-backend
+  - target:
+      kind: HTTPRoute
+      name: convex-site-route
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: convex-vote-wise-site-route
+      - op: replace
+        path: /spec/hostnames/0
+        value: convex-vote-wise-site.maix.ovh
+      - op: replace
+        path: /spec/rules/0/backendRefs/0/name
+        value: convex-vote-wise-backend
