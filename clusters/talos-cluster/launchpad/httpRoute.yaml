@@ -11,6 +11,7 @@ spec:
     - "readable.maix.ovh"
     - "launchpad.maix.ovh"
     - "ferret.maix.ovh"
+    - "ollama.maix.ovh"
   rules:
     - matches:
         - path:
