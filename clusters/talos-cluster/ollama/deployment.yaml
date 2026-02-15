@@ -34,7 +34,7 @@ spec:
             - name: OLLAMA_KV_CACHE_TYPE
               value: "q8_0"
             - name: OLLAMA_KEEP_ALIVE
-              value: "3m"
+              value: "1m"
             - name: OLLAMA_MAX_LOADED_MODELS
               value: "2"
           resources:
