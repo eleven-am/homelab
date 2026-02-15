@@ -50,9 +50,9 @@ spec:
             - name: TTS_CLONE_DEVICE
               value: "cuda"
             - name: TTS_MODEL_TTL
-              value: "0"
+              value: "60"
             - name: TTS_CLONE_TTL
-              value: "300"
+              value: "60"
             - name: STT_MODEL_TTL
               value: "0"
             - name: PRELOAD_MODELS
