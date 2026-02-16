@@ -55,7 +55,7 @@ spec:
             - name: OPENROUTER_BASE_URL
               value: "https://openrouter.ai/api/v1"
             - name: AGENT_MODEL
-              value: "moonshotai/kimi-k2.5"
+              value: "anthropic/claude-haiku-4.5"
             - name: GENERATOR_MODEL
               value: "google/gemini-3-flash-preview"
             - name: SCRAPER_TIMEOUT_MS
