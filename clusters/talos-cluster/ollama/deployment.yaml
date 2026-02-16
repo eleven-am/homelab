@@ -28,7 +28,7 @@ spec:
             - name: OLLAMA_HOST
               value: "0.0.0.0"
             - name: OLLAMA_MAX_VRAM
-              value: "16106127360"
+              value: "12884901888"
             - name: OLLAMA_FLASH_ATTENTION
               value: "1"
             - name: OLLAMA_KV_CACHE_TYPE
