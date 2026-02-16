@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: ferret
-          image: zot.maix.ovh/ferret:v0.2.8
+          image: zot.maix.ovh/ferret:v0.2.9
           imagePullPolicy: Always
           resources:
             requests:
@@ -47,20 +47,17 @@ spec:
                 secretKeyRef:
                   name: ferret-secrets
                   key: STTUBE_API_KEY
-            - name: GEMINI_API_KEY
+            - name: OPENROUTER_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: ferret-secrets
-                  key: GEMINI_API_KEY
-            - name: ANTHROPIC_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: ferret-secrets
-                  key: ANTHROPIC_API_KEY
-            - name: GEMINI_MODEL
-              value: "gemini-2.5-flash"
-            - name: HAIKU_MODEL
-              value: "claude-haiku-4-5-20251001"
+                  key: OPENROUTER_API_KEY
+            - name: OPENROUTER_BASE_URL
+              value: "https://openrouter.ai/api/v1"
+            - name: AGENT_MODEL
+              value: "moonshotai/kimi-k2.5"
+            - name: GENERATOR_MODEL
+              value: "google/gemini-3-flash-preview"
             - name: SCRAPER_TIMEOUT_MS
               value: "30000"
             - name: API_KEYS_KEY
