@@ -4,7 +4,7 @@ metadata:
   name: ferret
   namespace: ferret
 spec:
-  replicas: 0
+  replicas: 1
   selector:
     matchLabels:
       app: ferret
@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: ferret
-          image: zot.maix.ovh/ferret:v0.2.9
+          image: zot.maix.ovh/ferret:v0.3.0
           imagePullPolicy: Always
           resources:
             requests:
