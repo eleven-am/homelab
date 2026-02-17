@@ -50,6 +50,8 @@ spec:
                   key: OPENROUTER_API_KEY
             - name: AGENT_MODEL
               value: "openai/gpt-5-nano"
+            - name: EXTRACT_MODEL
+              value: "anthropic/claude-haiku-4.5"
             - name: GENERATOR_MODEL
               value: "google/gemini-2.5-flash"
             - name: API_KEYS_KEY
