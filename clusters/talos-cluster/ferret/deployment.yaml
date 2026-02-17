@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: ferret
-          image: zot.maix.ovh/ferret:v0.3.0
+          image: zot.maix.ovh/ferret:v0.3.1
           imagePullPolicy: Always
           resources:
             requests:
@@ -36,30 +36,22 @@ spec:
               value: "redis://redis-service.redis.svc.cluster.local:6379"
             - name: SEARXNG_URL
               value: "http://searxng.searxng.svc.cluster.local:8080"
-            - name: BROWSERLESS_URL
-              value: "http://browserless-service.browserless.svc.cluster.local:3000"
-            - name: FLARESOLVERR_URL
-              value: "http://prowlarr-service.prowlarr.svc.cluster.local:8191"
-            - name: STTUBE_URL
-              value: "http://convex-readable-backend.convex.svc.cluster.local:3210/http/api/sttube"
-            - name: STTUBE_API_KEY
+            - name: WEBDOWN_URL
+              value: "http://convex-readable-backend.convex.svc.cluster.local:3210/http/api/webDown"
+            - name: WEBDOWN_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: ferret-secrets
-                  key: STTUBE_API_KEY
+                  key: WEBDOWN_API_KEY
             - name: OPENROUTER_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: ferret-secrets
                   key: OPENROUTER_API_KEY
-            - name: OPENROUTER_BASE_URL
-              value: "https://openrouter.ai/api/v1"
             - name: AGENT_MODEL
-              value: "anthropic/claude-haiku-4.5"
+              value: "openai/gpt-5-nano"
             - name: GENERATOR_MODEL
-              value: "google/gemini-3-flash-preview"
-            - name: SCRAPER_TIMEOUT_MS
-              value: "30000"
+              value: "google/gemini-2.5-flash"
             - name: API_KEYS_KEY
               value: "ferret:api_keys"
             - name: QUEUE_CONCURRENCY_RESEARCH
