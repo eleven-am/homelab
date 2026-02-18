@@ -519,7 +519,7 @@ spec:
     spec:
       containers:
         - name: voice-api
-          image: zot.maix.ovh/voice-api:v0.0.7
+          image: zot.maix.ovh/voice-api:v0.0.8
           imagePullPolicy: Always
           ports:
             - containerPort: 7171
