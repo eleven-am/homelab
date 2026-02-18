@@ -47,6 +47,18 @@ patches:
         path: /spec/replicas
         value: 1
       - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/cpu
+        value: 500m
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/memory
+        value: 1Gi
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/cpu
+        value: 4000m
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: 4Gi
+      - op: replace
         path: /spec/template/spec/volumes/0/persistentVolumeClaim/claimName
         value: convex-vote-wise-data
   - target:
