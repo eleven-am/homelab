@@ -45,7 +45,7 @@ patches:
         value: https://convex-vote-wise-site.maix.ovh
       - op: replace
         path: /spec/replicas
-        value: 1
+        value: 0
       - op: replace
         path: /spec/template/spec/volumes/0/persistentVolumeClaim/claimName
         value: convex-vote-wise-data
