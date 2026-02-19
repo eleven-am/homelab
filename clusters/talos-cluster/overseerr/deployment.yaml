@@ -24,7 +24,7 @@ spec:
       containers:
         - name: overseerr-server
           image: lscr.io/linuxserver/overseerr:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 5055
               name: overseerr
