@@ -84,12 +84,10 @@ spec:
             - name: grpc
               containerPort: 9090
           env:
-            # Server
             - name: REST_ADDR
               value: ":8080"
             - name: GRPC_ADDR
               value: ":9090"
-            # Postgres
             - name: POSTGRES_HOST
               value: "postgres-service.postgres.svc.cluster.local"
             - name: POSTGRES_PORT
@@ -111,10 +109,8 @@ spec:
                 secretKeyRef:
                   name: ada-secret
                   key: DB_NAME
-            # Redis
             - name: REDIS_ADDR
               value: "redis-service.redis.svc.cluster.local:6379"
-            # Neo4j
             - name: NEO4J_URI
               value: "bolt://neo4j.neo4j.svc.cluster.local:7687"
             - name: NEO4J_USER
@@ -126,12 +122,10 @@ spec:
                   key: NEO4J_PASSWORD
             - name: NEO4J_DATABASE
               value: "neo4j"
-            # Qdrant
             - name: QDRANT_HOST
               value: "qdrant-service.qdrant.svc.cluster.local"
             - name: QDRANT_PORT
               value: "6334"
-            # S3 / MinIO
             - name: S3_ENDPOINT
               value: "http://minio-service.minio.svc.cluster.local:9000"
             - name: S3_REGION
@@ -150,26 +144,49 @@ spec:
                 secretKeyRef:
                   name: ada-secret
                   key: S3_SECRET_KEY
-            # Seed API Key (creates admin key on first start)
             - name: SEED_TENANT_ID
               valueFrom:
                 secretKeyRef:
                   name: ada-secret
                   key: SEED_TENANT_ID
-            # LLM - OpenAI Direct
-            - name: LLM_PROVIDER
-              value: "openai"
-            - name: LLM_MODEL
-              value: "gpt-4o"
             - name: OPENAI_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: ada-secret
                   key: OPENAI_API_KEY
-            # Extraction
-            - name: EXTRACTION_MODEL
-              value: "gpt-4o"
-            # Embedding - Ollama
+            - name: OPENROUTER_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ada-secret
+                  key: OPENROUTER_API_KEY
+            - name: GOOGLE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ada-secret
+                  key: GOOGLE_API_KEY
+            - name: ANTHROPIC_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ada-secret
+                  key: ANTHROPIC_API_KEY
+            - name: LLM_PROVIDER
+              value: "openrouter"
+            - name: LLM_MODEL
+              value: "anthropic/claude-sonnet-4.5"
+            - name: LLM_EXTRACTION_PROVIDER
+              value: "openrouter"
+            - name: LLM_EXTRACTION_MODEL
+              value: "anthropic/claude-sonnet-4.5"
+            - name: LLM_EXTRACTION_BASE_URL
+              value: "https://openrouter.ai/api/v1"
+            - name: LLM_SUMMARIZATION_PROVIDER
+              value: "google"
+            - name: LLM_SUMMARIZATION_MODEL
+              value: "gemini-2.5-pro"
+            - name: LLM_CROSS_ENCODER_PROVIDER
+              value: "openai"
+            - name: LLM_CROSS_ENCODER_MODEL
+              value: "gpt-5.2"
             - name: EMBEDDING_PROVIDER
               value: "ollama"
             - name: EMBEDDING_MODEL
@@ -178,7 +195,6 @@ spec:
               value: "http://ollama-service.ollama.svc.cluster.local:11434"
             - name: EMBEDDING_DIMENSION
               value: "1024"
-            # Memory limits
             - name: GOMEMLIMIT
               value: "900MiB"
           resources:
