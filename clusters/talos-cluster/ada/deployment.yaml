@@ -76,7 +76,7 @@ spec:
               echo "Database initialization complete!"
       containers:
         - name: ada
-          image: zot.maix.ovh/ada:v0.2.2
+          image: zot.maix.ovh/ada:v0.2.3
           args: ["server"]
           ports:
             - name: http
@@ -149,6 +149,11 @@ spec:
                 secretKeyRef:
                   name: ada-secret
                   key: SEED_TENANT_ID
+            - name: INTERNAL_AUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: ada-secret
+                  key: INTERNAL_AUTH_SECRET
             - name: OPENAI_API_KEY
               valueFrom:
                 secretKeyRef:
