@@ -25,17 +25,3 @@ spec:
   resources:
     requests:
       storage: 1Gi
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: voice-gateway-uploads
-  namespace: voice
-spec:
-  accessModes:
-    - ReadWriteOnce
-  volumeMode: Filesystem
-  storageClassName: app-storage
-  resources:
-    requests:
-      storage: 10Gi
