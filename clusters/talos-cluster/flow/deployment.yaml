@@ -76,7 +76,7 @@ spec:
               echo "Database initialization complete!"
       containers:
         - name: flow-api
-          image: zot.maix.ovh/flow-server:v0.2.8
+          image: zot.maix.ovh/flow-server:v0.2.9
           ports:
             - name: http
               containerPort: 8080
@@ -119,11 +119,6 @@ spec:
                 secretKeyRef:
                   name: flow-secret
                   key: ENCRYPTION_KEY
-            - name: SECRET_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: flow-secret
-                  key: SECRET_KEY
             - name: RABBITMQ_URL
               valueFrom:
                 secretKeyRef:
@@ -166,7 +161,7 @@ spec:
         - name: zot-pull-secret
       containers:
         - name: flow-core
-          image: zot.maix.ovh/flow-core:v0.2.8
+          image: zot.maix.ovh/flow-core:v0.2.9
           env:
             - name: ENV
               value: "production"
@@ -200,11 +195,6 @@ spec:
                 secretKeyRef:
                   name: flow-secret
                   key: ENCRYPTION_KEY
-            - name: SECRET_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: flow-secret
-                  key: SECRET_KEY
             - name: RABBITMQ_URL
               valueFrom:
                 secretKeyRef:
@@ -237,7 +227,7 @@ spec:
         - name: zot-pull-secret
       containers:
         - name: flow-streaming
-          image: zot.maix.ovh/flow-streaming:v0.2.8
+          image: zot.maix.ovh/flow-streaming:v0.2.9
           env:
             - name: ENV
               value: "production"
@@ -271,11 +261,6 @@ spec:
                 secretKeyRef:
                   name: flow-secret
                   key: ENCRYPTION_KEY
-            - name: SECRET_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: flow-secret
-                  key: SECRET_KEY
             - name: RABBITMQ_URL
               valueFrom:
                 secretKeyRef:
@@ -308,7 +293,7 @@ spec:
         - name: zot-pull-secret
       containers:
         - name: flow-stage-worker
-          image: zot.maix.ovh/flow-stage-worker:v0.2.8
+          image: zot.maix.ovh/flow-stage-worker:v0.2.9
           env:
             - name: ENV
               value: "production"
@@ -342,11 +327,6 @@ spec:
                 secretKeyRef:
                   name: flow-secret
                   key: ENCRYPTION_KEY
-            - name: SECRET_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: flow-secret
-                  key: SECRET_KEY
             - name: RABBITMQ_URL
               valueFrom:
                 secretKeyRef:
