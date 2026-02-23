@@ -124,6 +124,11 @@ spec:
                 secretKeyRef:
                   name: flow-secret
                   key: RABBITMQ_URL
+            - name: INTERNAL_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: flow-secret
+                  key: INTERNAL_SECRET
           resources:
             requests:
               cpu: 50m
@@ -200,6 +205,11 @@ spec:
                 secretKeyRef:
                   name: flow-secret
                   key: RABBITMQ_URL
+            - name: INTERNAL_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: flow-secret
+                  key: INTERNAL_SECRET
           resources:
             requests:
               cpu: 25m
