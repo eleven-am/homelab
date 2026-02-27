@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: firefly-importer
+  namespace: firefly
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: firefly-importer
+  template:
+    metadata:
+      labels:
+        app: firefly-importer
+    spec:
+      containers:
+        - name: firefly-importer
+          image: fireflyiii/data-importer:latest
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: FIREFLY_III_URL
+              value: "http://firefly-service.firefly.svc.cluster.local"
+            - name: FIREFLY_III_ACCESS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: firefly-secret
+                  key: FIREFLY_ACCESS_TOKEN
+            - name: TRUSTED_PROXIES
+              value: "**"
+            - name: TZ
+              value: "Europe/Paris"
+            - name: ENABLE_BANKING_ID
+              valueFrom:
+                secretKeyRef:
+                  name: firefly-secret
+                  key: ENABLE_BANKING_ID
+            - name: ENABLE_BANKING_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: firefly-secret
+                  key: ENABLE_BANKING_KEY
+            - name: ENABLE_BANKING_REDIRECT_URI
+              value: "https://firefly-importer.maix.ovh/eb-callback"
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5

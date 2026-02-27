@@ -1,0 +1,159 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: firefly
+  namespace: firefly
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: firefly
+  template:
+    metadata:
+      labels:
+        app: firefly
+    spec:
+      initContainers:
+        - name: init-db
+          image: postgres:15-alpine
+          env:
+            - name: PGHOST
+              value: "postgres-service.postgres.svc.cluster.local"
+            - name: PGPORT
+              value: "5432"
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_USER
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+            - name: FIREFLY_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: firefly-secret
+                  key: DB_USER
+            - name: FIREFLY_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: firefly-secret
+                  key: DB_PASSWORD
+            - name: FIREFLY_DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: firefly-secret
+                  key: DB_NAME
+          command:
+            - sh
+            - -c
+            - |
+              echo "Checking if user $FIREFLY_DB_USER exists..."
+              USER_EXISTS=$(psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='$FIREFLY_DB_USER'")
+              if [ "$USER_EXISTS" != "1" ]; then
+                echo "Creating user $FIREFLY_DB_USER..."
+                psql -c "CREATE USER $FIREFLY_DB_USER WITH PASSWORD '$FIREFLY_DB_PASSWORD' CREATEDB;"
+              else
+                echo "User $FIREFLY_DB_USER already exists, updating password..."
+                psql -c "ALTER USER $FIREFLY_DB_USER WITH PASSWORD '$FIREFLY_DB_PASSWORD' CREATEDB;"
+              fi
+
+              echo "Checking if database $FIREFLY_DB_NAME exists..."
+              DB_EXISTS=$(psql -tAc "SELECT 1 FROM pg_database WHERE datname='$FIREFLY_DB_NAME'")
+              if [ "$DB_EXISTS" != "1" ]; then
+                echo "Creating database $FIREFLY_DB_NAME..."
+                psql -c "CREATE DATABASE $FIREFLY_DB_NAME OWNER $FIREFLY_DB_USER;"
+              else
+                echo "Database $FIREFLY_DB_NAME already exists"
+              fi
+
+              echo "Granting privileges..."
+              psql -c "GRANT ALL PRIVILEGES ON DATABASE $FIREFLY_DB_NAME TO $FIREFLY_DB_USER;"
+              echo "Database initialization complete!"
+      containers:
+        - name: firefly
+          image: fireflyiii/core:latest
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: APP_ENV
+              value: "production"
+            - name: APP_DEBUG
+              value: "false"
+            - name: SITE_OWNER
+              value: "roy@maix.ovh"
+            - name: APP_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: firefly-secret
+                  key: APP_KEY
+            - name: DEFAULT_LANGUAGE
+              value: "en_US"
+            - name: DEFAULT_LOCALE
+              value: "equal"
+            - name: TZ
+              value: "Europe/Paris"
+            - name: TRUSTED_PROXIES
+              value: "**"
+            - name: APP_URL
+              value: "https://firefly.maix.ovh"
+            - name: DB_CONNECTION
+              value: "pgsql"
+            - name: DB_HOST
+              value: "postgres-service.postgres.svc.cluster.local"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: firefly-secret
+                  key: DB_NAME
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: firefly-secret
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: firefly-secret
+                  key: DB_PASSWORD
+            - name: CACHE_DRIVER
+              value: "redis"
+            - name: SESSION_DRIVER
+              value: "redis"
+            - name: REDIS_HOST
+              value: "redis-service.redis.svc.cluster.local"
+            - name: REDIS_PORT
+              value: "6379"
+            - name: REDIS_DB
+              value: "2"
+            - name: REDIS_CACHE_DB
+              value: "3"
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 5
+          volumeMounts:
+            - name: upload-data
+              mountPath: /var/www/html/storage/upload
+      volumes:
+        - name: upload-data
+          persistentVolumeClaim:
+            claimName: firefly-upload
