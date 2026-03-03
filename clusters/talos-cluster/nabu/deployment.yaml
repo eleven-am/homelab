@@ -1,0 +1,142 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nabu
+  namespace: nabu
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nabu
+  template:
+    metadata:
+      labels:
+        app: nabu
+    spec:
+      imagePullSecrets:
+        - name: zot-pull-secret
+      initContainers:
+        - name: init-db
+          image: postgres:16-alpine
+          env:
+            - name: PGHOST
+              value: "postgres-service.postgres.svc.cluster.local"
+            - name: PGPORT
+              value: "5432"
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_USER
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+            - name: NABU_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: nabu-secret
+                  key: DB_USER
+            - name: NABU_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nabu-secret
+                  key: DB_PASSWORD
+            - name: NABU_DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: nabu-secret
+                  key: DB_NAME
+          command:
+            - sh
+            - -c
+            - |
+              echo "Checking if user $NABU_DB_USER exists..."
+              USER_EXISTS=$(psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='$NABU_DB_USER'")
+              if [ "$USER_EXISTS" != "1" ]; then
+                echo "Creating user $NABU_DB_USER..."
+                psql -c "CREATE USER $NABU_DB_USER WITH PASSWORD '$NABU_DB_PASSWORD' CREATEDB;"
+              else
+                echo "User $NABU_DB_USER already exists, updating password..."
+                psql -c "ALTER USER $NABU_DB_USER WITH PASSWORD '$NABU_DB_PASSWORD' CREATEDB;"
+              fi
+              echo "Checking if database $NABU_DB_NAME exists..."
+              DB_EXISTS=$(psql -tAc "SELECT 1 FROM pg_database WHERE datname='$NABU_DB_NAME'")
+              if [ "$DB_EXISTS" != "1" ]; then
+                echo "Creating database $NABU_DB_NAME..."
+                psql -c "CREATE DATABASE $NABU_DB_NAME OWNER $NABU_DB_USER;"
+              else
+                echo "Database $NABU_DB_NAME already exists"
+              fi
+              echo "Granting privileges..."
+              psql -c "GRANT ALL PRIVILEGES ON DATABASE $NABU_DB_NAME TO $NABU_DB_USER;"
+              echo "Database initialization complete!"
+      containers:
+        - name: nabu
+          image: zot.maix.ovh/nabu:latest
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: NABU_PORT
+              value: "8080"
+            - name: NABU_LOG_LEVEL
+              value: "info"
+            - name: DB_HOST
+              value: "postgres-service.postgres.svc.cluster.local"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_SSLMODE
+              value: "disable"
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: nabu-secret
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nabu-secret
+                  key: DB_PASSWORD
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: nabu-secret
+                  key: DB_NAME
+            - name: NABU_JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: nabu-secret
+                  key: NABU_JWT_SECRET
+            - name: NABU_JWT_EXPIRY
+              value: "24h"
+            - name: PUSHOVER_USER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: nabu-secret
+                  key: PUSHOVER_USER_KEY
+            - name: PUSHOVER_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: nabu-secret
+                  key: PUSHOVER_API_TOKEN
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5

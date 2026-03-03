@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nabu-service
+  namespace: nabu
+spec:
+  selector:
+    app: nabu
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
