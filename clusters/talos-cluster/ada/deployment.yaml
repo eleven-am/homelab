@@ -200,6 +200,10 @@ spec:
               value: "http://ollama-service.ollama.svc.cluster.local:11434"
             - name: EMBEDDING_DIMENSION
               value: "1024"
+            - name: FLOW_SIGNAL_ENABLED
+              value: "true"
+            - name: FLOW_SIGNAL_ADDR
+              value: "flow-service.flow.svc.cluster.local:9090"
             - name: GOMEMLIMIT
               value: "900MiB"
           resources:

@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: flow-api
+  name: flow
   namespace: flow
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: flow-api
+      app: flow
   template:
     metadata:
       labels:
-        app: flow-api
+        app: flow
     spec:
       imagePullSecrets:
         - name: zot-pull-secret
       initContainers:
         - name: init-db
-          image: postgres:15-alpine
+          image: postgres:16-alpine
           env:
             - name: PGHOST
               value: "postgres-service.postgres.svc.cluster.local"
@@ -74,23 +74,74 @@ spec:
               echo "Granting privileges..."
               psql -c "GRANT ALL PRIVILEGES ON DATABASE $FLOW_DB_NAME TO $FLOW_DB_USER;"
               echo "Database initialization complete!"
+        - name: init-minio
+          image: minio/mc:latest
+          env:
+            - name: MINIO_ROOT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: minio-secret
+                  key: MINIO_ROOT_USER
+            - name: MINIO_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: minio-secret
+                  key: MINIO_ROOT_PASSWORD
+            - name: FLOW_S3_USER
+              valueFrom:
+                secretKeyRef:
+                  name: flow-secret
+                  key: S3_ACCESS_KEY
+            - name: FLOW_S3_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: flow-secret
+                  key: S3_SECRET_KEY
+          command:
+            - sh
+            - -c
+            - |
+              mc alias set minio http://minio-service.minio.svc.cluster.local:9000 "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD"
+
+              echo "Creating bucket flow..."
+              mc mb --ignore-existing minio/flow
+
+              echo "Creating MinIO user $FLOW_S3_USER..."
+              mc admin user add minio "$FLOW_S3_USER" "$FLOW_S3_PASSWORD" 2>/dev/null || echo "User already exists, updating..."
+              mc admin user add minio "$FLOW_S3_USER" "$FLOW_S3_PASSWORD" 2>/dev/null || true
+
+              echo "Creating access policy for flow bucket..."
+              cat > /tmp/flow-policy.json << 'POLICY'
+              {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Action": ["s3:*"],
+                    "Resource": ["arn:aws:s3:::flow", "arn:aws:s3:::flow/*"]
+                  }
+                ]
+              }
+              POLICY
+              mc admin policy create minio flow-policy /tmp/flow-policy.json 2>/dev/null || true
+              mc admin policy attach minio flow-policy --user "$FLOW_S3_USER" 2>/dev/null || true
+
+              echo "MinIO initialization complete!"
       containers:
-        - name: flow-api
-          image: zot.maix.ovh/flow-server:v0.3.1
+        - name: flow
+          image: zot.maix.ovh/flow:latest
           ports:
-            - name: http
-              containerPort: 8080
+            - name: grpc
+              containerPort: 9090
           env:
             - name: ENV
               value: "production"
-            - name: PORT
-              value: "8080"
+            - name: GRPC_PORT
+              value: "9090"
             - name: LOG_LEVEL
               value: "info"
             - name: AUTO_MIGRATE
               value: "true"
-            - name: ALLOWED_ORIGINS
-              value: "https://flow.maix.ovh"
             - name: DB_HOST
               value: "postgres-service.postgres.svc.cluster.local"
             - name: DB_PORT
@@ -122,240 +173,53 @@ spec:
             - name: RABBITMQ_URL
               valueFrom:
                 secretKeyRef:
-                  name: flow-secret
-                  key: RABBITMQ_URL
+                  name: rabbitmq-small-default-user
+                  key: connection_string
+            - name: RABBITMQ_EXCHANGE
+              value: "flow.events"
+            - name: RABBITMQ_ROUTING_KEY
+              value: "behavior.dispatch"
             - name: INTERNAL_SECRET
               valueFrom:
                 secretKeyRef:
                   name: flow-secret
                   key: INTERNAL_SECRET
+            - name: SPRITE_TARGET
+              value: "sprite-service.sprite.svc.cluster.local:50051"
+            - name: S3_ENDPOINT
+              value: "http://minio-service.minio.svc.cluster.local:9000"
+            - name: S3_REGION
+              value: "us-east-1"
+            - name: S3_BUCKET
+              value: "flow"
+            - name: S3_FORCE_PATH_STYLE
+              value: "true"
+            - name: S3_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: flow-secret
+                  key: S3_ACCESS_KEY
+            - name: S3_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: flow-secret
+                  key: S3_SECRET_KEY
+            - name: AWS_ENDPOINT_URL_S3
+              value: "http://minio-service.minio.svc.cluster.local:9000"
           resources:
             requests:
-              cpu: 50m
-              memory: 128Mi
+              cpu: 100m
+              memory: 256Mi
             limits:
-              cpu: 500m
-              memory: 512Mi
+              cpu: 1000m
+              memory: 1Gi
           livenessProbe:
             tcpSocket:
-              port: http
+              port: grpc
             initialDelaySeconds: 30
             periodSeconds: 10
           readinessProbe:
             tcpSocket:
-              port: http
+              port: grpc
             initialDelaySeconds: 5
             periodSeconds: 5
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: flow-core
-  namespace: flow
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: flow-core
-  template:
-    metadata:
-      labels:
-        app: flow-core
-    spec:
-      imagePullSecrets:
-        - name: zot-pull-secret
-      containers:
-        - name: flow-core
-          image: zot.maix.ovh/flow-core:v0.3.1
-          env:
-            - name: ENV
-              value: "production"
-            - name: LOG_LEVEL
-              value: "info"
-            - name: DB_HOST
-              value: "postgres-service.postgres.svc.cluster.local"
-            - name: DB_PORT
-              value: "5432"
-            - name: DB_SSL_MODE
-              value: "disable"
-            - name: DB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: flow-secret
-                  key: DB_USER
-            - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: flow-secret
-                  key: DB_PASSWORD
-            - name: DB_NAME
-              valueFrom:
-                secretKeyRef:
-                  name: flow-secret
-                  key: DB_NAME
-            - name: REDIS_URL
-              value: "redis://redis-service.redis.svc.cluster.local:6379/1"
-            - name: ENCRYPTION_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: flow-secret
-                  key: ENCRYPTION_KEY
-            - name: RABBITMQ_URL
-              valueFrom:
-                secretKeyRef:
-                  name: flow-secret
-                  key: RABBITMQ_URL
-            - name: INTERNAL_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: flow-secret
-                  key: INTERNAL_SECRET
-          resources:
-            requests:
-              cpu: 25m
-              memory: 64Mi
-            limits:
-              cpu: 200m
-              memory: 256Mi
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: flow-streaming
-  namespace: flow
-spec:
-  replicas: 0
-  selector:
-    matchLabels:
-      app: flow-streaming
-  template:
-    metadata:
-      labels:
-        app: flow-streaming
-    spec:
-      imagePullSecrets:
-        - name: zot-pull-secret
-      containers:
-        - name: flow-streaming
-          image: zot.maix.ovh/flow-streaming:v0.3.1
-          env:
-            - name: ENV
-              value: "production"
-            - name: LOG_LEVEL
-              value: "info"
-            - name: DB_HOST
-              value: "postgres-service.postgres.svc.cluster.local"
-            - name: DB_PORT
-              value: "5432"
-            - name: DB_SSL_MODE
-              value: "disable"
-            - name: DB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: flow-secret
-                  key: DB_USER
-            - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: flow-secret
-                  key: DB_PASSWORD
-            - name: DB_NAME
-              valueFrom:
-                secretKeyRef:
-                  name: flow-secret
-                  key: DB_NAME
-            - name: REDIS_URL
-              value: "redis://redis-service.redis.svc.cluster.local:6379/1"
-            - name: ENCRYPTION_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: flow-secret
-                  key: ENCRYPTION_KEY
-            - name: RABBITMQ_URL
-              valueFrom:
-                secretKeyRef:
-                  name: flow-secret
-                  key: RABBITMQ_URL
-            - name: INTERNAL_SECRET
-              valueFrom:
-                secretKeyRef:
-                  key: INTERNAL_SECRET
-                  name: flow-secret
-          resources:
-            requests:
-              cpu: 25m
-              memory: 64Mi
-            limits:
-              cpu: 200m
-              memory: 256Mi
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: flow-stage-worker
-  namespace: flow
-spec:
-  replicas: 0
-  selector:
-    matchLabels:
-      app: flow-stage-worker
-  template:
-    metadata:
-      labels:
-        app: flow-stage-worker
-    spec:
-      imagePullSecrets:
-        - name: zot-pull-secret
-      containers:
-        - name: flow-stage-worker
-          image: zot.maix.ovh/flow-stage-worker:v0.3.1
-          env:
-            - name: ENV
-              value: "production"
-            - name: LOG_LEVEL
-              value: "info"
-            - name: DB_HOST
-              value: "postgres-service.postgres.svc.cluster.local"
-            - name: DB_PORT
-              value: "5432"
-            - name: DB_SSL_MODE
-              value: "disable"
-            - name: DB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: flow-secret
-                  key: DB_USER
-            - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: flow-secret
-                  key: DB_PASSWORD
-            - name: DB_NAME
-              valueFrom:
-                secretKeyRef:
-                  name: flow-secret
-                  key: DB_NAME
-            - name: REDIS_URL
-              value: "redis://redis-service.redis.svc.cluster.local:6379/1"
-            - name: ENCRYPTION_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: flow-secret
-                  key: ENCRYPTION_KEY
-            - name: RABBITMQ_URL
-              valueFrom:
-                secretKeyRef:
-                  name: flow-secret
-                  key: RABBITMQ_URL
-            - name: INTERNAL_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: flow-secret
-                  key: INTERNAL_SECRET
-          resources:
-            requests:
-              cpu: 50m
-              memory: 128Mi
-            limits:
-              cpu: 500m
-              memory: 512Mi
