@@ -118,6 +118,8 @@ spec:
                 secretKeyRef:
                   name: gateway-secrets
                   key: INTERNAL_SECRET
+            - name: FLOW_ADDRESS
+              value: "flow-service.flow.svc.cluster.local:9090"
             - name: STT_ADDRESS
               value: "voice-sidecar:50051"
             - name: TTS_ADDRESS
