@@ -74,7 +74,7 @@ spec:
               echo "Database initialization complete!"
       containers:
         - name: nabu
-          image: zot.maix.ovh/nabu:v0.1.2
+          image: zot.maix.ovh/nabu:v0.1.4
           ports:
             - name: http
               containerPort: 8080
