@@ -1,0 +1,344 @@
+groups:
+  - name: nvme
+    rules:
+      - alert: NVMeTemperatureWarning
+        expr: node_hwmon_temp_celsius{chip=~"nvme.*"} > 70
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "NVMe temperature warning"
+          description: "NVMe on {{ $labels.instance }} is at {{ $value | printf \"%.1f\" }}C"
+
+      - alert: NVMeTemperatureCritical
+        expr: node_hwmon_temp_celsius{chip=~"nvme.*"} > 80
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "NVMe CRITICAL"
+          description: "NVMe on {{ $labels.instance }} at {{ $value | printf \"%.1f\" }}C - OVERHEATING"
+
+  - name: cpu
+    rules:
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 90
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage"
+          description: "CPU on {{ $labels.instance }} at {{ $value | printf \"%.1f\" }}%"
+
+      - alert: HighCPUUsageCritical
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 95
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Critical CPU usage"
+          description: "CPU on {{ $labels.instance }} at {{ $value | printf \"%.1f\" }}%"
+
+      - alert: HighLoadAverage
+        expr: node_load15 > on(instance) count by(instance) (node_cpu_seconds_total{mode="idle"}) * 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High load average"
+          description: "Load average on {{ $labels.instance }} is {{ $value | printf \"%.1f\" }}"
+
+  - name: memory
+    rules:
+      - alert: HighMemoryUsage
+        expr: (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) > 0.92
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage"
+          description: "Memory on {{ $labels.instance }} at {{ $value | humanizePercentage }}"
+
+      - alert: HighMemoryUsageCritical
+        expr: (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) > 0.97
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Critical memory usage"
+          description: "Memory on {{ $labels.instance }} at {{ $value | humanizePercentage }}"
+
+      - alert: SwapUsage
+        expr: node_memory_SwapFree_bytes / node_memory_SwapTotal_bytes < 0.5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Swap usage detected"
+          description: "{{ $labels.instance }} using swap - memory pressure"
+
+  - name: disk
+    rules:
+      - alert: DiskSpaceLow
+        expr: (node_filesystem_avail_bytes{fstype!~"tmpfs|overlay"} / node_filesystem_size_bytes) < 0.15
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Low disk space"
+          description: "{{ $labels.mountpoint }} on {{ $labels.instance }} at {{ $value | humanizePercentage }} free"
+
+      - alert: DiskSpaceCritical
+        expr: (node_filesystem_avail_bytes{fstype!~"tmpfs|overlay"} / node_filesystem_size_bytes) < 0.05
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Critical disk space"
+          description: "{{ $labels.mountpoint }} on {{ $labels.instance }} at {{ $value | humanizePercentage }} free"
+
+      - alert: DiskIOHigh
+        expr: rate(node_disk_io_time_seconds_total[5m]) > 0.9
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High disk I/O"
+          description: "Disk {{ $labels.device }} on {{ $labels.instance }} at {{ $value | humanizePercentage }} utilization"
+
+  - name: network
+    rules:
+      - alert: NetworkInterfaceDown
+        expr: node_network_up{device!~"lo|docker.*|veth.*|br-.*|tap.*|vmbr.*|fwbr.*|fwpr.*|fwln.*|wl.*|tailscale.*"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Network interface down"
+          description: "Interface {{ $labels.device }} on {{ $labels.instance }} is down"
+
+      - alert: HighNetworkErrors
+        expr: rate(node_network_receive_errs_total[5m]) + rate(node_network_transmit_errs_total[5m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Network errors detected"
+          description: "{{ $labels.device }} on {{ $labels.instance }} has network errors"
+
+  - name: system
+    rules:
+      - alert: HostDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Host unreachable"
+          description: "{{ $labels.instance }} ({{ $labels.job }}) is down"
+
+      - alert: SystemdServiceFailed
+        expr: node_systemd_unit_state{state="failed"} == 1
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Systemd service failed"
+          description: "{{ $labels.name }} on {{ $labels.instance }} has failed"
+
+      - alert: TooManyOpenFiles
+        expr: node_filefd_allocated / node_filefd_maximum > 0.8
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Too many open files"
+          description: "{{ $labels.instance }} using {{ $value | humanizePercentage }} of file descriptors"
+
+  - name: gpu
+    rules:
+      - alert: GPUTemperatureWarning
+        expr: DCGM_FI_DEV_GPU_TEMP > 75
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "GPU temperature warning"
+          description: "GPU {{ $labels.gpu }} at {{ $value }}C"
+
+      - alert: GPUTemperatureCritical
+        expr: DCGM_FI_DEV_GPU_TEMP > 85
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "GPU temperature critical"
+          description: "GPU {{ $labels.gpu }} at {{ $value }}C - OVERHEATING"
+
+      - alert: GPUMemoryHigh
+        expr: DCGM_FI_DEV_FB_USED / (DCGM_FI_DEV_FB_USED + DCGM_FI_DEV_FB_FREE) > 0.9
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "GPU memory high"
+          description: "GPU {{ $labels.gpu }} memory at {{ $value | humanizePercentage }}"
+
+      - alert: GPUPowerHigh
+        expr: DCGM_FI_DEV_POWER_USAGE > 300
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "GPU power usage high"
+          description: "GPU {{ $labels.gpu }} drawing {{ $value }}W"
+
+  - name: proxmox-vms
+    rules:
+      - alert: VMHighMemory
+        expr: (pve_memory_usage_bytes / pve_memory_size_bytes) > 0.95
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "VM/LXC high memory"
+          description: "{{ $labels.id }} using {{ $value | humanizePercentage }} memory"
+
+      - alert: VMHighCPU
+        expr: pve_cpu_usage_ratio > 0.9
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "VM/LXC high CPU"
+          description: "{{ $labels.id }} at {{ $value | humanizePercentage }} CPU"
+
+      - alert: ProxmoxStorageLow
+        expr: (pve_disk_usage_bytes{id=~"storage/.*"} / pve_disk_size_bytes) > 0.85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Proxmox storage low"
+          description: "{{ $labels.id }} at {{ $value | humanizePercentage }} used"
+
+      - alert: ProxmoxStorageCritical
+        expr: (pve_disk_usage_bytes{id=~"storage/.*"} / pve_disk_size_bytes) > 0.95
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Proxmox storage critical"
+          description: "{{ $labels.id }} at {{ $value | humanizePercentage }} used"
+
+      - alert: OPNsenseDown
+        expr: pve_up{id="qemu/8000"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "OPNsense router down"
+          description: "OPNsense firewall/router is not running - network may be affected"
+
+      - alert: TalosNodeDown
+        expr: pve_up{id="qemu/600"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Talos control plane down"
+          description: "Talos cluster control plane VM is not running"
+
+      - alert: ProxmoxNodeHighMemory
+        expr: (pve_memory_usage_bytes{id=~"node/.*"} / pve_memory_size_bytes) > 0.95
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Proxmox node high memory"
+          description: "Proxmox host {{ $labels.id }} at {{ $value | humanizePercentage }} memory"
+
+      - alert: ProxmoxNodeHighCPU
+        expr: pve_cpu_usage_ratio{id=~"node/.*"} > 0.9
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Proxmox node high CPU"
+          description: "Proxmox host {{ $labels.id }} at {{ $value | humanizePercentage }} CPU"
+
+  - name: tunserver
+    rules:
+      - alert: TunserverDown
+        expr: up{job="tunserver"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Tunserver down"
+          description: "Tunserver (LXC 100) is unreachable - DNS, VPN, and reverse proxy are all offline"
+
+      - alert: TunserverHighCPU
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle",job="tunserver"}[5m])) * 100) > 90
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Tunserver high CPU"
+          description: "Tunserver CPU at {{ $value | printf \"%.1f\" }}%"
+
+      - alert: TunserverHighMemory
+        expr: (1 - node_memory_MemAvailable_bytes{job="tunserver"} / node_memory_MemTotal_bytes{job="tunserver"}) > 0.9
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Tunserver high memory"
+          description: "Tunserver memory at {{ $value | humanizePercentage }}"
+
+      - alert: TunserverDiskLow
+        expr: (node_filesystem_avail_bytes{job="tunserver",fstype!~"tmpfs|overlay"} / node_filesystem_size_bytes{job="tunserver",fstype!~"tmpfs|overlay"}) < 0.15
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Tunserver low disk space"
+          description: "{{ $labels.mountpoint }} on tunserver at {{ $value | humanizePercentage }} free"
+
+  - name: zfs
+    rules:
+      - alert: ZFSPoolError
+        expr: node_filesystem_device_error{device="snow"} != 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "ZFS pool error detected"
+          description: "ZFS pool 'snow' has device errors - check zpool status immediately"
+
+      - alert: ZFSPoolUsageWarning
+        expr: 1 - (node_filesystem_avail_bytes{device="snow"} / node_filesystem_size_bytes{device="snow"}) > 0.80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "ZFS pool usage >80%"
+          description: "ZFS pool 'snow' at {{ $value | humanizePercentage }} capacity"
+
+      - alert: ZFSPoolUsageHigh
+        expr: 1 - (node_filesystem_avail_bytes{device="snow"} / node_filesystem_size_bytes{device="snow"}) > 0.85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "ZFS pool usage >85%"
+          description: "ZFS pool 'snow' at {{ $value | humanizePercentage }} capacity - plan expansion soon"
+
+      - alert: ZFSPoolUsageCritical
+        expr: 1 - (node_filesystem_avail_bytes{device="snow"} / node_filesystem_size_bytes{device="snow"}) > 0.90
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "ZFS pool usage >90%"
+          description: "ZFS pool 'snow' at {{ $value | humanizePercentage }} - performance degradation imminent"

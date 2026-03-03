@@ -36,6 +36,8 @@ spec:
               value: "http://flow-service.flow.svc.cluster.local:9090"
             - name: ADA_GRPC_URL
               value: "http://ada-service.ada.svc.cluster.local:9090"
+            - name: VOICE_BASE_URL
+              value: "http://voice-gateway.voice.svc.cluster.local:8080"
             - name: BETTER_AUTH_URL
               value: "http://io-service.io.svc.cluster.local:3000"
             - name: BETTER_AUTH_SECRET
