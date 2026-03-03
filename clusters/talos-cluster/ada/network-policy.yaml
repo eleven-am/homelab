@@ -7,16 +7,7 @@ spec:
   endpointSelector:
     matchLabels:
       app: ada
-  ingress:
-    - fromEndpoints:
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: cloudflare-gateway
-      toPorts:
-        - ports:
-            - port: "80"
-              protocol: TCP
-            - port: "9090"
-              protocol: TCP
+  ingress: []
   egress:
     - toEndpoints:
         - matchLabels:

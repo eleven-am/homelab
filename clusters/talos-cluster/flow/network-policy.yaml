@@ -10,13 +10,6 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: cloudflare-gateway
-      toPorts:
-        - ports:
-            - port: "9090"
-              protocol: TCP
-    - fromEndpoints:
-        - matchLabels:
             k8s:io.kubernetes.pod.namespace: sprite
             app: sprite
       toPorts:
