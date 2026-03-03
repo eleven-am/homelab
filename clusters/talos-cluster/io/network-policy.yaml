@@ -10,6 +10,13 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
+            k8s:io.kubernetes.pod.namespace: cloudflare-gateway
+      toPorts:
+        - ports:
+            - port: "3000"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
             k8s:io.kubernetes.pod.namespace: flow
             app: flow
       toPorts:
