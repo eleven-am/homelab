@@ -7,9 +7,6 @@ spec:
   selector:
     app: ada
   ports:
-    - name: http
-      port: 80
-      targetPort: 8080
     - name: grpc
       port: 9090
       targetPort: 9090
