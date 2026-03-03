@@ -39,7 +39,7 @@ spec:
             - name: VOICE_BASE_URL
               value: "http://voice-gateway.voice.svc.cluster.local:8080"
             - name: BETTER_AUTH_URL
-              value: "http://io-service.io.svc.cluster.local:3000"
+              value: "https://io.maix.ovh"
             - name: BETTER_AUTH_SECRET
               value: io-dev-secret-change-me-32-chars
           resources:
