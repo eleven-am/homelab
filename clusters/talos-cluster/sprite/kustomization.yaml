@@ -3,5 +3,6 @@ kind: Kustomization
 namespace: sprite
 resources:
   - namespace.yaml
+  - secret.yaml
   - deployment.yaml
   - service.yaml

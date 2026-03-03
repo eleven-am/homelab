@@ -27,8 +27,8 @@ spec:
             - name: SPRITE_AMQP_URI
               valueFrom:
                 secretKeyRef:
-                  name: rabbitmq-small-default-user
-                  key: connection_string
+                  name: sprite-secret
+                  key: SPRITE_AMQP_URI
             - name: SPRITE_BEHAVIOR_QUEUE
               value: "sprite.behavior.in"
             - name: SPRITE_CONVERSATION_QUEUE
