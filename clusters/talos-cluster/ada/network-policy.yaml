@@ -77,3 +77,9 @@ spec:
         - ports:
             - port: "11434"
               protocol: TCP
+    - toCIDR:
+        - 0.0.0.0/0
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP

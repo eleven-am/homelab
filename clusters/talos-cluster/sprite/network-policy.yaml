@@ -57,3 +57,9 @@ spec:
         - ports:
             - port: "9090"
               protocol: TCP
+    - toCIDR:
+        - 0.0.0.0/0
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
