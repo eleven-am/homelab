@@ -111,6 +111,8 @@ spec:
                   key: NABU_JWT_SECRET
             - name: NABU_JWT_EXPIRY
               value: "24h"
+            - name: ENABLE_BANKING_REDIRECT_URL
+              value: "https://nabu.horus.maix.ovh/v1/auth/callback"
             - name: PUSHOVER_USER_KEY
               valueFrom:
                 secretKeyRef:
