@@ -20,6 +20,12 @@ spec:
               args:
                 - |
                   set -e
+                  notify_failure() {
+                    MSG="{\"title\":\"Backup Failed: B2 Mirror\",\"message\":\"B2 Mirror backup failed at $(date '+%Y-%m-%d %H:%M')\",\"priority\":1}"
+                    curl -s -X POST https://ntfy.maix.ovh/notify -H "Content-Type: application/json" -d "$MSG" 2>/dev/null || \
+                    wget -q -O /dev/null --post-data="$MSG" --header="Content-Type: application/json" https://ntfy.maix.ovh/notify 2>/dev/null || true
+                  }
+                  trap '[ $? -ne 0 ] && notify_failure' EXIT
 
                   echo "Configuring MinIO alias..."
                   mc alias set minio http://minio-service.minio:9000 "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD"

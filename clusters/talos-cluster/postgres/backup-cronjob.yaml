@@ -20,6 +20,12 @@ spec:
               args:
                 - |
                   set -eo pipefail
+                  notify_failure() {
+                    curl -s -X POST https://ntfy.maix.ovh/notify \
+                      -H "Content-Type: application/json" \
+                      -d "{\"title\":\"Backup Failed: Postgres\",\"message\":\"Postgres backup failed at $(date '+%Y-%m-%d %H:%M')\",\"priority\":1}"
+                  }
+                  trap notify_failure ERR
                   TIMESTAMP=$(date +%Y-%m-%d-%H%M)
                   BACKUP_FILE="backup-${TIMESTAMP}.sql.gz"
 

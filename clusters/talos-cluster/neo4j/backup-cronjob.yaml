@@ -57,6 +57,13 @@ spec:
               args:
                 - |
                   set -e
+                  notify_failure() {
+                    kubectl scale statefulset neo4j --replicas=1 -n neo4j || true
+                    curl -s -X POST https://ntfy.maix.ovh/notify \
+                      -H "Content-Type: application/json" \
+                      -d "{\"title\":\"Backup Failed: Neo4j\",\"message\":\"Neo4j backup failed at $(date '+%Y-%m-%d %H:%M')\",\"priority\":1}"
+                  }
+                  trap notify_failure ERR
                   TIMESTAMP=$(date +%Y-%m-%d-%H%M)
                   BACKUP_JOB="neo4j-backup-${TIMESTAMP}"
 

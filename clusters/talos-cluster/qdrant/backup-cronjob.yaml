@@ -20,6 +20,12 @@ spec:
               args:
                 - |
                   set -e
+                  notify_failure() {
+                    curl -s -X POST https://ntfy.maix.ovh/notify \
+                      -H "Content-Type: application/json" \
+                      -d "{\"title\":\"Backup Failed: Qdrant\",\"message\":\"Qdrant backup failed at $(date '+%Y-%m-%d %H:%M')\",\"priority\":1}"
+                  }
+                  trap '[ $? -ne 0 ] && notify_failure' EXIT
                   TIMESTAMP=$(date +%Y-%m-%d-%H%M)
                   QDRANT_URL="http://qdrant-service.qdrant:6333"
 
