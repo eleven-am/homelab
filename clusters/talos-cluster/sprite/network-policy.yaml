@@ -49,3 +49,11 @@ spec:
         - ports:
             - port: "5672"
               protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: ada
+            app: ada
+      toPorts:
+        - ports:
+            - port: "9090"
+              protocol: TCP

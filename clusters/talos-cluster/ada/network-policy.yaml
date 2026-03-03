@@ -7,7 +7,15 @@ spec:
   endpointSelector:
     matchLabels:
       app: ada
-  ingress: []
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: sprite
+            app: sprite
+      toPorts:
+        - ports:
+            - port: "9090"
+              protocol: TCP
   egress:
     - toEndpoints:
         - matchLabels:
