@@ -16,6 +16,14 @@ spec:
         - ports:
             - port: "9090"
               protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: io
+            app: io
+      toPorts:
+        - ports:
+            - port: "9090"
+              protocol: TCP
   egress:
     - toEndpoints:
         - matchLabels:
@@ -83,4 +91,12 @@ spec:
       toPorts:
         - ports:
             - port: "443"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: io
+            app: io
+      toPorts:
+        - ports:
+            - port: "3000"
               protocol: TCP

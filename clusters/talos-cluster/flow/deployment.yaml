@@ -129,7 +129,7 @@ spec:
               echo "MinIO initialization complete!"
       containers:
         - name: flow
-          image: zot.maix.ovh/flow:latest
+          image: zot.maix.ovh/flow:v0.3.3
           ports:
             - name: grpc
               containerPort: 9090

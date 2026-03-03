@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: io
+  namespace: io
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: io
+  template:
+    metadata:
+      labels:
+        app: io
+    spec:
+      imagePullSecrets:
+        - name: zot-pull-secret
+      containers:
+        - name: io
+          image: zot.maix.ovh/io-gateway:v0.1.0
+          args:
+            - dist/main.js
+          ports:
+            - name: http
+              containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: PORT
+              value: "3000"
+            - name: DATABASE_URL
+              value: "postgresql://io:io@postgres-service.postgres.svc.cluster.local:5432/io?schema=public"
+            - name: REDIS_URL
+              value: "redis://redis-service.redis.svc.cluster.local:6379"
+            - name: FLOW_GRPC_URL
+              value: "http://flow-service.flow.svc.cluster.local:9090"
+            - name: ADA_GRPC_URL
+              value: "http://ada-service.ada.svc.cluster.local:9090"
+            - name: BETTER_AUTH_URL
+              value: "http://io-service.io.svc.cluster.local:3000"
+            - name: BETTER_AUTH_SECRET
+              value: io-dev-secret-change-me-32-chars
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
