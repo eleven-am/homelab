@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: io
 resources:
   - namespace.yaml
+  - secret.yaml
   - deployment.yaml
   - service.yaml
   - network-policy.yaml

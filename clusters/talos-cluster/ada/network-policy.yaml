@@ -88,6 +88,7 @@ spec:
     - toFQDNs:
         - matchName: openrouter.ai
         - matchPattern: "*.openrouter.ai"
+        - matchName: openaipublic.blob.core.windows.net
       toPorts:
         - ports:
             - port: "443"
