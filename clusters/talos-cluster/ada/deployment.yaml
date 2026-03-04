@@ -79,13 +79,9 @@ spec:
           image: zot.maix.ovh/ada:v0.2.6
           args: ["server"]
           ports:
-            - name: http
-              containerPort: 8080
             - name: grpc
               containerPort: 9090
           env:
-            - name: REST_ADDR
-              value: ":8080"
             - name: GRPC_ADDR
               value: ":9090"
             - name: POSTGRES_HOST
@@ -215,11 +211,11 @@ spec:
               memory: 1Gi
           livenessProbe:
             tcpSocket:
-              port: http
+              port: grpc
             initialDelaySeconds: 30
             periodSeconds: 10
           readinessProbe:
             tcpSocket:
-              port: http
+              port: grpc
             initialDelaySeconds: 5
             periodSeconds: 5
