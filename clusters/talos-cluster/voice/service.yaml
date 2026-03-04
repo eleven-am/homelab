@@ -16,21 +16,6 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: voice-gateway
-  namespace: voice
-spec:
-  selector:
-    app: voice-gateway
-  ports:
-    - port: 8080
-      targetPort: 8080
-      name: http
-      protocol: TCP
-  type: ClusterIP
----
-apiVersion: v1
-kind: Service
-metadata:
   name: voice-api
   namespace: voice
 spec:

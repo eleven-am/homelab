@@ -68,6 +68,14 @@ spec:
               protocol: TCP
     - toEndpoints:
         - matchLabels:
+            k8s:io.kubernetes.pod.namespace: voice
+            app: voice-sidecar
+      toPorts:
+        - ports:
+            - port: "50051"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
             k8s:io.kubernetes.pod.namespace: postgres
       toPorts:
         - ports:
