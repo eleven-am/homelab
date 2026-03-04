@@ -10,3 +10,4 @@ terraform.tfstate.backup
 values.*
 clusters/talos-cluster/secrets
 keys.txt
+.DS_Store
