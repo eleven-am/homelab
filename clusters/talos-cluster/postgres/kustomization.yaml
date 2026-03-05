@@ -9,4 +9,3 @@ resources:
   - autoscaling.yaml
   - service.yaml
   - backup-cronjob.yaml
-  - billing-secret.yaml

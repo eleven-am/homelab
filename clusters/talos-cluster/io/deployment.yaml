@@ -48,21 +48,6 @@ spec:
                 secretKeyRef:
                   name: io-secret
                   key: DB_NAME
-            - name: BILLING_DB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: billing-secret
-                  key: BILLING_DB_USER
-            - name: BILLING_DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: billing-secret
-                  key: BILLING_DB_PASSWORD
-            - name: BILLING_DB_NAME
-              valueFrom:
-                secretKeyRef:
-                  name: billing-secret
-                  key: BILLING_DB_NAME
           command:
             - sh
             - -c
@@ -88,32 +73,10 @@ spec:
 
               echo "Granting privileges..."
               psql -c "GRANT ALL PRIVILEGES ON DATABASE $IO_DB_NAME TO $IO_DB_USER;"
-
-              echo "Checking if billing user $BILLING_DB_USER exists..."
-              BILLING_USER_EXISTS=$(psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='$BILLING_DB_USER'")
-              if [ "$BILLING_USER_EXISTS" != "1" ]; then
-                echo "Creating billing user $BILLING_DB_USER..."
-                psql -c "CREATE USER $BILLING_DB_USER WITH PASSWORD '$BILLING_DB_PASSWORD' CREATEDB;"
-              else
-                echo "Billing user $BILLING_DB_USER already exists, updating password..."
-                psql -c "ALTER USER $BILLING_DB_USER WITH PASSWORD '$BILLING_DB_PASSWORD' CREATEDB;"
-              fi
-
-              echo "Checking if billing database $BILLING_DB_NAME exists..."
-              BILLING_DB_EXISTS=$(psql -tAc "SELECT 1 FROM pg_database WHERE datname='$BILLING_DB_NAME'")
-              if [ "$BILLING_DB_EXISTS" != "1" ]; then
-                echo "Creating billing database $BILLING_DB_NAME..."
-                psql -c "CREATE DATABASE $BILLING_DB_NAME OWNER $BILLING_DB_USER;"
-              else
-                echo "Billing database $BILLING_DB_NAME already exists"
-              fi
-
-              echo "Granting billing privileges..."
-              psql -c "GRANT ALL PRIVILEGES ON DATABASE $BILLING_DB_NAME TO $BILLING_DB_USER;"
               echo "Database initialization complete!"
       containers:
         - name: io
-          image: zot.maix.ovh/io:v0.0.4
+          image: zot.maix.ovh/io:v0.0.5
           ports:
             - name: http
               containerPort: 3000
@@ -141,27 +104,6 @@ spec:
                 secretKeyRef:
                   name: io-secret
                   key: DB_NAME
-            - name: IO_BILLING_DB_HOST
-              value: "postgres-service.postgres.svc.cluster.local"
-            - name: IO_BILLING_DB_PORT
-              value: "5432"
-            - name: IO_BILLING_DB_SSL_MODE
-              value: "disable"
-            - name: IO_BILLING_DB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: billing-secret
-                  key: BILLING_DB_USER
-            - name: IO_BILLING_DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: billing-secret
-                  key: BILLING_DB_PASSWORD
-            - name: IO_BILLING_DB_NAME
-              valueFrom:
-                secretKeyRef:
-                  name: billing-secret
-                  key: BILLING_DB_NAME
             - name: IO_REDIS_ADDR
               value: "redis-service.redis.svc.cluster.local:6379"
             - name: IO_FLOW_GRPC_ADDR
@@ -186,6 +128,31 @@ spec:
               value: "false"
             - name: IO_ENABLE_DEV_AUTH_HEADER
               value: "false"
+            - name: IO_POLAR_ACCESS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: polar-secret
+                  key: POLAR_ACCESS_TOKEN
+            - name: IO_BILLING_STARTER_PRODUCT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: polar-secret
+                  key: BILLING_STARTER_PRODUCT_ID
+            - name: IO_BILLING_PRO_PRODUCT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: polar-secret
+                  key: BILLING_PRO_PRODUCT_ID
+            - name: IO_BILLING_WEBHOOK_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: polar-secret
+                  key: BILLING_WEBHOOK_SECRET
+            - name: IO_BILLING_SUCCESS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: polar-secret
+                  key: BILLING_SUCCESS_URL
           resources:
             requests:
               cpu: 100m

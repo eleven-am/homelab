@@ -48,21 +48,6 @@ spec:
                 secretKeyRef:
                   name: flow-secret
                   key: DB_NAME
-            - name: BILLING_DB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: billing-secret
-                  key: BILLING_DB_USER
-            - name: BILLING_DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: billing-secret
-                  key: BILLING_DB_PASSWORD
-            - name: BILLING_DB_NAME
-              valueFrom:
-                secretKeyRef:
-                  name: billing-secret
-                  key: BILLING_DB_NAME
           command:
             - sh
             - -c
@@ -88,28 +73,6 @@ spec:
 
               echo "Granting privileges..."
               psql -c "GRANT ALL PRIVILEGES ON DATABASE $FLOW_DB_NAME TO $FLOW_DB_USER;"
-
-              echo "Checking if billing user $BILLING_DB_USER exists..."
-              BILLING_USER_EXISTS=$(psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='$BILLING_DB_USER'")
-              if [ "$BILLING_USER_EXISTS" != "1" ]; then
-                echo "Creating billing user $BILLING_DB_USER..."
-                psql -c "CREATE USER $BILLING_DB_USER WITH PASSWORD '$BILLING_DB_PASSWORD' CREATEDB;"
-              else
-                echo "Billing user $BILLING_DB_USER already exists, updating password..."
-                psql -c "ALTER USER $BILLING_DB_USER WITH PASSWORD '$BILLING_DB_PASSWORD' CREATEDB;"
-              fi
-
-              echo "Checking if billing database $BILLING_DB_NAME exists..."
-              BILLING_DB_EXISTS=$(psql -tAc "SELECT 1 FROM pg_database WHERE datname='$BILLING_DB_NAME'")
-              if [ "$BILLING_DB_EXISTS" != "1" ]; then
-                echo "Creating billing database $BILLING_DB_NAME..."
-                psql -c "CREATE DATABASE $BILLING_DB_NAME OWNER $BILLING_DB_USER;"
-              else
-                echo "Billing database $BILLING_DB_NAME already exists"
-              fi
-
-              echo "Granting billing privileges..."
-              psql -c "GRANT ALL PRIVILEGES ON DATABASE $BILLING_DB_NAME TO $BILLING_DB_USER;"
               echo "Database initialization complete!"
         - name: init-minio
           image: minio/mc:latest
@@ -166,7 +129,7 @@ spec:
               echo "MinIO initialization complete!"
       containers:
         - name: flow
-          image: zot.maix.ovh/flow:v0.3.6
+          image: zot.maix.ovh/flow:v0.3.7
           ports:
             - name: grpc
               containerPort: 9090
@@ -200,27 +163,11 @@ spec:
                 secretKeyRef:
                   name: flow-secret
                   key: DB_NAME
-            - name: BILLING_DB_HOST
-              value: "postgres-service.postgres.svc.cluster.local"
-            - name: BILLING_DB_PORT
-              value: "5432"
-            - name: BILLING_DB_SSL_MODE
-              value: "disable"
-            - name: BILLING_DB_USER
+            - name: POLAR_ACCESS_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: billing-secret
-                  key: BILLING_DB_USER
-            - name: BILLING_DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: billing-secret
-                  key: BILLING_DB_PASSWORD
-            - name: BILLING_DB_NAME
-              valueFrom:
-                secretKeyRef:
-                  name: billing-secret
-                  key: BILLING_DB_NAME
+                  name: polar-secret
+                  key: POLAR_ACCESS_TOKEN
             - name: REDIS_URL
               value: "redis://redis-service.redis.svc.cluster.local:6379/1"
             - name: ENCRYPTION_KEY
@@ -252,18 +199,16 @@ spec:
               value: "flow"
             - name: S3_FORCE_PATH_STYLE
               value: "true"
-            - name: S3_ACCESS_KEY
+            - name: AWS_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:
                   name: flow-secret
                   key: S3_ACCESS_KEY
-            - name: S3_SECRET_KEY
+            - name: AWS_SECRET_ACCESS_KEY
               valueFrom:
                 secretKeyRef:
                   name: flow-secret
                   key: S3_SECRET_KEY
-            - name: AWS_ENDPOINT_URL_S3
-              value: "http://minio-service.minio.svc.cluster.local:9000"
           resources:
             requests:
               cpu: 100m

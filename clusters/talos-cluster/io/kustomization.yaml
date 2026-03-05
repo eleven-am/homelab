@@ -4,6 +4,7 @@ namespace: io
 resources:
   - namespace.yaml
   - secret.yaml
+  - polar-secret.yaml
   - deployment.yaml
   - service.yaml
   - network-policy.yaml
