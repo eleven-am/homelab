@@ -48,6 +48,21 @@ spec:
                 secretKeyRef:
                   name: ada-secret
                   key: DB_NAME
+            - name: BILLING_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: billing-secret
+                  key: BILLING_DB_USER
+            - name: BILLING_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: billing-secret
+                  key: BILLING_DB_PASSWORD
+            - name: BILLING_DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: billing-secret
+                  key: BILLING_DB_NAME
           command:
             - sh
             - -c
@@ -73,10 +88,32 @@ spec:
 
               echo "Granting privileges..."
               psql -c "GRANT ALL PRIVILEGES ON DATABASE $ADA_DB_NAME TO $ADA_DB_USER;"
+
+              echo "Checking if billing user $BILLING_DB_USER exists..."
+              BILLING_USER_EXISTS=$(psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='$BILLING_DB_USER'")
+              if [ "$BILLING_USER_EXISTS" != "1" ]; then
+                echo "Creating billing user $BILLING_DB_USER..."
+                psql -c "CREATE USER $BILLING_DB_USER WITH PASSWORD '$BILLING_DB_PASSWORD' CREATEDB;"
+              else
+                echo "Billing user $BILLING_DB_USER already exists, updating password..."
+                psql -c "ALTER USER $BILLING_DB_USER WITH PASSWORD '$BILLING_DB_PASSWORD' CREATEDB;"
+              fi
+
+              echo "Checking if billing database $BILLING_DB_NAME exists..."
+              BILLING_DB_EXISTS=$(psql -tAc "SELECT 1 FROM pg_database WHERE datname='$BILLING_DB_NAME'")
+              if [ "$BILLING_DB_EXISTS" != "1" ]; then
+                echo "Creating billing database $BILLING_DB_NAME..."
+                psql -c "CREATE DATABASE $BILLING_DB_NAME OWNER $BILLING_DB_USER;"
+              else
+                echo "Billing database $BILLING_DB_NAME already exists"
+              fi
+
+              echo "Granting billing privileges..."
+              psql -c "GRANT ALL PRIVILEGES ON DATABASE $BILLING_DB_NAME TO $BILLING_DB_USER;"
               echo "Database initialization complete!"
       containers:
         - name: ada
-          image: zot.maix.ovh/ada:v0.2.6
+          image: zot.maix.ovh/ada:v0.2.7
           args: ["server"]
           ports:
             - name: grpc
@@ -105,6 +142,27 @@ spec:
                 secretKeyRef:
                   name: ada-secret
                   key: DB_NAME
+            - name: BILLING_DB_HOST
+              value: "postgres-service.postgres.svc.cluster.local"
+            - name: BILLING_DB_PORT
+              value: "5432"
+            - name: BILLING_DB_SSLMODE
+              value: "disable"
+            - name: BILLING_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: billing-secret
+                  key: BILLING_DB_USER
+            - name: BILLING_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: billing-secret
+                  key: BILLING_DB_PASSWORD
+            - name: BILLING_DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: billing-secret
+                  key: BILLING_DB_NAME
             - name: REDIS_ADDR
               value: "redis-service.redis.svc.cluster.local:6379"
             - name: NEO4J_URI
