@@ -130,6 +130,7 @@ spec:
       containers:
         - name: flow
           image: zot.maix.ovh/flow:v0.3.8
+          imagePullPolicy: Always
           ports:
             - name: grpc
               containerPort: 9090

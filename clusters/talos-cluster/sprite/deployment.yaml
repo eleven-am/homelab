@@ -18,6 +18,7 @@ spec:
       containers:
         - name: sprite
           image: zot.maix.ovh/sprite:v0.0.2
+          imagePullPolicy: Always
           ports:
             - name: grpc
               containerPort: 50051
