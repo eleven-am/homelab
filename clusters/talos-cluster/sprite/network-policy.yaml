@@ -27,6 +27,9 @@ spec:
               protocol: UDP
             - port: "53"
               protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
     - toEndpoints:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: flow
@@ -57,17 +60,10 @@ spec:
         - ports:
             - port: "9090"
               protocol: TCP
-    - toCIDRSet:
-        - cidr: 0.0.0.0/0
-          except:
-            - 10.0.0.0/8
-            - 172.16.0.0/12
-            - 192.168.0.0/16
-            - 169.254.0.0/16
-            - 127.0.0.0/8
+    - toFQDNs:
+        - matchName: openrouter.ai
+        - matchPattern: "*.openrouter.ai"
       toPorts:
         - ports:
             - port: "443"
-              protocol: TCP
-            - port: "80"
               protocol: TCP

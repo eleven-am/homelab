@@ -13,11 +13,15 @@ spec:
       labels:
         app: sprite
     spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       imagePullSecrets:
         - name: zot-pull-secret
       containers:
         - name: sprite
-          image: zot.maix.ovh/sprite:v0.0.2
+          image: zot.maix.ovh/sprite:v0.0.4
           imagePullPolicy: Always
           ports:
             - name: grpc
@@ -25,6 +29,8 @@ spec:
           env:
             - name: SPRITE_FLOW_GRPC_ENDPOINT
               value: "http://flow-service.flow.svc.cluster.local:9090"
+            - name: SPRITE_ADA_GRPC_ENDPOINT
+              value: "http://ada-service.ada.svc.cluster.local:9090"
             - name: SPRITE_AMQP_URI
               valueFrom:
                 secretKeyRef:
@@ -55,6 +61,11 @@ spec:
             limits:
               cpu: 1000m
               memory: 1Gi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           livenessProbe:
             tcpSocket:
               port: grpc
