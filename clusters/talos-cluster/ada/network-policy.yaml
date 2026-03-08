@@ -91,6 +91,8 @@ spec:
     - toFQDNs:
         - matchName: openrouter.ai
         - matchPattern: "*.openrouter.ai"
+        - matchName: api.openai.com
+        - matchName: generativelanguage.googleapis.com
         - matchName: openaipublic.blob.core.windows.net
       toPorts:
         - ports:

@@ -75,7 +75,7 @@ spec:
               psql -c "GRANT ALL PRIVILEGES ON DATABASE $FLOW_DB_NAME TO $FLOW_DB_USER;"
               echo "Database initialization complete!"
         - name: init-minio
-          image: minio/mc:latest
+          image: minio/mc@sha256:a7fe349ef4bd8521fb8497f55c6042871b2ae640607cf99d9bede5e9bdf11727
           env:
             - name: MINIO_ROOT_USER
               valueFrom:
@@ -129,7 +129,7 @@ spec:
               echo "MinIO initialization complete!"
       containers:
         - name: flow
-          image: zot.maix.ovh/flow:v0.3.9
+          image: zot.maix.ovh/flow:v0.3.11
           imagePullPolicy: Always
           ports:
             - name: grpc
@@ -141,6 +141,14 @@ spec:
               value: "9090"
             - name: LOG_LEVEL
               value: "info"
+            - name: STREAMING_POD_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: FLOW_SESSION_OWNERSHIP_LEASE_TTL
+              value: "45s"
+            - name: FLOW_SESSION_OWNERSHIP_RENEW_EVERY
+              value: "15s"
             - name: AUTO_MIGRATE
               value: "true"
             - name: DB_HOST
@@ -200,6 +208,20 @@ spec:
               value: "flow"
             - name: S3_FORCE_PATH_STYLE
               value: "true"
+            - name: FLOW_RETENTION_ENABLED
+              value: "true"
+            - name: FLOW_RETENTION_RUN_EVERY
+              value: "1h"
+            - name: FLOW_ENTITY_EVENTS_RETENTION_DAYS
+              value: "14"
+            - name: FLOW_CHECKPOINT_RETENTION_DAYS
+              value: "14"
+            - name: FLOW_FETCHER_STATE_RETENTION_DAYS
+              value: "30"
+            - name: FLOW_TELEMETRY_RETENTION_DAYS
+              value: "90"
+            - name: FLOW_DIFF_CACHE_TTL
+              value: "24h"
             - name: AWS_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:

@@ -15,9 +15,19 @@ spec:
     spec:
       imagePullSecrets:
         - name: zot-pull-secret
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       initContainers:
         - name: init-db
           image: postgres:16-alpine
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            runAsNonRoot: true
+            runAsUser: 70
           env:
             - name: PGHOST
               value: "postgres-service.postgres.svc.cluster.local"
@@ -48,6 +58,8 @@ spec:
                 secretKeyRef:
                   name: ada-secret
                   key: DB_NAME
+            - name: BILLING_DB_NAME
+              value: "io_billing"
           command:
             - sh
             - -c
@@ -73,11 +85,27 @@ spec:
 
               echo "Granting privileges..."
               psql -c "GRANT ALL PRIVILEGES ON DATABASE $ADA_DB_NAME TO $ADA_DB_USER;"
+
+              echo "Checking if billing database $BILLING_DB_NAME exists..."
+              BILLING_DB_EXISTS=$(psql -tAc "SELECT 1 FROM pg_database WHERE datname='$BILLING_DB_NAME'")
+              if [ "$BILLING_DB_EXISTS" != "1" ]; then
+                echo "Creating billing database $BILLING_DB_NAME..."
+                psql -c "CREATE DATABASE $BILLING_DB_NAME OWNER $PGUSER;"
+              else
+                echo "Billing database $BILLING_DB_NAME already exists"
+              fi
+
               echo "Database initialization complete!"
       containers:
         - name: ada
           image: zot.maix.ovh/ada:v0.2.9
           imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            runAsNonRoot: true
+            runAsUser: 65532
           args: ["server"]
           ports:
             - name: grpc
@@ -106,6 +134,36 @@ spec:
                 secretKeyRef:
                   name: ada-secret
                   key: DB_NAME
+            - name: BILLING_ENABLED
+              value: "true"
+            - name: BILLING_SEED_DEFAULT_PLANS
+              value: "true"
+            - name: BILLING_AUTO_SUBSCRIBE
+              value: "true"
+            - name: BILLING_ENABLE_STORAGE_WRITES
+              value: "false"
+            - name: BILLING_POSTGRES_HOST
+              value: "postgres-service.postgres.svc.cluster.local"
+            - name: BILLING_POSTGRES_PORT
+              value: "5432"
+            - name: BILLING_POSTGRES_SSLMODE
+              value: "disable"
+            - name: BILLING_POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_USER
+            - name: BILLING_POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+            - name: BILLING_POSTGRES_DATABASE
+              value: "io_billing"
+            - name: BILLING_REDIS_ADDR
+              value: "redis-service.redis.svc.cluster.local:6379"
+            - name: BILLING_REDIS_DB
+              value: "11"
             - name: POLAR_ACCESS_TOKEN
               valueFrom:
                 secretKeyRef:
