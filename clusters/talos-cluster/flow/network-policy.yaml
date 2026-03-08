@@ -32,14 +32,6 @@ spec:
         - ports:
             - port: "9090"
               protocol: TCP
-    - fromEndpoints:
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: voice
-            app: voice-gateway
-      toPorts:
-        - ports:
-            - port: "9090"
-              protocol: TCP
   egress:
     - toEndpoints:
         - matchLabels:

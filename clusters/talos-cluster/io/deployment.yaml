@@ -122,9 +122,9 @@ spec:
                   name: io-secret
                   key: SESSION_TOKEN_SECRET
             - name: IO_STT_GRPC_ADDR
-              value: "voice-gateway.voice.svc.cluster.local:50051"
+              value: "voice-sidecar.voice.svc.cluster.local:50051"
             - name: IO_TTS_GRPC_ADDR
-              value: "voice-gateway.voice.svc.cluster.local:50051"
+              value: "voice-sidecar.voice.svc.cluster.local:50051"
             - name: IO_SEED_DEV_RBAC
               value: "false"
             - name: IO_ENABLE_DEV_AUTH_HEADER
