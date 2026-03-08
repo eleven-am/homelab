@@ -129,7 +129,7 @@ spec:
               echo "MinIO initialization complete!"
       containers:
         - name: flow
-          image: zot.maix.ovh/flow:v0.3.11
+          image: zot.maix.ovh/flow:v0.3.12
           imagePullPolicy: Always
           ports:
             - name: grpc
