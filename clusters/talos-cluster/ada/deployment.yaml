@@ -107,6 +107,9 @@ spec:
             runAsNonRoot: true
             runAsUser: 65532
           args: ["server"]
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
           ports:
             - name: grpc
               containerPort: 9090
@@ -283,3 +286,6 @@ spec:
               port: grpc
             initialDelaySeconds: 5
             periodSeconds: 5
+      volumes:
+        - name: tmp
+          emptyDir: {}
