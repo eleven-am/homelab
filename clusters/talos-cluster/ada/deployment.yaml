@@ -98,7 +98,7 @@ spec:
               echo "Database initialization complete!"
       containers:
         - name: ada
-          image: zot.maix.ovh/ada:v0.2.10
+          image: zot.maix.ovh/ada:v0.2.11
           imagePullPolicy: Always
           securityContext:
             allowPrivilegeEscalation: false
