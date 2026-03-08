@@ -71,6 +71,10 @@ spec:
               value: "true"
             - name: PGSSLMODE
               value: "disable"
+            - name: ISOLATE_MAX_USER_HEAP_SIZE
+              value: "134217728"
+            - name: ISOLATE_MAX_HEAP_EXTRA_SIZE
+              value: "67108864"
           resources:
             requests:
               cpu: 200m
