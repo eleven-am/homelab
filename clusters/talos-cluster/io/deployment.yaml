@@ -134,26 +134,15 @@ spec:
                 secretKeyRef:
                   name: polar-secret
                   key: POLAR_ACCESS_TOKEN
-            - name: IO_BILLING_STARTER_PRODUCT_ID
+            - name: IO_POLAR_WEBHOOK_SECRET
               valueFrom:
                 secretKeyRef:
                   name: polar-secret
-                  key: BILLING_STARTER_PRODUCT_ID
-            - name: IO_BILLING_PRO_PRODUCT_ID
-              valueFrom:
-                secretKeyRef:
-                  name: polar-secret
-                  key: BILLING_PRO_PRODUCT_ID
-            - name: IO_BILLING_WEBHOOK_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: polar-secret
-                  key: BILLING_WEBHOOK_SECRET
-            - name: IO_BILLING_SUCCESS_URL
-              valueFrom:
-                secretKeyRef:
-                  name: polar-secret
-                  key: BILLING_SUCCESS_URL
+                  key: POLAR_WEBHOOK_SECRET
+            - name: IO_BILLING_RECONCILE_ENABLED
+              value: "true"
+            - name: IO_BILLING_RECONCILE_EVERY
+              value: "1h"
           resources:
             requests:
               cpu: 100m
