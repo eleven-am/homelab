@@ -76,7 +76,7 @@ spec:
               echo "Database initialization complete!"
       containers:
         - name: io
-          image: zot.maix.ovh/io:v0.0.11
+          image: zot.maix.ovh/io:v0.0.13
           imagePullPolicy: Always
           ports:
             - name: http

@@ -129,7 +129,7 @@ spec:
               echo "MinIO initialization complete!"
       containers:
         - name: flow
-          image: zot.maix.ovh/flow:v0.3.13
+          image: zot.maix.ovh/flow:v0.3.15
           imagePullPolicy: Always
           ports:
             - name: grpc
@@ -172,11 +172,6 @@ spec:
                 secretKeyRef:
                   name: flow-secret
                   key: DB_NAME
-            - name: POLAR_ACCESS_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: polar-secret
-                  key: POLAR_ACCESS_TOKEN
             - name: REDIS_URL
               value: "redis://redis-service.redis.svc.cluster.local:6379/1"
             - name: ENCRYPTION_KEY

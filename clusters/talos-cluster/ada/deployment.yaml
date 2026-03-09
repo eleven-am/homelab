@@ -98,7 +98,7 @@ spec:
               echo "Database initialization complete!"
       containers:
         - name: ada
-          image: zot.maix.ovh/ada:v0.2.11
+          image: zot.maix.ovh/ada:v0.2.13
           imagePullPolicy: Always
           securityContext:
             allowPrivilegeEscalation: false
@@ -167,11 +167,6 @@ spec:
               value: "redis-service.redis.svc.cluster.local:6379"
             - name: BILLING_REDIS_DB
               value: "11"
-            - name: POLAR_ACCESS_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: polar-secret
-                  key: POLAR_ACCESS_TOKEN
             - name: REDIS_ADDR
               value: "redis-service.redis.svc.cluster.local:6379"
             - name: NEO4J_URI
