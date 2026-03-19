@@ -1,14 +1,3 @@
-variable "proxmox_endpoint" {
-  description = "The Proxmox API endpoint URL (e.g., https://192.168.1.6:8006)"
-  type        = string
-}
-
-variable "proxmox_api_token" {
-  description = "The Proxmox API token in format 'user@realm!tokenid=secret'"
-  type        = string
-  sensitive   = true
-}
-
 variable "proxmox_node" {
   description = "The Proxmox node name to deploy VMs on"
   type        = string
