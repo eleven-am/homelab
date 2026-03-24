@@ -23,7 +23,7 @@ spec:
         - name: zot-pull-secret
       containers:
         - name: oidea
-          image: zot.maix.ovh/oidea:20260119212324
+          image: zot.maix.ovh/oidea:20260324230928
           imagePullPolicy: Always
           ports:
             - containerPort: 80
