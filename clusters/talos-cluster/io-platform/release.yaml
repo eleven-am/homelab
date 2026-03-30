@@ -42,6 +42,14 @@ spec:
       targetPath: io.env.VOICE_SESSION_SECRET
     - kind: Secret
       name: io-platform-secret
+      valuesKey: POLAR_ACCESS_TOKEN
+      targetPath: io.env.POLAR_ACCESS_TOKEN
+    - kind: Secret
+      name: io-platform-secret
+      valuesKey: POLAR_WEBHOOK_SECRET
+      targetPath: io.env.POLAR_WEBHOOK_SECRET
+    - kind: Secret
+      name: io-platform-secret
       valuesKey: POSTGRES_PASSWORD
       targetPath: postgres.password
     - kind: Secret
@@ -85,13 +93,8 @@ spec:
         tag: v0.0.34
       env:
         PHX_HOST: io.maix.ovh
-        AUTH_JWT_ISSUER: io-go
+        AUTH_JWT_ISSUER: io
         AUTH_JWT_AUDIENCE: io
-        SPRITE_GATEWAY_ADAPTER: grpc
-        SPRITE_EVENT_SUBSCRIBER_ENABLED: "true"
-        ADA_PUBLIC_EVENT_SUBSCRIBER_ENABLED: "true"
-        ADA_GRPC_TIMEOUT_MS: "30000"
-        CLI_AUTH_FRONTEND_URL: "https://io.maix.ovh/cli/authorize"
     ioWeb:
       enabled: true
       image:
