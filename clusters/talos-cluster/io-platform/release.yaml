@@ -92,6 +92,11 @@ spec:
         ADA_PUBLIC_EVENT_SUBSCRIBER_ENABLED: "true"
         ADA_GRPC_TIMEOUT_MS: "30000"
         CLI_AUTH_FRONTEND_URL: "https://io.maix.ovh/cli/authorize"
+    ioWeb:
+      enabled: true
+      image:
+        repository: io-web
+        tag: v0.0.1
       ingress:
         enabled: true
         gatewayRef:
