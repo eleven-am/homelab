@@ -7,8 +7,9 @@ spec:
   chart:
     spec:
       chart: io-platform
+      version: ">=0.2.0"
       sourceRef:
-        kind: OCIRepository
+        kind: HelmRepository
         name: io-platform
         namespace: flux-system
   interval: 15m

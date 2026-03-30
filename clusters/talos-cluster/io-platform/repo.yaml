@@ -1,10 +1,9 @@
 apiVersion: source.toolkit.fluxcd.io/v1
-kind: OCIRepository
+kind: HelmRepository
 metadata:
   name: io-platform
   namespace: flux-system
 spec:
+  type: oci
   interval: 10m
-  url: oci://zot.maix.ovh/charts/io-platform
-  ref:
-    semver: ">=0.1.0"
+  url: oci://zot.maix.ovh/charts
