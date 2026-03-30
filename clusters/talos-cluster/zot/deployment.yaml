@@ -43,7 +43,7 @@ spec:
           mountPath: /config
       containers:
       - name: zot
-        image: ghcr.io/project-zot/zot:v2.1.11
+        image: ghcr.io/project-zot/zot:v2.1.5
         ports:
         - containerPort: 5000
           name: registry
@@ -64,27 +64,13 @@ spec:
         - name: data
           mountPath: /var/lib/zot
         args: ["serve", "/etc/zot/config.json"]
-        startupProbe:
-          tcpSocket:
-            port: registry
-          periodSeconds: 10
-          failureThreshold: 30
-        readinessProbe:
-          tcpSocket:
-            port: registry
-          periodSeconds: 10
-        livenessProbe:
-          tcpSocket:
-            port: registry
-          periodSeconds: 30
-          failureThreshold: 3
         resources:
           requests:
-            memory: "512Mi"
-            cpu: "100m"
+            memory: "64Mi"
+            cpu: "50m"
           limits:
-            memory: "1Gi"
-            cpu: "500m"
+            memory: "256Mi"
+            cpu: "200m"
       volumes:
       - name: config-template
         configMap:
