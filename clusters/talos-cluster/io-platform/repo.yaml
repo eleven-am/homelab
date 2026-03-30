@@ -7,3 +7,5 @@ spec:
   type: oci
   interval: 10m
   url: oci://zot.maix.ovh/charts
+  secretRef:
+    name: zot-pull-secret
