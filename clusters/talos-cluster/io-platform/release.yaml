@@ -158,8 +158,9 @@ spec:
 
     neo4j:
       enabled: true
+      nameOverride: neo4j
       neo4j:
-        name: neo4j-standalone
+        name: neo4j
         resources:
           cpu: "500m"
           memory: "2Gi"
