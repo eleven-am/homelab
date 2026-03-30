@@ -20,6 +20,9 @@ data:
         "realm": "zot",
         "externalUrl": "https://zot.maix.ovh",
         "auth": {
+          "htpasswd": {
+            "path": "/etc/zot/htpasswd"
+          },
           "openid": {
             "providers": {
               "github": {
