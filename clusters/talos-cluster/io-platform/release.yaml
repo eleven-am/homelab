@@ -96,7 +96,7 @@ spec:
       enabled: true
       image:
         repository: io-web
-        tag: v0.0.1
+        tag: v0.0.2
       ingress:
         enabled: true
         gatewayRef:
