@@ -96,6 +96,7 @@ spec:
         AUTH_JWT_ISSUER: io
         AUTH_JWT_AUDIENCE: io
         POLAR_SANDBOX: "true"
+        CORS_ALLOWED_ORIGINS: "https://io.maix.ovh"
     ioWeb:
       enabled: true
       image:
