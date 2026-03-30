@@ -4,5 +4,6 @@ namespace: io-platform
 resources:
   - namespace.yaml
   - secret.yaml
+  - helm-registry-secret.yaml
   - repo.yaml
   - release.yaml
