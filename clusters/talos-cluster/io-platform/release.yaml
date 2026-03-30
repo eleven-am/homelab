@@ -95,6 +95,7 @@ spec:
         PHX_HOST: io.maix.ovh
         AUTH_JWT_ISSUER: io
         AUTH_JWT_AUDIENCE: io
+        POLAR_SANDBOX: "true"
     ioWeb:
       enabled: true
       image:
