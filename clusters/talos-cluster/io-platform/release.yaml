@@ -103,7 +103,7 @@ spec:
       host: io.maix.ovh
       image:
         repository: io
-        tag: v0.0.41
+        tag: v0.0.42
       env:
         AUTH_JWT_ISSUER: io
         AUTH_JWT_AUDIENCE: io
@@ -113,7 +113,7 @@ spec:
       enabled: true
       image:
         repository: io-web
-        tag: v0.0.4
+        tag: v0.0.7
       ingress:
         enabled: true
         gatewayRef:
@@ -121,6 +121,19 @@ spec:
           namespace: cloudflare-gateway
         hosts:
           - host: io.maix.ovh
+
+    ioDocs:
+      enabled: true
+      image:
+        repository: io-docs
+        tag: v0.0.1
+      ingress:
+        enabled: true
+        gatewayRef:
+          name: cloudflare-gateway
+          namespace: cloudflare-gateway
+        hosts:
+          - host: io-docs.maix.ovh
 
     sprite:
       enabled: true
