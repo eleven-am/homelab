@@ -126,7 +126,7 @@ spec:
       enabled: true
       image:
         repository: io-docs
-        tag: v0.0.1
+        tag: v0.0.2
       ingress:
         enabled: true
         gatewayRef:
