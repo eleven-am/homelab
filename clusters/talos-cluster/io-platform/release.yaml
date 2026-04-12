@@ -27,7 +27,7 @@ spec:
     - kind: Secret
       name: io-platform-secret
       valuesKey: SECRET_KEY_BASE
-      targetPath: io.env.SECRET_KEY_BASE
+      targetPath: global.secretKeyBase
     - kind: Secret
       name: io-platform-secret
       valuesKey: CLOAK_KEY
@@ -66,6 +66,14 @@ spec:
       targetPath: minio.rootPassword
     - kind: Secret
       name: io-platform-secret
+      valuesKey: INTERNAL_GRPC_TOKEN
+      targetPath: global.internalGrpcAuthToken
+    - kind: Secret
+      name: io-platform-secret
+      valuesKey: ADA_BEAM_GRPC_AUTH_TOKEN
+      targetPath: global.adaBeamGrpcAuthToken
+    - kind: Secret
+      name: io-platform-secret
       valuesKey: OPENAI_API_KEY
       targetPath: ada.env.OPENAI_API_KEY
     - kind: Secret
@@ -92,11 +100,11 @@ spec:
 
     io:
       enabled: true
+      host: io.maix.ovh
       image:
         repository: io
-        tag: v0.0.34
+        tag: v0.0.39
       env:
-        PHX_HOST: io.maix.ovh
         AUTH_JWT_ISSUER: io
         AUTH_JWT_AUDIENCE: io
         POLAR_SANDBOX: "true"
@@ -118,17 +126,15 @@ spec:
       enabled: true
       image:
         repository: sprite
-        tag: v0.0.28
+        tag: v0.1.7
       env:
         RUST_LOG: info
-        SPRITE_ADA_PRICING_TIER: core
-        SPRITE_ADA_AVAILABLE_TOKENS: "1000000"
 
     ada:
       enabled: true
       image:
         repository: ada
-        tag: v0.1.22
+        tag: v0.1.26
       env:
         ADA_BEAM_NEO4J_USER: neo4j
         ADA_BEAM_NEO4J_DATABASE: neo4j
