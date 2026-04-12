@@ -103,7 +103,7 @@ spec:
       host: io.maix.ovh
       image:
         repository: io
-        tag: v0.0.47
+        tag: v0.0.48
       env:
         AUTH_JWT_ISSUER: io
         AUTH_JWT_AUDIENCE: io
