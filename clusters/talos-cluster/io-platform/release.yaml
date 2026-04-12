@@ -134,7 +134,7 @@ spec:
       enabled: true
       image:
         repository: ada
-        tag: v0.1.26
+        tag: v0.1.27
       env:
         ADA_BEAM_NEO4J_USER: neo4j
         ADA_BEAM_NEO4J_DATABASE: neo4j
