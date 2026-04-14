@@ -1,0 +1,132 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: litellm-deployment
+  namespace: litellm
+  labels:
+    app: litellm
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: litellm
+  template:
+    metadata:
+      labels:
+        app: litellm
+    spec:
+      initContainers:
+        - name: init-db
+          image: postgres:17
+          command:
+            - sh
+            - -c
+            - |
+              until pg_isready -h postgres-service.postgres.svc.cluster.local -U $PG_ADMIN_USER; do
+                echo "Waiting for postgres..."
+                sleep 2
+              done
+
+              PGPASSWORD=$PG_ADMIN_PASSWORD psql -h postgres-service.postgres.svc.cluster.local -U $PG_ADMIN_USER -tc "SELECT 1 FROM pg_database WHERE datname = 'litellm'" | grep -q 1 || \
+              PGPASSWORD=$PG_ADMIN_PASSWORD psql -h postgres-service.postgres.svc.cluster.local -U $PG_ADMIN_USER -c "CREATE DATABASE litellm"
+
+              PGPASSWORD=$PG_ADMIN_PASSWORD psql -h postgres-service.postgres.svc.cluster.local -U $PG_ADMIN_USER -tc "SELECT 1 FROM pg_roles WHERE rolname = '$LITELLM_DB_USER'" | grep -q 1 || \
+              PGPASSWORD=$PG_ADMIN_PASSWORD psql -h postgres-service.postgres.svc.cluster.local -U $PG_ADMIN_USER -c "CREATE USER $LITELLM_DB_USER WITH PASSWORD '$LITELLM_DB_PASSWORD'"
+
+              PGPASSWORD=$PG_ADMIN_PASSWORD psql -h postgres-service.postgres.svc.cluster.local -U $PG_ADMIN_USER -c "GRANT ALL PRIVILEGES ON DATABASE litellm TO $LITELLM_DB_USER"
+              PGPASSWORD=$PG_ADMIN_PASSWORD psql -h postgres-service.postgres.svc.cluster.local -U $PG_ADMIN_USER -d litellm -c "GRANT ALL ON SCHEMA public TO $LITELLM_DB_USER"
+          env:
+            - name: PG_ADMIN_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_USER
+            - name: PG_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+            - name: LITELLM_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-secret
+                  key: LITELLM_DB_USER
+            - name: LITELLM_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-secret
+                  key: LITELLM_DB_PASSWORD
+      containers:
+        - name: litellm
+          image: ghcr.io/berriai/litellm-database:v1.83.3-stable
+          imagePullPolicy: IfNotPresent
+          args:
+            - --config
+            - /app/config.yaml
+            - --port
+            - "4000"
+          ports:
+            - containerPort: 4000
+              name: http
+          env:
+            - name: LITELLM_MASTER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-secret
+                  key: LITELLM_MASTER_KEY
+            - name: LITELLM_SALT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-secret
+                  key: LITELLM_SALT_KEY
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-secret
+                  key: DATABASE_URL
+            - name: ANTHROPIC_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-secret
+                  key: ANTHROPIC_API_KEY
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-secret
+                  key: OPENAI_API_KEY
+            - name: GEMINI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-secret
+                  key: GEMINI_API_KEY
+            - name: STORE_MODEL_IN_DB
+              value: "True"
+          resources:
+            requests:
+              cpu: 200m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 2Gi
+          volumeMounts:
+            - name: config
+              mountPath: /app/config.yaml
+              subPath: config.yaml
+          livenessProbe:
+            httpGet:
+              path: /health/liveliness
+              port: 4000
+            initialDelaySeconds: 120
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /health/readiness
+              port: 4000
+            initialDelaySeconds: 120
+            periodSeconds: 10
+      volumes:
+        - name: config
+          configMap:
+            name: litellm-config
