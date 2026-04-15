@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gpt-researcher-config
+  namespace: gpt-researcher
+data:
+  OPENAI_BASE_URL: "http://litellm-service.litellm.svc.cluster.local:4000/v1"
+  FAST_LLM: "openai:gemini-2.5-flash"
+  SMART_LLM: "openai:claude-sonnet-4-6"
+  STRATEGIC_LLM: "openai:gpt-5.4"
+  EMBEDDING: "openai:text-embedding-3-small"
+  RETRIEVER: "searx"
+  SEARX_URL: "http://searxng.searxng.svc.cluster.local:8080"
+  REPORT_SOURCE: "web"
+  LANGUAGE: "english"
+  MAX_SEARCH_RESULTS_PER_QUERY: "5"
+  MAX_ITERATIONS: "3"
+  TOTAL_WORDS: "1200"
+  SCRAPER: "bs"
+  CURATE_SOURCES: "false"
+  DEEP_RESEARCH_BREADTH: "3"
+  DEEP_RESEARCH_DEPTH: "2"
+  DEEP_RESEARCH_CONCURRENCY: "4"
+  TEMPERATURE: "0.4"

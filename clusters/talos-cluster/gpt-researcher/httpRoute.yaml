@@ -1,0 +1,19 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: gpt-researcher-route
+  namespace: gpt-researcher
+spec:
+  parentRefs:
+    - name: envoy-gateway
+      namespace: gateway
+  hostnames:
+    - "researcher.horus.maix.ovh"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: gpt-researcher-service
+          port: 8000
