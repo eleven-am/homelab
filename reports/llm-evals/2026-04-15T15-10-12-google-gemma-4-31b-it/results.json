@@ -1,0 +1,419 @@
+{
+  "date": "2026-04-15",
+  "model": "google/gemma-4-31B-it",
+  "base_url": "http://127.0.0.1:8000/v1",
+  "prompt_pack_name": "general-agent-v1",
+  "prompt_pack_path": "/home/royossai/llm_prompt_pack_general_agent_v1.json",
+  "results": [
+    {
+      "task": "email_triage",
+      "latency_sec": 36.13,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 304,
+        "total_tokens": 535,
+        "completion_tokens": 231,
+        "prompt_tokens_details": null
+      },
+      "content": "```json\n{\n  \"urgent_now\": [\n    4,\n    1,\n    7\n  ],\n  \"today_not_urgent\": [\n    8,\n    5\n  ],\n  \"low_priority\": [\n    2,\n    3,\n    6\n  ],\n  \"delegate\": [\n    {\n      \"id\": 8,\n      \"delegate_to\": \"Engineering Manager\",\n      \"why\": \"Technical implementation detail regarding feature flags\"\n    },\n    {\n      \"id\": 2,\n      \"delegate_to\": \"HR/Recruiting Coordinator\",\n      \"why\": \"Scheduling logistics for candidate interviews\"\n    }\n  ],\n  \"draft_reply\": {\n    \"id\": 4,\n    \"subject\": \"Re: Webhook failure in production\",\n    \"body\": \"I am aware of the webhook failures and have alerted the engineering team. We are investigating the root cause now and I will provide a firm ETA within the hour.\"\n  }\n}\n```",
+      "tool_calls": [],
+      "raw": {
+        "id": "chatcmpl-ada12aa9acee24bc",
+        "object": "chat.completion",
+        "created": 1776258612,
+        "model": "google/gemma-4-31B-it",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "```json\n{\n  \"urgent_now\": [\n    4,\n    1,\n    7\n  ],\n  \"today_not_urgent\": [\n    8,\n    5\n  ],\n  \"low_priority\": [\n    2,\n    3,\n    6\n  ],\n  \"delegate\": [\n    {\n      \"id\": 8,\n      \"delegate_to\": \"Engineering Manager\",\n      \"why\": \"Technical implementation detail regarding feature flags\"\n    },\n    {\n      \"id\": 2,\n      \"delegate_to\": \"HR/Recruiting Coordinator\",\n      \"why\": \"Scheduling logistics for candidate interviews\"\n    }\n  ],\n  \"draft_reply\": {\n    \"id\": 4,\n    \"subject\": \"Re: Webhook failure in production\",\n    \"body\": \"I am aware of the webhook failures and have alerted the engineering team. We are investigating the root cause now and I will provide a firm ETA within the hour.\"\n  }\n}\n```",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": 106,
+            "token_ids": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "prompt_tokens": 304,
+          "total_tokens": 535,
+          "completion_tokens": 231,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "kv_transfer_params": null
+      }
+    },
+    {
+      "task": "tool_choice",
+      "latency_sec": 2.666,
+      "finish_reason": "tool_calls",
+      "usage": {
+        "prompt_tokens": 201,
+        "total_tokens": 217,
+        "completion_tokens": 16,
+        "prompt_tokens_details": null
+      },
+      "content": null,
+      "tool_calls": [
+        {
+          "id": "chatcmpl-tool-997f5d282e4a9ca9",
+          "type": "function",
+          "function": {
+            "name": "search_email",
+            "arguments": "{\"query\": \"board prep\"}"
+          }
+        }
+      ],
+      "raw": {
+        "id": "chatcmpl-8d879ee056f9cca8",
+        "object": "chat.completion",
+        "created": 1776258648,
+        "model": "google/gemma-4-31B-it",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": null,
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [
+                {
+                  "id": "chatcmpl-tool-997f5d282e4a9ca9",
+                  "type": "function",
+                  "function": {
+                    "name": "search_email",
+                    "arguments": "{\"query\": \"board prep\"}"
+                  }
+                }
+              ],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "tool_calls",
+            "stop_reason": 50,
+            "token_ids": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "prompt_tokens": 201,
+          "total_tokens": 217,
+          "completion_tokens": 16,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "kv_transfer_params": null
+      }
+    },
+    {
+      "task": "english_rewrite",
+      "latency_sec": 10.242,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 130,
+        "total_tokens": 197,
+        "completion_tokens": 67,
+        "prompt_tokens_details": null
+      },
+      "content": "Hi team, \n\nJust a reminder that the current draft isn't ready for the client. There is still too much ambiguity around the pricing, and sending it as-is would create more confusion than clarity. \n\nPlease tighten up the wording and send me one clean, final version by tomorrow morning. \n\nThanks!",
+      "tool_calls": [],
+      "raw": {
+        "id": "chatcmpl-8d2ad94e2ea69882",
+        "object": "chat.completion",
+        "created": 1776258650,
+        "model": "google/gemma-4-31B-it",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "Hi team, \n\nJust a reminder that the current draft isn't ready for the client. There is still too much ambiguity around the pricing, and sending it as-is would create more confusion than clarity. \n\nPlease tighten up the wording and send me one clean, final version by tomorrow morning. \n\nThanks!",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": 106,
+            "token_ids": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "prompt_tokens": 130,
+          "total_tokens": 197,
+          "completion_tokens": 67,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "kv_transfer_params": null
+      }
+    },
+    {
+      "task": "relevance_judgment",
+      "latency_sec": 28.748,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 274,
+        "total_tokens": 463,
+        "completion_tokens": 189,
+        "prompt_tokens_details": null
+      },
+      "content": "```json\n{\n  \"read_now\": [\n    \"E\",\n    \"C\",\n    \"G\",\n    \"A\"\n  ],\n  \"skim_if_time\": [\n    \"D\"\n  ],\n  \"ignore_for_this_meeting\": [\n    \"B\",\n    \"F\",\n    \"H\"\n  ],\n  \"rationale\": \"Priority is given to direct board requests (E), critical financial wins (G), and high-stakes risks (C, A). A board member's specific question is the top priority. The churn risk of the largest account is a critical board-level update. Improving gross margins is a key performance win. The security issue is a necessary disclosure. PRD is secondary. Admin tasks, junior hiring, and raw data dumps are irrelevant for a strategic board preparation call.\"\n}\n```",
+      "tool_calls": [],
+      "raw": {
+        "id": "chatcmpl-93a43cff3a298af9",
+        "object": "chat.completion",
+        "created": 1776258661,
+        "model": "google/gemma-4-31B-it",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "```json\n{\n  \"read_now\": [\n    \"E\",\n    \"C\",\n    \"G\",\n    \"A\"\n  ],\n  \"skim_if_time\": [\n    \"D\"\n  ],\n  \"ignore_for_this_meeting\": [\n    \"B\",\n    \"F\",\n    \"H\"\n  ],\n  \"rationale\": \"Priority is given to direct board requests (E), critical financial wins (G), and high-stakes risks (C, A). A board member's specific question is the top priority. The churn risk of the largest account is a critical board-level update. Improving gross margins is a key performance win. The security issue is a necessary disclosure. PRD is secondary. Admin tasks, junior hiring, and raw data dumps are irrelevant for a strategic board preparation call.\"\n}\n```",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": 106,
+            "token_ids": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "prompt_tokens": 274,
+          "total_tokens": 463,
+          "completion_tokens": 189,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "kv_transfer_params": null
+      }
+    },
+    {
+      "task": "messy_context_decision",
+      "latency_sec": 14.824,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 119,
+        "total_tokens": 216,
+        "completion_tokens": 97,
+        "prompt_tokens_details": null
+      },
+      "content": "* **Decision:** Delay the launch to next Tuesday.\n* **Reasoning:** Pushing a billing change during a support spike risks a catastrophic failure in customer experience and churn of the largest enterprise account.\n* **Risk:** Finance may miss the quarterly window if the delay pushes the effective date into the next period.\n* **Next Step:** Product team to coordinate with the Account Manager to provide the enterprise customer a preview of the new format for sign-off by Friday.",
+      "tool_calls": [],
+      "raw": {
+        "id": "chatcmpl-ac3a4d85504b6116",
+        "object": "chat.completion",
+        "created": 1776258689,
+        "model": "google/gemma-4-31B-it",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "* **Decision:** Delay the launch to next Tuesday.\n* **Reasoning:** Pushing a billing change during a support spike risks a catastrophic failure in customer experience and churn of the largest enterprise account.\n* **Risk:** Finance may miss the quarterly window if the delay pushes the effective date into the next period.\n* **Next Step:** Product team to coordinate with the Account Manager to provide the enterprise customer a preview of the new format for sign-off by Friday.",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": 106,
+            "token_ids": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "prompt_tokens": 119,
+          "total_tokens": 216,
+          "completion_tokens": 97,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "kv_transfer_params": null
+      }
+    },
+    {
+      "task": "meeting_prep",
+      "latency_sec": 15.451,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 159,
+        "total_tokens": 260,
+        "completion_tokens": 101,
+        "prompt_tokens_details": null
+      },
+      "content": "* **Read First:** Customer incident summary (critical for the churn call).\n* **Decide Beforehand:** The specific \"win-back\" offer or concession for the escalating account.\n* **Ask Recruiter:** Which of the two candidates requires visa sponsorship and the associated timeline/cost.\n* **Confirm for Board:** Final status of the Q2 metrics deck and key talking points.\n* **Churn Call Opening:** Acknowledge the failure immediately and express a commitment to resolution.",
+      "tool_calls": [],
+      "raw": {
+        "id": "chatcmpl-a2c89fc2ce253476",
+        "object": "chat.completion",
+        "created": 1776258704,
+        "model": "google/gemma-4-31B-it",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "* **Read First:** Customer incident summary (critical for the churn call).\n* **Decide Beforehand:** The specific \"win-back\" offer or concession for the escalating account.\n* **Ask Recruiter:** Which of the two candidates requires visa sponsorship and the associated timeline/cost.\n* **Confirm for Board:** Final status of the Q2 metrics deck and key talking points.\n* **Churn Call Opening:** Acknowledge the failure immediately and express a commitment to resolution.",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": 106,
+            "token_ids": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "prompt_tokens": 159,
+          "total_tokens": 260,
+          "completion_tokens": 101,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "kv_transfer_params": null
+      }
+    },
+    {
+      "task": "structured_following",
+      "latency_sec": 18.759,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 99,
+        "total_tokens": 222,
+        "completion_tokens": 123,
+        "prompt_tokens_details": null
+      },
+      "content": "```json\n{\n  \"recommendation\": \"move to Linear + Google Docs\",\n  \"why\": \"This separates structured project tracking from unstructured documentation, providing superior speed and specialized tooling for software development while maintaining universal accessibility for docs.\",\n  \"tradeoffs\": [\n    \"Increased context switching between two different platforms\",\n    \"Loss of a single 'source of truth' for all company knowledge\",\n    \"Additional subscription management and billing overhead\"\n  ],\n  \"who_should_own_the_decision\": \"CTO or Head of Product\"\n}\n```",
+      "tool_calls": [],
+      "raw": {
+        "id": "chatcmpl-85c8f5b38cd4607b",
+        "object": "chat.completion",
+        "created": 1776258720,
+        "model": "google/gemma-4-31B-it",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "```json\n{\n  \"recommendation\": \"move to Linear + Google Docs\",\n  \"why\": \"This separates structured project tracking from unstructured documentation, providing superior speed and specialized tooling for software development while maintaining universal accessibility for docs.\",\n  \"tradeoffs\": [\n    \"Increased context switching between two different platforms\",\n    \"Loss of a single 'source of truth' for all company knowledge\",\n    \"Additional subscription management and billing overhead\"\n  ],\n  \"who_should_own_the_decision\": \"CTO or Head of Product\"\n}\n```",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": 106,
+            "token_ids": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "prompt_tokens": 99,
+          "total_tokens": 222,
+          "completion_tokens": 123,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "kv_transfer_params": null
+      }
+    },
+    {
+      "task": "ambiguity_handling",
+      "latency_sec": 6.661,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 74,
+        "total_tokens": 117,
+        "completion_tokens": 43,
+        "prompt_tokens_details": null
+      },
+      "content": "To give you the right wording, I need to know: **What is Sam blocking, and what is the specific \"thing\" (approval, data, a signature, etc.) you need from him?**",
+      "tool_calls": [],
+      "raw": {
+        "id": "chatcmpl-be1478b1a9ab258d",
+        "object": "chat.completion",
+        "created": 1776258739,
+        "model": "google/gemma-4-31B-it",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "To give you the right wording, I need to know: **What is Sam blocking, and what is the specific \"thing\" (approval, data, a signature, etc.) you need from him?**",
+              "refusal": null,
+              "annotations": null,
+              "audio": null,
+              "function_call": null,
+              "tool_calls": [],
+              "reasoning": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": 106,
+            "token_ids": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": null,
+        "usage": {
+          "prompt_tokens": 74,
+          "total_tokens": 117,
+          "completion_tokens": 43,
+          "prompt_tokens_details": null
+        },
+        "prompt_logprobs": null,
+        "prompt_token_ids": null,
+        "kv_transfer_params": null
+      }
+    }
+  ]
+}
