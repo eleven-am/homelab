@@ -16,21 +16,29 @@ spec:
     metadata:
       labels:
         app: vox
+      annotations:
+        homelab.maix.ovh/voxtral-adapter: "0.2.31"
     spec:
       runtimeClassName: nvidia
       containers:
         - name: vox
           image: docker.io/elevenam/vox:v0.2.19
           imagePullPolicy: IfNotPresent
+          command:
+            - /bin/bash
+            - -lc
           args:
-            - vox
-            - serve
-            - --host
-            - 0.0.0.0
-            - --port
-            - "11435"
-            - --ttl
-            - "0"
+            - |
+              set -euo pipefail
+              rm -rf /home/vox/.vox/adapters/vox-voxtral
+              install -d -o vox -g vox /home/vox/.vox/adapters/vox-voxtral
+              gosu vox /bin/uv pip install \
+                --python /home/vox/app/.venv/bin/python \
+                --target /home/vox/.vox/adapters/vox-voxtral \
+                --no-deps \
+                /opt/vox-wheels/vox_voxtral-0.2.31-py3-none-any.whl
+              exec /usr/local/bin/vox-entrypoint.sh \
+                vox serve --host 0.0.0.0 --port 11435 --ttl 0
           ports:
             - containerPort: 11435
               name: http
@@ -48,6 +56,9 @@ spec:
           volumeMounts:
             - name: vox-data
               mountPath: /home/vox/.vox
+            - name: vox-adapter-wheels
+              mountPath: /opt/vox-wheels
+              readOnly: true
           startupProbe:
             httpGet:
               path: /v1/health
@@ -70,3 +81,6 @@ spec:
         - name: vox-data
           persistentVolumeClaim:
             claimName: vox-data
+        - name: vox-adapter-wheels
+          configMap:
+            name: voxtral-adapter-wheel

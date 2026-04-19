@@ -1,5 +1,12 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+generatorOptions:
+  disableNameSuffixHash: true
+configMapGenerator:
+  - name: voxtral-adapter-wheel
+    namespace: vox
+    files:
+      - wheels/vox_voxtral-0.2.31-py3-none-any.whl
 resources:
   - namespace.yaml
   - pvc.yaml
