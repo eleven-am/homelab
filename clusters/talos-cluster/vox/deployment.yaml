@@ -1,0 +1,110 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vox-deployment
+  namespace: vox
+  labels:
+    app: vox
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: vox
+  template:
+    metadata:
+      labels:
+        app: vox
+    spec:
+      runtimeClassName: nvidia
+      initContainers:
+        - name: pull-kokoro
+          image: docker.io/elevenam/vox:v0.2.18
+          imagePullPolicy: IfNotPresent
+          args:
+            - vox
+            - pull
+            - kokoro:v1.0
+          volumeMounts:
+            - name: vox-data
+              mountPath: /home/vox/.vox
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 2Gi
+        - name: pull-whisper
+          image: docker.io/elevenam/vox:v0.2.18
+          imagePullPolicy: IfNotPresent
+          args:
+            - vox
+            - pull
+            - whisper:base.en
+          volumeMounts:
+            - name: vox-data
+              mountPath: /home/vox/.vox
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 2Gi
+      containers:
+        - name: vox
+          image: docker.io/elevenam/vox:v0.2.18
+          imagePullPolicy: IfNotPresent
+          args:
+            - vox
+            - serve
+            - --host
+            - 0.0.0.0
+            - --port
+            - "11435"
+          env:
+            - name: VOX_PRELOAD
+              value: kokoro:v1.0,whisper:base.en
+            - name: VOX_PRELOAD_VAD
+              value: "true"
+          ports:
+            - containerPort: 11435
+              name: http
+            - containerPort: 9090
+              name: grpc
+          resources:
+            requests:
+              cpu: 1000m
+              memory: 4Gi
+              nvidia.com/gpu: "1"
+            limits:
+              cpu: 4000m
+              memory: 12Gi
+              nvidia.com/gpu: "1"
+          volumeMounts:
+            - name: vox-data
+              mountPath: /home/vox/.vox
+          startupProbe:
+            httpGet:
+              path: /v1/health
+              port: 11435
+            periodSeconds: 5
+            failureThreshold: 60
+          readinessProbe:
+            httpGet:
+              path: /v1/health
+              port: 11435
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /v1/health
+              port: 11435
+            initialDelaySeconds: 30
+            periodSeconds: 15
+      volumes:
+        - name: vox-data
+          persistentVolumeClaim:
+            claimName: vox-data

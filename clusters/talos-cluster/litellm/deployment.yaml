@@ -103,6 +103,8 @@ spec:
                   key: GEMINI_API_KEY
             - name: OSIRIS_GEMMA_API_KEY
               value: "unused"
+            - name: VOX_API_KEY
+              value: "unused"
             - name: STORE_MODEL_IN_DB
               value: "True"
             - name: HTTP_PROXY
