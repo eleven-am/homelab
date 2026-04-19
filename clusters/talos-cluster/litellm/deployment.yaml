@@ -14,6 +14,8 @@ spec:
       app: litellm
   template:
     metadata:
+      annotations:
+        homelab.maix.ovh/config-revision: "2026-04-19-talos-audio-v2"
       labels:
         app: litellm
     spec:
