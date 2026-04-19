@@ -144,6 +144,8 @@ spec:
           image: tailscale/tailscale:latest
           imagePullPolicy: IfNotPresent
           env:
+            - name: TS_KUBE_SECRET
+              value: ""
             - name: TS_AUTHKEY
               valueFrom:
                 secretKeyRef:
