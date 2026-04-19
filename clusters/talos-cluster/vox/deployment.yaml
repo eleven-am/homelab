@@ -19,40 +19,46 @@ spec:
     spec:
       runtimeClassName: nvidia
       initContainers:
-        - name: pull-kokoro
+        - name: bootstrap-models
           image: docker.io/elevenam/vox:v0.2.18
           imagePullPolicy: IfNotPresent
+          command:
+            - /bin/sh
+            - -lc
           args:
-            - vox
-            - pull
-            - kokoro:v1.0
+            - |
+              set -eu
+              vox serve --host 127.0.0.1 --port 11435 >/tmp/vox-bootstrap.log 2>&1 &
+              server_pid=$!
+              cleanup() {
+                kill "$server_pid" 2>/dev/null || true
+                wait "$server_pid" 2>/dev/null || true
+              }
+              trap cleanup EXIT
+              ready=0
+              for _ in $(seq 1 120); do
+                if vox --host http://127.0.0.1:11435 list >/dev/null 2>&1; then
+                  ready=1
+                  break
+                fi
+                sleep 1
+              done
+              if [ "$ready" -ne 1 ]; then
+                cat /tmp/vox-bootstrap.log
+                exit 1
+              fi
+              vox --host http://127.0.0.1:11435 pull kokoro:v1.0
+              vox --host http://127.0.0.1:11435 pull whisper:base.en
           volumeMounts:
             - name: vox-data
               mountPath: /home/vox/.vox
           resources:
             requests:
-              cpu: 250m
-              memory: 512Mi
+              cpu: 500m
+              memory: 1Gi
             limits:
               cpu: 1000m
-              memory: 2Gi
-        - name: pull-whisper
-          image: docker.io/elevenam/vox:v0.2.18
-          imagePullPolicy: IfNotPresent
-          args:
-            - vox
-            - pull
-            - whisper:base.en
-          volumeMounts:
-            - name: vox-data
-              mountPath: /home/vox/.vox
-          resources:
-            requests:
-              cpu: 250m
-              memory: 512Mi
-            limits:
-              cpu: 1000m
-              memory: 2Gi
+              memory: 4Gi
       containers:
         - name: vox
           image: docker.io/elevenam/vox:v0.2.18
