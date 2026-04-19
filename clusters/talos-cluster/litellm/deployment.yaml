@@ -15,7 +15,7 @@ spec:
   template:
     metadata:
       annotations:
-        homelab.maix.ovh/config-revision: "2026-04-19-talos-audio-v3"
+        homelab.maix.ovh/config-revision: "2026-04-19-osiris-mistral-v1"
       labels:
         app: litellm
     spec:
