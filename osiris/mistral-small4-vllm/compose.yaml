@@ -9,6 +9,7 @@ services:
     environment:
       HF_HOME: /data/hf
       HUGGING_FACE_HUB_CACHE: /data/hf/hub
+      VLLM_NVFP4_GEMM_BACKEND: cutlass
     volumes:
       - /home/royossai/mistral-small4-cache:/data/hf
     command:
@@ -23,6 +24,9 @@ services:
       - "32768"
       - --gpu-memory-utilization
       - "0.80"
+      - --enforce-eager
+      - --moe-backend
+      - cutlass
       - --tool-call-parser
       - mistral
       - --enable-auto-tool-choice
