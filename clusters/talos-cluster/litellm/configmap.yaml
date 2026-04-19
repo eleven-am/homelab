@@ -69,13 +69,25 @@ data:
 
       - model_name: talos/kokoro-tts
         litellm_params:
-          model: openai/kokoro:v1.0
+          model: openai/kokoro-tts-onnx:v1.0
+          api_base: http://vox-service.vox.svc.cluster.local:11435/v1
+          api_key: os.environ/VOX_API_KEY
+
+      - model_name: talos/voxtral-tts
+        litellm_params:
+          model: openai/voxtral-tts-vllm:4b
           api_base: http://vox-service.vox.svc.cluster.local:11435/v1
           api_key: os.environ/VOX_API_KEY
 
       - model_name: talos/parakeet-stt
         litellm_params:
-          model: openai/parakeet
+          model: openai/parakeet-stt-onnx:tdt-0.6b-v3
+          api_base: http://vox-service.vox.svc.cluster.local:11435/v1
+          api_key: os.environ/VOX_API_KEY
+
+      - model_name: openai/talos-parakeet-stt
+        litellm_params:
+          model: openai/parakeet-stt-onnx:tdt-0.6b-v3
           api_base: http://vox-service.vox.svc.cluster.local:11435/v1
           api_key: os.environ/VOX_API_KEY
 

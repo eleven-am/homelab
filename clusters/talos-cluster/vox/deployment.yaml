@@ -29,6 +29,8 @@ spec:
             - 0.0.0.0
             - --port
             - "11435"
+            - --ttl
+            - "0"
           ports:
             - containerPort: 11435
               name: http
