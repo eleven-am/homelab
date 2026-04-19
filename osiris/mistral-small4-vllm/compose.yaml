@@ -1,0 +1,30 @@
+services:
+  mistral-small4-vllm:
+    image: vllm/vllm-openai:gemma4-cu130
+    container_name: mistral-small4-vllm
+    restart: unless-stopped
+    network_mode: host
+    ipc: host
+    gpus: all
+    environment:
+      HF_HOME: /data/hf
+      HUGGING_FACE_HUB_CACHE: /data/hf/hub
+    volumes:
+      - /home/royossai/mistral-small4-cache:/data/hf
+    command:
+      - mistralai/Mistral-Small-4-119B-2603-NVFP4
+      - --served-model-name
+      - mistral-small-4
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8000"
+      - --max-model-len
+      - "32768"
+      - --gpu-memory-utilization
+      - "0.80"
+      - --tool-call-parser
+      - mistral
+      - --enable-auto-tool-choice
+      - --reasoning-parser
+      - mistral

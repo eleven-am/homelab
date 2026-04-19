@@ -1,0 +1,16 @@
+[Unit]
+Description=Mistral Small 4 vLLM on Osiris
+After=docker.service network-online.target
+Requires=docker.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/home/royossai/services/mistral-small4-vllm
+ExecStart=/usr/bin/docker compose -f /home/royossai/services/mistral-small4-vllm/compose.yaml up -d
+ExecStop=/usr/bin/docker compose -f /home/royossai/services/mistral-small4-vllm/compose.yaml down
+TimeoutStartSec=0
+
+[Install]
+WantedBy=multi-user.target

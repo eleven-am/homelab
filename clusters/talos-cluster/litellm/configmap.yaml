@@ -56,9 +56,9 @@ data:
           model: gemini/gemini-2.5-pro
           api_key: os.environ/GEMINI_API_KEY
 
-      - model_name: osiris/gemma-4-31b
+      - model_name: osiris/mistral-small-4
         litellm_params:
-          model: openai/gemma-4-31b-it
+          model: openai/mistral-small-4
           api_base: http://100.64.0.19:8000/v1
           api_key: os.environ/OSIRIS_GEMMA_API_KEY
 
