@@ -101,8 +101,22 @@ spec:
                 secretKeyRef:
                   name: litellm-secret
                   key: GEMINI_API_KEY
+            - name: OSIRIS_GEMMA_API_KEY
+              value: "unused"
             - name: STORE_MODEL_IN_DB
               value: "True"
+            - name: HTTP_PROXY
+              value: http://127.0.0.1:1055
+            - name: HTTPS_PROXY
+              value: http://127.0.0.1:1055
+            - name: http_proxy
+              value: http://127.0.0.1:1055
+            - name: https_proxy
+              value: http://127.0.0.1:1055
+            - name: NO_PROXY
+              value: 127.0.0.1,localhost,.svc,.svc.cluster.local,.cluster.local,postgres-service.postgres.svc.cluster.local,.anthropic.com,.openai.com,.googleapis.com,.google.com
+            - name: no_proxy
+              value: 127.0.0.1,localhost,.svc,.svc.cluster.local,.cluster.local,postgres-service.postgres.svc.cluster.local,.anthropic.com,.openai.com,.googleapis.com,.google.com
           resources:
             requests:
               cpu: 200m
@@ -126,7 +140,43 @@ spec:
               port: 4000
             initialDelaySeconds: 120
             periodSeconds: 10
+        - name: litellm-tailscale
+          image: tailscale/tailscale:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: TS_AUTHKEY
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-tailscale-secret
+                  key: TS_AUTHKEY
+            - name: TS_EXTRA_ARGS
+              value: --login-server=https://headscale.maix.ovh
+            - name: TS_HOSTNAME
+              value: litellm
+            - name: TS_STATE_DIR
+              value: /var/lib/tailscale
+            - name: TS_AUTH_ONCE
+              value: "true"
+            - name: TS_USERSPACE
+              value: "true"
+            - name: TS_OUTBOUND_HTTP_PROXY_LISTEN
+              value: :1055
+            - name: TS_NO_LOGS_NO_SUPPORT
+              value: "true"
+          resources:
+            requests:
+              cpu: 25m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+          volumeMounts:
+            - name: tailscale-state
+              mountPath: /var/lib/tailscale
       volumes:
         - name: config
           configMap:
             name: litellm-config
+        - name: tailscale-state
+          persistentVolumeClaim:
+            claimName: litellm-tailscale-state
