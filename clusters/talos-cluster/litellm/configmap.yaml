@@ -73,9 +73,9 @@ data:
           api_base: http://vox-service.vox.svc.cluster.local:11435/v1
           api_key: os.environ/VOX_API_KEY
 
-      - model_name: talos/whisper-stt
+      - model_name: talos/parakeet-stt
         litellm_params:
-          model: openai/whisper:base.en
+          model: openai/parakeet
           api_base: http://vox-service.vox.svc.cluster.local:11435/v1
           api_key: os.environ/VOX_API_KEY
 
