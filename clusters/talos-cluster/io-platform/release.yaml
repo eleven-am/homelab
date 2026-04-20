@@ -91,7 +91,7 @@ spec:
       host: io.maix.ovh
       image:
         repository: io
-        tag: v0.0.51
+        tag: v0.0.52
       env:
         AUTH_JWT_ISSUER: io
         AUTH_JWT_AUDIENCE: io
@@ -135,7 +135,7 @@ spec:
       enabled: true
       image:
         repository: ada
-        tag: v0.1.29
+        tag: v0.1.30
       llm:
         apiKey: ""
         embedApiKey: ""
