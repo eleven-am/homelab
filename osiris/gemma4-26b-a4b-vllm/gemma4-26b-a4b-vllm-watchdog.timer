@@ -1,0 +1,11 @@
+[Unit]
+Description=Check Gemma 4 26B A4B vLLM health every minute
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=1min
+AccuracySec=15s
+Unit=gemma4-26b-a4b-vllm-watchdog.service
+
+[Install]
+WantedBy=timers.target
