@@ -31,8 +31,15 @@ spec:
             - "11435"
             - --ttl
             - "0"
+            - --max-loaded
+            - "2"
             - --device
             - cpu
+            - --preload
+            - parakeet-stt-onnx:tdt-0.6b-v3
+            - --preload
+            - kokoro-tts-onnx:v1.0
+            - --preload-vad
           ports:
             - containerPort: 11435
               name: http
