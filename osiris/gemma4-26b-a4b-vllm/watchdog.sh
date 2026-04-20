@@ -6,6 +6,17 @@ CONTAINER=gemma4-26b-a4b-vllm
 HEALTH_URL=http://127.0.0.1:8000/health
 
 status="$(docker inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{else}}{{.State.Status}}{{end}}' "$CONTAINER" 2>/dev/null || true)"
+started_at="$(docker inspect --format '{{.State.StartedAt}}' "$CONTAINER" 2>/dev/null || true)"
+
+if [ -n "$started_at" ] && [ "$started_at" != "0001-01-01T00:00:00Z" ]; then
+  started_epoch="$(date -u -d "$started_at" +%s 2>/dev/null || echo 0)"
+  now_epoch="$(date -u +%s)"
+  age_seconds=$((now_epoch - started_epoch))
+
+  if [ "$age_seconds" -lt 900 ]; then
+    exit 0
+  fi
+fi
 
 case "$status" in
   healthy|starting)
