@@ -1,7 +1,7 @@
 services:
-  mistral-small4-vllm:
+  gemma4-26b-a4b-vllm:
     image: vllm/vllm-openai:gemma4-cu130
-    container_name: mistral-small4-vllm
+    container_name: gemma4-26b-a4b-vllm
     restart: unless-stopped
     network_mode: host
     ipc: host
@@ -9,13 +9,12 @@ services:
     environment:
       HF_HOME: /data/hf
       HUGGING_FACE_HUB_CACHE: /data/hf/hub
-      VLLM_NVFP4_GEMM_BACKEND: cutlass
     volumes:
-      - /home/royossai/mistral-small4-cache:/data/hf
+      - /home/royossai/gemma4-26b-a4b-cache:/data/hf
     command:
-      - mistralai/Mistral-Small-4-119B-2603-NVFP4
+      - google/gemma-4-26B-A4B-it
       - --served-model-name
-      - mistral-small-4
+      - gemma-4-26b-a4b
       - --host
       - 0.0.0.0
       - --port
@@ -25,10 +24,3 @@ services:
       - --gpu-memory-utilization
       - "0.80"
       - --enforce-eager
-      - --moe-backend
-      - cutlass
-      - --tool-call-parser
-      - mistral
-      - --enable-auto-tool-choice
-      - --reasoning-parser
-      - mistral

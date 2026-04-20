@@ -1,0 +1,16 @@
+[Unit]
+Description=Gemma 4 26B A4B vLLM on Osiris
+After=docker.service network-online.target
+Requires=docker.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/home/royossai/services/gemma4-26b-a4b-vllm
+ExecStart=/usr/bin/docker compose -f /home/royossai/services/gemma4-26b-a4b-vllm/compose.yaml up -d
+ExecStop=/usr/bin/docker compose -f /home/royossai/services/gemma4-26b-a4b-vllm/compose.yaml down
+TimeoutStartSec=0
+
+[Install]
+WantedBy=multi-user.target

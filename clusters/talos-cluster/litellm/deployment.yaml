@@ -15,7 +15,7 @@ spec:
   template:
     metadata:
       annotations:
-        homelab.maix.ovh/config-revision: "2026-04-19-osiris-mistral-v1"
+        homelab.maix.ovh/config-revision: "2026-04-20-osiris-gemma-26b-a4b-v1"
       labels:
         app: litellm
     spec:
