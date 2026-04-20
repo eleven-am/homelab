@@ -20,5 +20,5 @@ fi
 
 curl -fsS "$OLLAMA_URL/api/generate" \
   -H 'Content-Type: application/json' \
-  -d '{"model":"gpt-oss:20b","prompt":"Reply with OK.","stream":false,"keep_alive":"-1","options":{"num_ctx":4096,"num_predict":1}}' \
+  -d '{"model":"gpt-oss:20b","prompt":"Reply with OK.","stream":false,"options":{"num_ctx":4096,"num_predict":1}}' \
   >/dev/null
