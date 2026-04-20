@@ -28,7 +28,7 @@ spec:
             - name: OLLAMA_HOST
               value: "0.0.0.0"
             - name: OLLAMA_GPU_OVERHEAD
-              value: "7516192768"
+              value: "12884901888"
             - name: OLLAMA_CONTEXT_LENGTH
               value: "2048"
             - name: OLLAMA_FLASH_ATTENTION
