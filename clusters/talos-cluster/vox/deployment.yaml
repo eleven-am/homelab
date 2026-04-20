@@ -31,6 +31,8 @@ spec:
             - "11435"
             - --ttl
             - "0"
+            - --device
+            - cpu
           ports:
             - containerPort: 11435
               name: http
