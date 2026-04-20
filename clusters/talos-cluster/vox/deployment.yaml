@@ -36,7 +36,7 @@ spec:
             - --device
             - cuda
             - --preload
-            - parakeet-stt-nemo:tdt-0.6b-v3
+            - parakeet-stt-onnx:tdt-0.6b-v3
             - --preload
             - kokoro-tts-onnx:v1.0
             - --preload-vad
