@@ -34,9 +34,9 @@ spec:
             - --max-loaded
             - "2"
             - --device
-            - cpu
+            - cuda
             - --preload
-            - parakeet-stt-onnx:tdt-0.6b-v3
+            - parakeet-stt-nemo:tdt-0.6b-v3
             - --preload
             - kokoro-tts-onnx:v1.0
             - --preload-vad
