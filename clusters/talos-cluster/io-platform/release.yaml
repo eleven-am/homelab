@@ -74,24 +74,12 @@ spec:
       targetPath: global.adaBeamGrpcAuthToken
     - kind: Secret
       name: io-platform-secret
-      valuesKey: OPENAI_API_KEY
-      targetPath: ada.env.OPENAI_API_KEY
-    - kind: Secret
-      name: io-platform-secret
-      valuesKey: OPENROUTER_API_KEY
-      targetPath: ada.env.OPENROUTER_API_KEY
-    - kind: Secret
-      name: io-platform-secret
-      valuesKey: OPENROUTER_API_KEY
+      valuesKey: LITELLM_API_KEY
       targetPath: ada.env.ADA_BEAM_LLM_API_KEY
     - kind: Secret
       name: io-platform-secret
-      valuesKey: GOOGLE_API_KEY
-      targetPath: ada.env.GOOGLE_API_KEY
-    - kind: Secret
-      name: io-platform-secret
-      valuesKey: ANTHROPIC_API_KEY
-      targetPath: ada.env.ANTHROPIC_API_KEY
+      valuesKey: LITELLM_API_KEY
+      targetPath: ada.env.ADA_BEAM_LLM_EMBED_API_KEY
   values:
     global:
       registry: zot.maix.ovh
@@ -151,15 +139,12 @@ spec:
       env:
         ADA_BEAM_NEO4J_USER: neo4j
         ADA_BEAM_NEO4J_DATABASE: neo4j
-        ADA_BEAM_OLLAMA_URL: "http://ollama-service.ollama.svc.cluster.local:11434"
-        ADA_BEAM_OLLAMA_EMBED_MODEL: "bge-m3:latest"
-        ADA_BEAM_LLM_EMBED_PROVIDER: ollama
-        ADA_BEAM_LLM_EMBED_MODEL: "bge-m3:latest"
-        ADA_BEAM_LLM_EMBED_API_KEY: ollama
-        ADA_BEAM_LLM_EMBED_URL: "http://ollama-service.ollama.svc.cluster.local:11434/v1"
-        ADA_BEAM_LLM_PROVIDER: openrouter
-        ADA_BEAM_LLM_MODEL: "anthropic/claude-sonnet-4.5"
-        ADA_BEAM_LLM_URL: "https://openrouter.ai/api/v1"
+        ADA_BEAM_LLM_PROVIDER: openai
+        ADA_BEAM_LLM_MODEL: "osiris/gemma-4-26b-a4b"
+        ADA_BEAM_LLM_URL: "http://litellm-service.litellm.svc.cluster.local:4000/v1"
+        ADA_BEAM_LLM_EMBED_PROVIDER: openai
+        ADA_BEAM_LLM_EMBED_MODEL: "osiris/bge-m3"
+        ADA_BEAM_LLM_EMBED_URL: "http://litellm-service.litellm.svc.cluster.local:4000/v1"
 
     postgres:
       enabled: true
