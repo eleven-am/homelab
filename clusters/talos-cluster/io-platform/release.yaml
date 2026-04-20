@@ -154,6 +154,12 @@ spec:
       storage:
         size: 20Gi
         storageClass: blizzard-storage
+      resources:
+        requests:
+          cpu: 200m
+          memory: 1Gi
+        limits:
+          memory: 2Gi
 
     redis:
       enabled: true
