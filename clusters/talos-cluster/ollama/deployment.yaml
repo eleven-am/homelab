@@ -27,8 +27,10 @@ spec:
           env:
             - name: OLLAMA_HOST
               value: "0.0.0.0"
-            - name: OLLAMA_MAX_VRAM
-              value: "4294967296"
+            - name: OLLAMA_GPU_OVERHEAD
+              value: "7516192768"
+            - name: OLLAMA_CONTEXT_LENGTH
+              value: "2048"
             - name: OLLAMA_FLASH_ATTENTION
               value: "1"
             - name: OLLAMA_KV_CACHE_TYPE
@@ -39,6 +41,8 @@ spec:
               value: "1"
             - name: OLLAMA_NUM_PARALLEL
               value: "1"
+            - name: OLLAMA_MAX_QUEUE
+              value: "8"
           resources:
             requests:
               memory: "1Gi"
