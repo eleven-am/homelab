@@ -73,6 +73,17 @@ data:
           model: ollama/bge-m3
           api_base: http://100.64.0.19:11434
 
+      - model_name: osiris/gpt-oss-20b
+        litellm_params:
+          model: ollama_chat/gpt-oss:20b
+          api_base: http://100.64.0.19:11434
+          timeout: 900
+          stream_timeout: 900
+          max_retries: 0
+          max_parallel_requests: 1
+          rpm: 20
+          tpm: 60000
+
       - model_name: talos/kokoro-tts
         litellm_params:
           model: openai/kokoro-tts-onnx:v1.0

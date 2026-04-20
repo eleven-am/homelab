@@ -1,0 +1,14 @@
+[Unit]
+Description=Preload GPT-OSS 20B in Ollama after Gemma is healthy
+After=network-online.target ollama.service gemma4-26b-a4b-vllm.service
+Requires=ollama.service
+Wants=network-online.target gemma4-26b-a4b-vllm.service
+
+[Service]
+Type=oneshot
+Environment="OLLAMA_HOST=127.0.0.1:11434"
+ExecStart=/home/royossai/services/ollama/preload-gpt-oss-20b.sh
+TimeoutStartSec=0
+
+[Install]
+WantedBy=multi-user.target
