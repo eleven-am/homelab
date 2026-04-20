@@ -103,7 +103,7 @@ spec:
       host: io.maix.ovh
       image:
         repository: io
-        tag: v0.0.50
+        tag: v0.0.51
       env:
         AUTH_JWT_ISSUER: io
         AUTH_JWT_AUDIENCE: io
@@ -139,7 +139,7 @@ spec:
       enabled: true
       image:
         repository: sprite
-        tag: v0.1.9
+        tag: v0.1.10
       env:
         RUST_LOG: info
 
@@ -147,7 +147,7 @@ spec:
       enabled: true
       image:
         repository: ada
-        tag: v0.1.28
+        tag: v0.1.29
       env:
         ADA_BEAM_NEO4J_USER: neo4j
         ADA_BEAM_NEO4J_DATABASE: neo4j
