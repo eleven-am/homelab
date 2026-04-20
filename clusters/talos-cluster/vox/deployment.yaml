@@ -22,12 +22,15 @@ spec:
         - name: vox
           image: docker.io/elevenam/vox:v0.2.20
           imagePullPolicy: IfNotPresent
-          command:
-            - sh
-            - -c
-            - |
-              rm -rf /home/vox/.vox/adapters/onnxruntime /home/vox/.vox/adapters/onnxruntime-*.dist-info
-              exec vox serve --host 0.0.0.0 --port 11435 --ttl 0
+          args:
+            - vox
+            - serve
+            - --host
+            - 0.0.0.0
+            - --port
+            - "11435"
+            - --ttl
+            - "0"
           ports:
             - containerPort: 11435
               name: http
