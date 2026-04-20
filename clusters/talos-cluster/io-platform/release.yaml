@@ -75,11 +75,11 @@ spec:
     - kind: Secret
       name: io-platform-secret
       valuesKey: LITELLM_API_KEY
-      targetPath: ada.env.ADA_BEAM_LLM_API_KEY
+      targetPath: ada.llm.apiKey
     - kind: Secret
       name: io-platform-secret
       valuesKey: LITELLM_API_KEY
-      targetPath: ada.env.ADA_BEAM_LLM_EMBED_API_KEY
+      targetPath: ada.llm.embedApiKey
   values:
     global:
       registry: zot.maix.ovh
@@ -136,14 +136,15 @@ spec:
       image:
         repository: ada
         tag: v0.1.29
+      llm:
+        provider: openai
+        model: "osiris/gemma-4-26b-a4b"
+        embedProvider: openai
+        embedModel: "osiris/bge-m3"
       env:
         ADA_BEAM_NEO4J_USER: neo4j
         ADA_BEAM_NEO4J_DATABASE: neo4j
-        ADA_BEAM_LLM_PROVIDER: openai
-        ADA_BEAM_LLM_MODEL: "osiris/gemma-4-26b-a4b"
         ADA_BEAM_LLM_URL: "http://litellm-service.litellm.svc.cluster.local:4000/v1"
-        ADA_BEAM_LLM_EMBED_PROVIDER: openai
-        ADA_BEAM_LLM_EMBED_MODEL: "osiris/bge-m3"
         ADA_BEAM_LLM_EMBED_URL: "http://litellm-service.litellm.svc.cluster.local:4000/v1"
 
     postgres:
