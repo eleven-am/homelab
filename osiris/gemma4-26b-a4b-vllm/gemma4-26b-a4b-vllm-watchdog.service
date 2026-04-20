@@ -7,4 +7,4 @@ Wants=network-online.target
 [Service]
 Type=oneshot
 WorkingDirectory=/home/royossai/services/gemma4-26b-a4b-vllm
-ExecStart=/bin/sh -c 'curl -fsS http://127.0.0.1:8000/health >/dev/null || /usr/bin/docker compose -f /home/royossai/services/gemma4-26b-a4b-vllm/compose.yaml restart gemma4-26b-a4b-vllm'
+ExecStart=/home/royossai/services/gemma4-26b-a4b-vllm/watchdog.sh
