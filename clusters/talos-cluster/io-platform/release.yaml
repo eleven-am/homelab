@@ -7,7 +7,7 @@ spec:
   chart:
     spec:
       chart: io-platform
-      version: "0.3.34"
+      version: "0.3.35"
       sourceRef:
         kind: HelmRepository
         name: io-platform
@@ -101,7 +101,7 @@ spec:
       enabled: true
       image:
         repository: io-web
-        tag: v0.0.11
+        tag: v0.0.12
       ingress:
         enabled: true
         gatewayRef:
