@@ -135,7 +135,7 @@ spec:
       enabled: true
       image:
         repository: ada
-        tag: v0.1.31
+        tag: v0.1.32
       llm:
         apiKey: ""
         embedApiKey: ""
