@@ -7,7 +7,7 @@ spec:
   chart:
     spec:
       chart: io-platform
-      version: "0.3.37"
+      version: "0.3.39"
       sourceRef:
         kind: HelmRepository
         name: io-platform
@@ -91,12 +91,33 @@ spec:
       host: io.maix.ovh
       image:
         repository: io
-        tag: v0.0.61
+        tag: v0.0.63
       env:
         AUTH_JWT_ISSUER: io
         AUTH_JWT_AUDIENCE: io
         POLAR_SANDBOX: "true"
         CORS_ALLOWED_ORIGINS: "https://io.maix.ovh"
+
+    voice:
+      vox:
+        grpcAddr: vox-service.vox.svc.cluster.local:9090
+        grpcTls: false
+        outputAudioFormat: f32le
+      iceTransportPolicy: all
+      stunUrls:
+        - stun:stun.l.google.com:19302
+      turn:
+        enabled: true
+        urls:
+          - turn:turn.horus:3478?transport=udp
+          - turn:turn.horus:3478?transport=tcp
+          - turns:turn.horus:5349?transport=tcp
+        usernamePrefix: io
+        ttlSeconds: 3600
+        existingSecret:
+          name: io-platform-secret
+          key: TURN_SECRET
+
     ioWeb:
       enabled: true
       image:
@@ -135,7 +156,7 @@ spec:
       enabled: true
       image:
         repository: ada
-        tag: v0.1.38
+        tag: v0.1.39
       llm:
         apiKey: ""
         embedApiKey: ""
