@@ -7,7 +7,7 @@ spec:
   chart:
     spec:
       chart: io-platform
-      version: "0.3.35"
+      version: "0.3.36"
       sourceRef:
         kind: HelmRepository
         name: io-platform
@@ -135,7 +135,7 @@ spec:
       enabled: true
       image:
         repository: ada
-        tag: v0.1.36
+        tag: v0.1.37
       llm:
         apiKey: ""
         embedApiKey: ""
