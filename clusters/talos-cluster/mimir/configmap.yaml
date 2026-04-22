@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mimir-config
+  namespace: mimir
+data:
+  PORT: "3000"
+  MIMIR_STT_URL: "http://litellm-service.litellm.svc.cluster.local:4000"
+  MIMIR_STT_MODEL: "talos/parakeet-stt"
+  MIMIR_ALLOWED_CLIENTS: "readable,phoebe,io"
+  MIMIR_STT_TIMEOUT_SECONDS: "180"
+  MIMIR_REQUEST_TIMEOUT_SECONDS: "30"
+  MIMIR_BROWSER_TIMEOUT_SECONDS: "20"
+  MIMIR_MAX_BROWSER_PAGES: "4"
