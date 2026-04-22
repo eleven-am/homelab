@@ -1,0 +1,10 @@
+[Unit]
+Description=Restart Mistral Small 4 vLLM if the API is unhealthy
+After=docker.service network-online.target mistral-small-4-vllm.service
+Requires=docker.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/royossai/services/mistral-small-4-vllm
+ExecStart=/home/royossai/services/mistral-small-4-vllm/watchdog.sh
