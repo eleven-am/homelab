@@ -15,7 +15,7 @@ spec:
   template:
     metadata:
       annotations:
-        homelab.maix.ovh/config-revision: "2026-04-22-osiris-gemma4-restore-v1"
+        homelab.maix.ovh/config-revision: "2026-04-22-osiris-gemma4-max-concurrency-v1"
       labels:
         app: litellm
     spec:
