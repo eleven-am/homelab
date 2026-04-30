@@ -73,7 +73,7 @@ data:
           model: ollama/bge-m3
           api_base: http://100.64.0.19:11434
 
-      - model_name: osiris/foundation-20
+      - model_name: osiris/reasoning-20
         litellm_params:
           model: ollama_chat/gpt-oss:20b
           api_base: http://100.64.0.19:11434
@@ -84,13 +84,13 @@ data:
           rpm: 20
           tpm: 60000
 
-      - model_name: talos/speech-tts
+      - model_name: osiris/speech-tts
         litellm_params:
           model: openai/kokoro-tts-onnx:v1.0
           api_base: http://vox-service.vox.svc.cluster.local:11435/v1
           api_key: os.environ/VOX_API_KEY
 
-      - model_name: talos/speech-stt
+      - model_name: osiris/speech-stt
         litellm_params:
           model: openai/parakeet-stt-onnx:tdt-0.6b-v3
           api_base: http://vox-service.vox.svc.cluster.local:11435/v1
