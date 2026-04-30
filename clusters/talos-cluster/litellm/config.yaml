@@ -61,10 +61,26 @@ model_list:
       rpm: 30
       tpm: 120000
 
+  - model_name: osiris/foundation-4
+    litellm_params:
+      model: ollama_chat/gemma4:e4b
+      api_base: http://100.64.0.19:11434
+      timeout: 900
+      stream_timeout: 900
+      max_retries: 0
+      max_parallel_requests: 1
+      rpm: 20
+      tpm: 60000
+
   - model_name: osiris/embedding-1024
     litellm_params:
       model: ollama/bge-m3
       api_base: http://100.64.0.19:11434
+
+  - model_name: osiris/embedding-1024
+    litellm_params:
+      model: ollama/bge-m3
+      api_base: http://ollama-service.ollama.svc.cluster.local:11434
 
   - model_name: osiris/reasoning-4
     litellm_params:
