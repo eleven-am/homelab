@@ -96,12 +96,6 @@ data:
           api_base: http://vox-service.vox.svc.cluster.local:11435/v1
           api_key: os.environ/VOX_API_KEY
 
-      - model_name: openai/talos-speech-stt
-        litellm_params:
-          model: openai/parakeet-stt-onnx:tdt-0.6b-v3
-          api_base: http://vox-service.vox.svc.cluster.local:11435/v1
-          api_key: os.environ/VOX_API_KEY
-
       - model_name: "*"
         litellm_params:
           model: "*"
