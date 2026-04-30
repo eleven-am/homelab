@@ -166,9 +166,9 @@ spec:
         ADA_BEAM_NEO4J_USER: neo4j
         ADA_BEAM_NEO4J_DATABASE: neo4j
         ADA_BEAM_LLM_PROVIDER: openai
-        ADA_BEAM_LLM_MODEL: "osiris/gemma-4-26b-a4b"
+        ADA_BEAM_LLM_MODEL: "osiris/foundation-120"
         ADA_BEAM_LLM_EMBED_PROVIDER: openai
-        ADA_BEAM_LLM_EMBED_MODEL: "osiris/bge-m3"
+        ADA_BEAM_LLM_EMBED_MODEL: "osiris/embedding-1024"
         ADA_BEAM_LLM_URL: &litellm_url "http://litellm-service.litellm.svc.cluster.local:4000/v1"
         ADA_BEAM_LLM_EMBED_URL: *litellm_url
 

@@ -6,7 +6,7 @@ metadata:
 data:
   PORT: "3000"
   MIMIR_STT_URL: "http://litellm-service.litellm.svc.cluster.local:4000"
-  MIMIR_STT_MODEL: "talos/parakeet-stt"
+  MIMIR_STT_MODEL: "talos/speech-stt"
   MIMIR_METUBE_URL: "http://metube.metube.svc.cluster.local"
   MIMIR_ALLOWED_CLIENTS: "readable,phoebe,io"
   MIMIR_STT_TIMEOUT_SECONDS: "180"

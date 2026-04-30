@@ -24,6 +24,8 @@ services:
       - --gpu-memory-utilization
       - "0.80"
       - --enforce-eager
+      - --quantization
+      - fp8
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8000/health >/dev/null || exit 1"]
       interval: 30s
