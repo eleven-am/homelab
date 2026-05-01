@@ -1,6 +1,6 @@
 services:
   gemma4-26b-a4b-vllm:
-    image: vllm/vllm-openai:cu130-nightly
+    image: vllm-node-tf5
     container_name: gemma4-26b-a4b-vllm
     restart: unless-stopped
     network_mode: host
@@ -10,9 +10,11 @@ services:
       HF_HOME: /data/hf
       HUGGING_FACE_HUB_CACHE: /data/hf/hub
     volumes:
-      - /home/royossai/gemma4-31b-nvfp4-cache:/data/hf
+      - /home/royossai/gemma4-26b-a4b-cache:/data/hf
     command:
-      - nvidia/Gemma-4-31B-IT-NVFP4
+      - vllm
+      - serve
+      - google/gemma-4-26B-A4B-it
       - --served-model-name
       - gemma-4-26b-a4b
       - --host
@@ -23,9 +25,11 @@ services:
       - "32768"
       - --gpu-memory-utilization
       - "0.80"
+      - --max-num-batched-tokens
+      - "8192"
+      - --load-format
+      - safetensors
       - --enforce-eager
-      - --quantization
-      - modelopt
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8000/health >/dev/null || exit 1"]
       interval: 30s
