@@ -29,6 +29,8 @@ services:
       - "8192"
       - --load-format
       - safetensors
+      - --quantization
+      - fp8
       - --enforce-eager
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8000/health >/dev/null || exit 1"]
