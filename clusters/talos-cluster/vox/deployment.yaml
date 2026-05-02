@@ -18,6 +18,16 @@ spec:
         app: vox
     spec:
       runtimeClassName: nvidia
+      initContainers:
+        - name: fix-vox-permissions
+          image: alpine:3.22
+          command:
+            - sh
+            - -lc
+            - mkdir -p /home/vox/.vox/adapters && chown -R 10000:10000 /home/vox/.vox/adapters
+          volumeMounts:
+            - name: vox-data
+              mountPath: /home/vox/.vox
       containers:
         - name: vox
           image: docker.io/elevenam/vox:v0.2.35
