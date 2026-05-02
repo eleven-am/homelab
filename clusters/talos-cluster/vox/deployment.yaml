@@ -20,7 +20,7 @@ spec:
       runtimeClassName: nvidia
       containers:
         - name: vox
-          image: docker.io/elevenam/vox:v0.2.30
+          image: docker.io/elevenam/vox:v0.2.31
           imagePullPolicy: IfNotPresent
           args:
             - vox
