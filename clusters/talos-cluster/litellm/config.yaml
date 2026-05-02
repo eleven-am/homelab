@@ -104,6 +104,61 @@ model_list:
       rpm: 20
       tpm: 60000
 
+  - model_name: osiris/rosetta-12
+    litellm_params:
+      model: ollama_chat/translategemma:12b
+      api_base: http://ollama-service.ollama.svc.cluster.local:11434
+      timeout: 900
+      stream_timeout: 900
+      max_retries: 0
+      max_parallel_requests: 1
+      rpm: 20
+      tpm: 60000
+
+  - model_name: osiris/reasoning-9
+    litellm_params:
+      model: ollama_chat/qwen3.5:9b
+      api_base: http://ollama-service.ollama.svc.cluster.local:11434
+      timeout: 900
+      stream_timeout: 900
+      max_retries: 0
+      max_parallel_requests: 1
+      rpm: 20
+      tpm: 60000
+
+  - model_name: osiris/uncensored-8
+    litellm_params:
+      model: ollama_chat/dolphin-llama3:8b
+      api_base: http://ollama-service.ollama.svc.cluster.local:11434
+      timeout: 900
+      stream_timeout: 900
+      max_retries: 0
+      max_parallel_requests: 1
+      rpm: 20
+      tpm: 60000
+
+  - model_name: osiris/vision-7
+    litellm_params:
+      model: ollama_chat/qwen2.5vl:7b
+      api_base: http://ollama-service.ollama.svc.cluster.local:11434
+      timeout: 900
+      stream_timeout: 900
+      max_retries: 0
+      max_parallel_requests: 1
+      rpm: 20
+      tpm: 60000
+
+  - model_name: osiris/ocr-3
+    litellm_params:
+      model: ollama_chat/deepseek-ocr:latest
+      api_base: http://ollama-service.ollama.svc.cluster.local:11434
+      timeout: 900
+      stream_timeout: 900
+      max_retries: 0
+      max_parallel_requests: 1
+      rpm: 20
+      tpm: 60000
+
   - model_name: osiris/speech-tts
     litellm_params:
       model: openai/kokoro-tts-onnx:v1.0
