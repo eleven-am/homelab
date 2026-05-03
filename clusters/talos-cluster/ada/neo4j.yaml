@@ -41,13 +41,13 @@ spec:
             - name: bolt
               containerPort: 7687
           env:
-            - name: NEO4J_PASSWORD
+            - name: ADA_NEO4J_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: ada-secret
                   key: NEO4J_PASSWORD
             - name: NEO4J_AUTH
-              value: neo4j/$(NEO4J_PASSWORD)
+              value: neo4j/$(ADA_NEO4J_PASSWORD)
             - name: NEO4J_PLUGINS
               value: '["apoc", "graph-data-science"]'
             - name: NEO4J_dbms_security_procedures_unrestricted
@@ -65,7 +65,7 @@ spec:
               command:
                 - sh
                 - -c
-                - cypher-shell -u neo4j -p "$NEO4J_PASSWORD" 'RETURN gds.version()' >/dev/null
+                - cypher-shell -u neo4j -p "$ADA_NEO4J_PASSWORD" 'RETURN gds.version()' >/dev/null
             initialDelaySeconds: 60
             periodSeconds: 15
             timeoutSeconds: 10
