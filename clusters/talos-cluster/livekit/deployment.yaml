@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: livekit-server
+  namespace: livekit
+  labels:
+    app: livekit-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: livekit-server
+  template:
+    metadata:
+      labels:
+        app: livekit-server
+    spec:
+      containers:
+        - name: livekit
+          image: livekit/livekit-server:v1.8.4
+          args: ["--config", "/etc/livekit.yaml"]
+          ports:
+            - containerPort: 7880
+              name: http
+            - containerPort: 7881
+              name: tcp
+          volumeMounts:
+            - name: config
+              mountPath: /etc/livekit.yaml
+              subPath: livekit.yaml
+              readOnly: true
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "200m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+      volumes:
+        - name: config
+          configMap:
+            name: livekit-config

@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: matrix
+  namespace: matrix
+  labels:
+    app: matrix
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: matrix
+  template:
+    metadata:
+      labels:
+        app: matrix
+    spec:
+      containers:
+        - name: conduwuit
+          image: ghcr.io/girlbossceo/conduwuit:v1.4.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8008
+          env:
+            - name: CONDUWUIT_CONFIG
+              value: /etc/conduwuit/conduwuit.toml
+            - name: CONDUIT_REGISTRATION_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: matrix-secret
+                  key: CONDUIT_REGISTRATION_TOKEN
+            - name: CONDUIT_EMERGENCY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: matrix-secret
+                  key: CONDUIT_EMERGENCY_PASSWORD
+            - name: CONDUIT_TURN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: matrix-secret
+                  key: CONDUIT_TURN_SECRET
+          volumeMounts:
+            - name: config
+              mountPath: /etc/conduwuit
+              readOnly: true
+            - name: data
+              mountPath: /var/lib/conduwuit
+            - name: media
+              mountPath: /var/lib/conduwuit-media
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+          livenessProbe:
+            httpGet:
+              path: /_matrix/client/versions
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /_matrix/client/versions
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+      volumes:
+        - name: config
+          configMap:
+            name: matrix-config
+        - name: data
+          persistentVolumeClaim:
+            claimName: matrix-data
+        - name: media
+          persistentVolumeClaim:
+            claimName: matrix-media
