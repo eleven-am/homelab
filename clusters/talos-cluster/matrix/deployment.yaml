@@ -18,38 +18,38 @@ spec:
         app: matrix
     spec:
       containers:
-        - name: conduwuit
+        - name: tuwunel
           image: ghcr.io/matrix-construct/tuwunel:v1.6.1
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
               containerPort: 8008
           env:
-            - name: CONDUWUIT_CONFIG
-              value: /etc/conduwuit/conduwuit.toml
-            - name: CONDUIT_REGISTRATION_TOKEN
+            - name: TUWUNEL_CONFIG
+              value: /etc/tuwunel/tuwunel.toml
+            - name: TUWUNEL_REGISTRATION_TOKEN
               valueFrom:
                 secretKeyRef:
                   name: matrix-secret
                   key: CONDUIT_REGISTRATION_TOKEN
-            - name: CONDUIT_EMERGENCY_PASSWORD
+            - name: TUWUNEL_EMERGENCY_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: matrix-secret
                   key: CONDUIT_EMERGENCY_PASSWORD
-            - name: CONDUIT_TURN_SECRET
+            - name: TUWUNEL_TURN_SECRET
               valueFrom:
                 secretKeyRef:
                   name: matrix-secret
                   key: CONDUIT_TURN_SECRET
           volumeMounts:
             - name: config
-              mountPath: /etc/conduwuit
+              mountPath: /etc/tuwunel
               readOnly: true
             - name: data
-              mountPath: /var/lib/conduwuit
+              mountPath: /var/lib/tuwunel
             - name: media
-              mountPath: /var/lib/conduwuit-media
+              mountPath: /var/lib/tuwunel-media
           resources:
             requests:
               cpu: 100m

@@ -4,28 +4,20 @@ metadata:
   name: matrix-config
   namespace: matrix
 data:
-  conduwuit.toml: |
+  tuwunel.toml: |
     [global]
     server_name = "matrix.maix.ovh"
-    database_path = "/var/lib/conduwuit"
-    database_backend = "rocksdb"
+    database_path = "/var/lib/tuwunel"
     port = 8008
     address = "0.0.0.0"
     max_request_size = 20_000_000
     allow_registration = true
     allow_federation = false
-    allow_check_for_updates = false
     trusted_servers = []
-    log = "warn,conduwuit=info"
-    well_known_client = "https://matrix.maix.ovh"
-    well_known_server = "matrix.maix.ovh:443"
+    log = "warn,tuwunel=info"
 
-    [global.media]
-    path = "/var/lib/conduwuit-media"
-
-    [global.turn]
-    uris = [
+    turn_uris = [
       "turn:176.149.222.82:3478?transport=udp",
       "turn:176.149.222.82:3478?transport=tcp",
     ]
-    ttl = 86400
+    turn_ttl = 86400
