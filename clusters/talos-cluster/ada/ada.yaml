@@ -1,0 +1,191 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ada-grpc
+  namespace: ada
+spec:
+  type: LoadBalancer
+  selector:
+    app.kubernetes.io/name: ada
+  ports:
+    - name: grpc
+      port: 50051
+      targetPort: 50051
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ada
+  namespace: ada
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ada
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: ada
+    spec:
+      imagePullSecrets:
+        - name: zot-pull-secret
+      initContainers:
+        - name: wait-for-postgres
+          image: busybox:1.36
+          imagePullPolicy: IfNotPresent
+          command: ["sh", "-c"]
+          args:
+            - |
+              until nc -z ada-postgres 5432; do
+                echo "waiting for postgres"
+                sleep 2
+              done
+        - name: wait-for-neo4j
+          image: busybox:1.36
+          imagePullPolicy: IfNotPresent
+          command: ["sh", "-c"]
+          args:
+            - |
+              until wget -q -O /dev/null http://ada-neo4j:7474; do
+                echo "waiting for neo4j"
+                sleep 2
+              done
+        - name: wait-for-qdrant
+          image: busybox:1.36
+          imagePullPolicy: IfNotPresent
+          command: ["sh", "-c"]
+          args:
+            - |
+              until wget -q -O /dev/null http://ada-qdrant:6333/readyz; do
+                echo "waiting for qdrant"
+                sleep 2
+              done
+        - name: wait-for-minio
+          image: busybox:1.36
+          imagePullPolicy: IfNotPresent
+          command: ["sh", "-c"]
+          args:
+            - |
+              until wget -q -O /dev/null http://ada-minio:9000/minio/health/live; do
+                echo "waiting for minio"
+                sleep 2
+              done
+      containers:
+        - name: ada
+          image: zot.maix.ovh/ada:v0.1.40
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: grpc
+              containerPort: 50051
+          env:
+            - name: MIX_ENV
+              value: prod
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ada-secret
+                  key: POSTGRES_PASSWORD
+            - name: ADA_BEAM_DATABASE_URL
+              value: ecto://postgres:$(POSTGRES_PASSWORD)@ada-postgres.ada.svc.cluster.local/ada_beam_dev
+            - name: ADA_BEAM_DB_POOL_SIZE
+              value: "20"
+            - name: ADA_BEAM_GRPC_AUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: ada-secret
+                  key: ADA_BEAM_GRPC_AUTH_TOKEN
+            - name: ADA_BEAM_GRPC_FOLLOW_IDLE_TIMEOUT_MS
+              value: infinity
+            - name: ADA_BEAM_NEO4J_ENABLED
+              value: "true"
+            - name: ADA_BEAM_NEO4J_URL
+              value: http://ada-neo4j.ada.svc.cluster.local:7474
+            - name: ADA_BEAM_NEO4J_USER
+              value: neo4j
+            - name: ADA_BEAM_NEO4J_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ada-secret
+                  key: NEO4J_PASSWORD
+            - name: ADA_BEAM_NEO4J_DATABASE
+              value: neo4j
+            - name: ADA_BEAM_NEO4J_TIMEOUT_MS
+              value: "30000"
+            - name: ADA_BEAM_QDRANT_ENABLED
+              value: "true"
+            - name: ADA_BEAM_QDRANT_URL
+              value: http://ada-qdrant.ada.svc.cluster.local:6333
+            - name: ADA_BEAM_QDRANT_TIMEOUT_MS
+              value: "30000"
+            - name: ADA_BEAM_MINIO_ENABLED
+              value: "true"
+            - name: ADA_BEAM_MINIO_URL
+              value: http://ada-minio.ada.svc.cluster.local:9000
+            - name: ADA_BEAM_MINIO_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ada-secret
+                  key: MINIO_ROOT_USER
+            - name: ADA_BEAM_MINIO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ada-secret
+                  key: MINIO_ROOT_PASSWORD
+            - name: ADA_BEAM_MINIO_BUCKET
+              value: ada-beam-payloads
+            - name: ADA_BEAM_MINIO_TIMEOUT_MS
+              value: "30000"
+            - name: ADA_BEAM_LLM_PROVIDER
+              value: openai
+            - name: ADA_BEAM_LLM_MODEL
+              value: osiris/foundation-120
+            - name: ADA_BEAM_LLM_URL
+              value: http://litellm-service.litellm.svc.cluster.local:4000/v1
+            - name: ADA_BEAM_LLM_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ada-secret
+                  key: ADA_BEAM_LLM_API_KEY
+            - name: ADA_BEAM_LLM_TIMEOUT_MS
+              value: "900000"
+            - name: ADA_BEAM_LLM_EMBED_PROVIDER
+              value: openai
+            - name: ADA_BEAM_LLM_EMBED_MODEL
+              value: osiris/embedding-1024
+            - name: ADA_BEAM_LLM_EMBED_URL
+              value: http://litellm-service.litellm.svc.cluster.local:4000/v1
+            - name: ADA_BEAM_LLM_EMBED_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ada-secret
+                  key: ADA_BEAM_LLM_EMBED_API_KEY
+            - name: ADA_BEAM_LLM_EMBED_TIMEOUT_MS
+              value: "300000"
+            - name: ADA_BEAM_CHUNKER_DEFAULT_MAX_TOKENS
+              value: "16384"
+            - name: ADA_BEAM_EXTRACTION_MAX_TOKENS
+              value: "16384"
+          readinessProbe:
+            exec:
+              command:
+                - /usr/local/bin/docker-healthcheck.sh
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 10
+            failureThreshold: 20
+          livenessProbe:
+            exec:
+              command:
+                - /usr/local/bin/docker-healthcheck.sh
+            initialDelaySeconds: 90
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 6
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              memory: 2Gi
