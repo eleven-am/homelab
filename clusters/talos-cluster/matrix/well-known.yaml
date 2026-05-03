@@ -12,7 +12,7 @@ data:
       "org.matrix.msc4143.rtc_foci": [
         {
           "type": "livekit",
-          "livekit_service_url": "https://lk-jwt.maix.ovh"
+          "livekit_service_url": "https://livekit.maix.ovh/livekit/jwt"
         }
       ]
     }

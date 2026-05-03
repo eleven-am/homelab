@@ -13,6 +13,32 @@ spec:
     - matches:
         - path:
             type: PathPrefix
+            value: /livekit/jwt
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /
+      backendRefs:
+        - name: lk-jwt-service
+          port: 8080
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /livekit/sfu
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /
+      backendRefs:
+        - name: livekit-server
+          port: 7880
+    - matches:
+        - path:
+            type: PathPrefix
             value: /
       backendRefs:
         - name: livekit-server
