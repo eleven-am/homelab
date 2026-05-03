@@ -8,7 +8,7 @@ data:
   MIMIR_STT_URL: "http://litellm-service.litellm.svc.cluster.local:4000"
   MIMIR_STT_MODEL: "osiris/speech-stt"
   MIMIR_METUBE_URL: "http://metube.metube.svc.cluster.local"
-  MIMIR_ALLOWED_CLIENTS: "readable,phoebe,io"
+  MIMIR_ALLOWED_CLIENTS: "readable,phoebe,io,hermes"
   MIMIR_STT_TIMEOUT_SECONDS: "180"
   MIMIR_METUBE_POLL_TIMEOUT_SECONDS: "300"
   MIMIR_REQUEST_TIMEOUT_SECONDS: "30"
