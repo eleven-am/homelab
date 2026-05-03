@@ -8,3 +8,4 @@ resources:
   - deployment.yaml
   - service.yaml
   - httpRoute.yaml
+  - well-known.yaml

@@ -1,0 +1,115 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: matrix-well-known
+  namespace: matrix
+data:
+  client: |
+    {
+      "m.homeserver": {
+        "base_url": "https://matrix.maix.ovh"
+      },
+      "org.matrix.msc4143.rtc_foci": [
+        {
+          "type": "livekit",
+          "livekit_service_url": "https://lk-jwt.maix.ovh"
+        }
+      ]
+    }
+  server: |
+    {
+      "m.server": "matrix.maix.ovh:443"
+    }
+  default.conf: |
+    server {
+      listen 80;
+      location = /.well-known/matrix/client {
+        default_type application/json;
+        add_header Access-Control-Allow-Origin *;
+        return 200 '$client_json';
+      }
+      location = /.well-known/matrix/server {
+        default_type application/json;
+        add_header Access-Control-Allow-Origin *;
+        return 200 '$server_json';
+      }
+      location / { return 404; }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: matrix-well-known
+  namespace: matrix
+  labels:
+    app: matrix-well-known
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: matrix-well-known
+  template:
+    metadata:
+      labels:
+        app: matrix-well-known
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.27-alpine
+          ports:
+            - containerPort: 80
+              name: http
+          volumeMounts:
+            - name: well-known
+              mountPath: /usr/share/nginx/html/.well-known/matrix/client
+              subPath: client
+            - name: well-known
+              mountPath: /usr/share/nginx/html/.well-known/matrix/server
+              subPath: server
+          command: ["/bin/sh","-c"]
+          args:
+            - |
+              cat > /etc/nginx/conf.d/default.conf <<'EOF'
+              server {
+                listen 80;
+                types { application/json json; }
+                location = /.well-known/matrix/client {
+                  default_type application/json;
+                  add_header Access-Control-Allow-Origin *;
+                  alias /usr/share/nginx/html/.well-known/matrix/client;
+                }
+                location = /.well-known/matrix/server {
+                  default_type application/json;
+                  add_header Access-Control-Allow-Origin *;
+                  alias /usr/share/nginx/html/.well-known/matrix/server;
+                }
+                location / { return 404; }
+              }
+              EOF
+              exec nginx -g 'daemon off;'
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 100m
+              memory: 64Mi
+      volumes:
+        - name: well-known
+          configMap:
+            name: matrix-well-known
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: matrix-well-known
+  namespace: matrix
+spec:
+  selector:
+    app: matrix-well-known
+  ports:
+    - port: 80
+      targetPort: 80
+      name: http
+      protocol: TCP
+  type: ClusterIP
