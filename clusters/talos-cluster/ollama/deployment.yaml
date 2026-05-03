@@ -6,7 +6,7 @@ metadata:
     app: ollama
   namespace: ollama
 spec:
-  replicas: 1
+  replicas: 0
   strategy:
     type: Recreate
   selector:

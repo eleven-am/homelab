@@ -24,13 +24,13 @@ spec:
           command:
             - sh
             - -lc
-            - mkdir -p /home/vox/.vox/adapters && chown -R 10000:10000 /home/vox/.vox/adapters
+            - mkdir -p /home/vox/.vox/adapters && chown 10000:10000 /home/vox/.vox /home/vox/.vox/adapters
           volumeMounts:
             - name: vox-data
               mountPath: /home/vox/.vox
       containers:
         - name: vox
-          image: docker.io/elevenam/vox:v0.2.35
+          image: docker.io/elevenam/vox:v0.2.36
           imagePullPolicy: IfNotPresent
           args:
             - vox
@@ -42,13 +42,9 @@ spec:
             - --ttl
             - "0"
             - --max-loaded
-            - "2"
+            - "1"
             - --device
             - cuda
-            - --preload
-            - parakeet-stt-onnx:tdt-0.6b-v3
-            - --preload
-            - kokoro-tts-onnx:v1.0
             - --preload-vad
           ports:
             - containerPort: 11435
