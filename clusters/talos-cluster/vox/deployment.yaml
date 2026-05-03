@@ -30,7 +30,7 @@ spec:
               mountPath: /home/vox/.vox
       containers:
         - name: vox
-          image: docker.io/elevenam/vox:v0.2.36
+          image: docker.io/elevenam/vox:v0.2.37
           imagePullPolicy: IfNotPresent
           args:
             - vox
