@@ -7,3 +7,4 @@ resources:
   - service.yaml
   - httpRoute.yaml
   - lk-jwt-deployment.yaml
+  - path-router.yaml
