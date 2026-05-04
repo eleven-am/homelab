@@ -35,7 +35,9 @@ spec:
             - "--max-model-len"
             - "8192"
             - "--gpu-memory-utilization"
-            - "0.10"
+            - "0.20"
+            - "--cpu-offload-gb"
+            - "1.5"
             - "--hf-overrides"
             - '{"architectures":["Qwen3ForSequenceClassification"],"classifier_from_token":["no","yes"],"is_original_qwen3_reranker":true}'
           ports:
