@@ -17,10 +17,9 @@ spec:
       labels:
         app: reranker
     spec:
-      runtimeClassName: nvidia
       containers:
         - name: vllm
-          image: vllm/vllm-openai:v0.10.2
+          image: vllm/vllm-openai-cpu:v0.20.1
           args:
             - "--model"
             - "Qwen/Qwen3-Reranker-0.6B"
@@ -31,13 +30,9 @@ spec:
             - "--host"
             - "0.0.0.0"
             - "--dtype"
-            - "float16"
+            - "bfloat16"
             - "--max-model-len"
             - "8192"
-            - "--gpu-memory-utilization"
-            - "0.20"
-            - "--cpu-offload-gb"
-            - "1.5"
             - "--hf-overrides"
             - '{"architectures":["Qwen3ForSequenceClassification"],"classifier_from_token":["no","yes"],"is_original_qwen3_reranker":true}'
           ports:
@@ -48,6 +43,10 @@ spec:
               value: /cache
             - name: HUGGINGFACE_HUB_CACHE
               value: /cache
+            - name: VLLM_CPU_KVCACHE_SPACE
+              value: "4"
+            - name: VLLM_CPU_OMP_THREADS_BIND
+              value: "0-7"
           volumeMounts:
             - name: cache
               mountPath: /cache
@@ -55,25 +54,23 @@ spec:
               mountPath: /dev/shm
           resources:
             requests:
-              cpu: 500m
-              memory: 4Gi
-              nvidia.com/gpu: "1"
+              cpu: "2"
+              memory: 6Gi
             limits:
-              cpu: 2000m
-              memory: 8Gi
-              nvidia.com/gpu: "1"
+              cpu: "8"
+              memory: 12Gi
           readinessProbe:
             httpGet:
               path: /health
               port: 8000
-            initialDelaySeconds: 60
+            initialDelaySeconds: 90
             periodSeconds: 10
-            failureThreshold: 30
+            failureThreshold: 60
           livenessProbe:
             httpGet:
               path: /health
               port: 8000
-            initialDelaySeconds: 300
+            initialDelaySeconds: 600
             periodSeconds: 30
       volumes:
         - name: cache
