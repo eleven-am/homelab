@@ -161,8 +161,9 @@ model_list:
 
   - model_name: osiris/reranker-0.6
     litellm_params:
-      model: openai/Qwen/Qwen3-Reranker-0.6B
+      model: cohere/Qwen/Qwen3-Reranker-0.6B
       api_base: http://reranker.reranker.svc.cluster.local:8000/v1
+      api_key: dummy
       timeout: 300
 
   - model_name: osiris/speech-tts
