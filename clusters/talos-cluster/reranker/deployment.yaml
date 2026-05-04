@@ -36,6 +36,8 @@ spec:
             - "8192"
             - "--gpu-memory-utilization"
             - "0.30"
+            - "--hf-overrides"
+            - '{"architectures":["Qwen3ForSequenceClassification"],"classifier_from_token":["no","yes"],"is_original_qwen3_reranker":true}'
           ports:
             - containerPort: 8000
               name: http
