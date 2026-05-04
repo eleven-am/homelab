@@ -21,10 +21,7 @@ spec:
         - name: vllm
           image: vllm/vllm-openai-cpu:v0.20.1
           args:
-            - "--model"
             - "Qwen/Qwen3-Reranker-0.6B"
-            - "--task"
-            - "score"
             - "--port"
             - "8000"
             - "--host"
