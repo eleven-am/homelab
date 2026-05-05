@@ -14,9 +14,9 @@ services:
     command:
       - vllm
       - serve
-      - BAAI/bge-reranker-v2-m3
+      - BAAI/bge-reranker-v2-gemma
       - --served-model-name
-      - BAAI/bge-reranker-v2-m3
+      - BAAI/bge-reranker-v2-gemma
       - --host
       - 0.0.0.0
       - --port
@@ -24,13 +24,15 @@ services:
       - --max-model-len
       - "8192"
       - --gpu-memory-utilization
-      - "0.04"
+      - "0.08"
       - --dtype
       - bfloat16
+      - --hf-overrides
+      - '{"architectures":["GemmaForSequenceClassification"],"classifier_from_token":["Yes"],"method":"no_post_processing"}'
       - --enforce-eager
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8001/health >/dev/null || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 3
-      start_period: 5m
+      start_period: 8m
