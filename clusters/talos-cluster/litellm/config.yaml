@@ -159,9 +159,9 @@ model_list:
       rpm: 20
       tpm: 60000
 
-  - model_name: osiris/reranker-0.6
+  - model_name: osiris/reranker-bge
     litellm_params:
-      model: hosted_vllm/Qwen/Qwen3-Reranker-0.6B
+      model: hosted_vllm/BAAI/bge-reranker-v2-m3
       api_base: http://100.64.0.19:8001
       timeout: 300
 

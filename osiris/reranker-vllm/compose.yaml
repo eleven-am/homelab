@@ -1,7 +1,7 @@
 services:
-  qwen3-reranker-vllm:
+  reranker-vllm:
     image: vllm-node-tf5
-    container_name: qwen3-reranker-vllm
+    container_name: reranker-vllm
     restart: unless-stopped
     network_mode: host
     ipc: host
@@ -10,13 +10,13 @@ services:
       HF_HOME: /data/hf
       HUGGING_FACE_HUB_CACHE: /data/hf/hub
     volumes:
-      - /home/royossai/qwen3-reranker-cache:/data/hf
+      - /home/royossai/reranker-cache:/data/hf
     command:
       - vllm
       - serve
-      - Qwen/Qwen3-Reranker-0.6B
+      - BAAI/bge-reranker-v2-m3
       - --served-model-name
-      - Qwen/Qwen3-Reranker-0.6B
+      - BAAI/bge-reranker-v2-m3
       - --host
       - 0.0.0.0
       - --port
@@ -27,8 +27,6 @@ services:
       - "0.04"
       - --dtype
       - bfloat16
-      - --hf-overrides
-      - '{"architectures":["Qwen3ForSequenceClassification"],"classifier_from_token":["no","yes"],"is_original_qwen3_reranker":true}'
       - --enforce-eager
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8001/health >/dev/null || exit 1"]
