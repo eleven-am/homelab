@@ -14,8 +14,14 @@ done
 
 curl -fsS "$GEMMA_URL" >/dev/null
 
-if ! ollama show "$MODEL" >/dev/null 2>&1; then
-  ollama pull "$MODEL"
+if ! curl -fsS "$OLLAMA_URL/api/show" \
+  -H 'Content-Type: application/json' \
+  -d '{"model":"gpt-oss:20b"}' \
+  >/dev/null 2>&1; then
+  curl -fsS "$OLLAMA_URL/api/pull" \
+    -H 'Content-Type: application/json' \
+    -d '{"model":"gpt-oss:20b","stream":false}' \
+    >/dev/null
 fi
 
 curl -fsS "$OLLAMA_URL/api/generate" \

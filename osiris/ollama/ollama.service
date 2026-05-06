@@ -1,0 +1,16 @@
+[Unit]
+Description=Ollama on Osiris (Docker)
+After=docker.service network-online.target
+Requires=docker.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/home/royossai/services/ollama
+ExecStart=/usr/bin/docker compose -f /home/royossai/services/ollama/compose.yaml up -d
+ExecStop=/usr/bin/docker compose -f /home/royossai/services/ollama/compose.yaml down
+TimeoutStartSec=0
+
+[Install]
+WantedBy=multi-user.target
