@@ -157,7 +157,7 @@ model_list:
   - model_name: osiris/reranker-568
     litellm_params:
       model: hosted_vllm/BAAI/bge-reranker-v2-m3
-      api_base: http://100.64.0.19:8001
+      api_base: http://reranker-service.reranker.svc.cluster.local:8001
       timeout: 300
 
   - model_name: osiris/speech-tts
