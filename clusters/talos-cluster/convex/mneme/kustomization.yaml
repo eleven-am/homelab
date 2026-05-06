@@ -1,0 +1,91 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../base
+  - secret.yaml
+
+patches:
+  - target:
+      kind: Deployment
+      name: convex-backend
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: convex-mneme-backend
+      - op: replace
+        path: /metadata/labels/app
+        value: convex-mneme-backend
+      - op: replace
+        path: /spec/selector/matchLabels/app
+        value: convex-mneme-backend
+      - op: replace
+        path: /spec/template/metadata/labels/app
+        value: convex-mneme-backend
+      - op: replace
+        path: /spec/template/spec/initContainers/0/env/0/value
+        value: convex_mneme
+      - op: replace
+        path: /spec/template/spec/initContainers/0/env/1/valueFrom/secretKeyRef/name
+        value: convex-mneme-secret
+      - op: replace
+        path: /spec/template/spec/containers/0/env/0/value
+        value: convex-mneme
+      - op: replace
+        path: /spec/template/spec/containers/0/env/1/valueFrom/secretKeyRef/name
+        value: convex-mneme-secret
+      - op: replace
+        path: /spec/template/spec/containers/0/env/2/valueFrom/secretKeyRef/name
+        value: convex-mneme-secret
+      - op: replace
+        path: /spec/template/spec/containers/0/env/3/value
+        value: https://convex-mneme-api.maix.ovh
+      - op: replace
+        path: /spec/template/spec/containers/0/env/4/value
+        value: https://convex-mneme-site.maix.ovh
+      - op: replace
+        path: /spec/template/spec/volumes/0/persistentVolumeClaim/claimName
+        value: convex-mneme-data
+  - target:
+      kind: Service
+      name: convex-backend
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: convex-mneme-backend
+      - op: replace
+        path: /spec/selector/app
+        value: convex-mneme-backend
+  - target:
+      kind: PersistentVolumeClaim
+      name: convex-data
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: convex-mneme-data
+  - target:
+      kind: HTTPRoute
+      name: convex-api-route
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: convex-mneme-api-route
+      - op: replace
+        path: /spec/hostnames/0
+        value: convex-mneme-api.maix.ovh
+      - op: replace
+        path: /spec/rules/0/backendRefs/0/name
+        value: convex-mneme-backend
+  - target:
+      kind: HTTPRoute
+      name: convex-site-route
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: convex-mneme-site-route
+      - op: replace
+        path: /spec/hostnames/0
+        value: convex-mneme-site.maix.ovh
+      - op: replace
+        path: /spec/rules/0/backendRefs/0/name
+        value: convex-mneme-backend
