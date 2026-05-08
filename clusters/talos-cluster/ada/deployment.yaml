@@ -1,17 +1,3 @@
-apiVersion: v1
-kind: Service
-metadata:
-  name: ada-grpc
-  namespace: ada
-spec:
-  type: LoadBalancer
-  selector:
-    app.kubernetes.io/name: ada
-  ports:
-    - name: grpc
-      port: 50051
-      targetPort: 50051
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -29,8 +15,6 @@ spec:
       labels:
         app.kubernetes.io/name: ada
     spec:
-      imagePullSecrets:
-        - name: zot-pull-secret
       initContainers:
         - name: wait-for-postgres
           image: busybox:1.36
@@ -74,98 +58,96 @@ spec:
               done
       containers:
         - name: ada
-          image: zot.maix.ovh/ada:v0.1.40
+          image: ghcr.io/eleven-am/adaoss:0.1.45
           imagePullPolicy: IfNotPresent
           ports:
             - name: grpc
               containerPort: 50051
+            - name: http
+              containerPort: 4000
           env:
             - name: MIX_ENV
               value: prod
+            - name: ADA_OSS_HTTP_SERVER
+              value: "true"
+            - name: ADA_OSS_HTTP_PORT
+              value: "4000"
+            - name: ADA_OSS_MASTER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ada-secret
+                  key: ADA_OSS_MASTER_KEY
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: ada-secret
                   key: POSTGRES_PASSWORD
-            - name: ADA_BEAM_DATABASE_URL
-              value: ecto://postgres:$(POSTGRES_PASSWORD)@ada-postgres.ada.svc.cluster.local/ada_beam_dev
-            - name: ADA_BEAM_DB_POOL_SIZE
+            - name: ADA_OSS_DATABASE_URL
+              value: ecto://postgres:$(POSTGRES_PASSWORD)@ada-postgres.ada.svc.cluster.local/ada_oss_dev
+            - name: ADA_OSS_DB_POOL_SIZE
               value: "20"
-            - name: ADA_BEAM_GRPC_AUTH_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: ada-secret
-                  key: ADA_BEAM_GRPC_AUTH_TOKEN
-            - name: ADA_BEAM_GRPC_FOLLOW_IDLE_TIMEOUT_MS
-              value: infinity
-            - name: ADA_BEAM_NEO4J_ENABLED
+            - name: ADA_OSS_NEO4J_ENABLED
               value: "true"
-            - name: ADA_BEAM_NEO4J_URL
+            - name: ADA_OSS_NEO4J_URL
               value: http://ada-neo4j.ada.svc.cluster.local:7474
-            - name: ADA_BEAM_NEO4J_USER
+            - name: ADA_OSS_NEO4J_USER
               value: neo4j
-            - name: ADA_BEAM_NEO4J_PASSWORD
+            - name: ADA_OSS_NEO4J_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: ada-secret
                   key: NEO4J_PASSWORD
-            - name: ADA_BEAM_NEO4J_DATABASE
+            - name: ADA_OSS_NEO4J_DATABASE
               value: neo4j
-            - name: ADA_BEAM_NEO4J_TIMEOUT_MS
+            - name: ADA_OSS_NEO4J_TIMEOUT_MS
               value: "30000"
-            - name: ADA_BEAM_QDRANT_ENABLED
+            - name: ADA_OSS_QDRANT_ENABLED
               value: "true"
-            - name: ADA_BEAM_QDRANT_URL
+            - name: ADA_OSS_QDRANT_URL
               value: http://ada-qdrant.ada.svc.cluster.local:6333
-            - name: ADA_BEAM_QDRANT_TIMEOUT_MS
+            - name: ADA_OSS_QDRANT_TIMEOUT_MS
               value: "30000"
-            - name: ADA_BEAM_MINIO_ENABLED
+            - name: ADA_OSS_MINIO_ENABLED
               value: "true"
-            - name: ADA_BEAM_MINIO_URL
+            - name: ADA_OSS_MINIO_URL
               value: http://ada-minio.ada.svc.cluster.local:9000
-            - name: ADA_BEAM_MINIO_ACCESS_KEY
+            - name: ADA_OSS_MINIO_ACCESS_KEY
               valueFrom:
                 secretKeyRef:
                   name: ada-secret
                   key: MINIO_ROOT_USER
-            - name: ADA_BEAM_MINIO_SECRET_KEY
+            - name: ADA_OSS_MINIO_SECRET_KEY
               valueFrom:
                 secretKeyRef:
                   name: ada-secret
                   key: MINIO_ROOT_PASSWORD
-            - name: ADA_BEAM_MINIO_BUCKET
-              value: ada-beam-payloads
-            - name: ADA_BEAM_MINIO_TIMEOUT_MS
+            - name: ADA_OSS_MINIO_BUCKET
+              value: ada-oss-payloads
+            - name: ADA_OSS_MINIO_TIMEOUT_MS
               value: "30000"
-            - name: ADA_BEAM_LLM_PROVIDER
-              value: openai
-            - name: ADA_BEAM_LLM_MODEL
+            - name: ADA_OSS_LLM_BASE_URL
+              value: http://litellm-service.litellm.svc.cluster.local:4000/v1
+            - name: ADA_OSS_LLM_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ada-secret
+                  key: ADA_OSS_LLM_API_KEY
+            - name: ADA_OSS_LLM_MODEL
               value: osiris/foundation-120
-            - name: ADA_BEAM_LLM_URL
-              value: http://litellm-service.litellm.svc.cluster.local:4000/v1
-            - name: ADA_BEAM_LLM_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: ada-secret
-                  key: ADA_BEAM_LLM_API_KEY
-            - name: ADA_BEAM_LLM_TIMEOUT_MS
+            - name: ADA_OSS_LLM_TIMEOUT_MS
               value: "900000"
-            - name: ADA_BEAM_LLM_EMBED_PROVIDER
-              value: openai
-            - name: ADA_BEAM_LLM_EMBED_MODEL
-              value: osiris/embedding-1024
-            - name: ADA_BEAM_LLM_EMBED_URL
-              value: http://litellm-service.litellm.svc.cluster.local:4000/v1
-            - name: ADA_BEAM_LLM_EMBED_API_KEY
+            - name: ADA_OSS_LLM_EMBED_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: ada-secret
-                  key: ADA_BEAM_LLM_EMBED_API_KEY
-            - name: ADA_BEAM_LLM_EMBED_TIMEOUT_MS
+                  key: ADA_OSS_LLM_EMBED_API_KEY
+            - name: ADA_OSS_LLM_EMBED_MODEL
+              value: osiris/embedding-1024
+            - name: ADA_OSS_LLM_EMBED_TIMEOUT_MS
               value: "300000"
-            - name: ADA_BEAM_CHUNKER_DEFAULT_MAX_TOKENS
+            - name: ADA_OSS_CHUNKER_DEFAULT_MAX_TOKENS
               value: "16384"
-            - name: ADA_BEAM_EXTRACTION_MAX_TOKENS
+            - name: ADA_OSS_EXTRACTION_MAX_TOKENS
               value: "16384"
           readinessProbe:
             exec:

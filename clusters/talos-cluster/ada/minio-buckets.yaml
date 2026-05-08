@@ -31,7 +31,7 @@ spec:
                 echo "waiting for minio"
                 sleep 3
               done
-              mc mb --ignore-existing minio/ada-beam-payloads
+              mc mb --ignore-existing minio/ada-oss-payloads
               mc mb --ignore-existing minio/postgres-backups
               mc mb --ignore-existing minio/neo4j-backups
               mc mb --ignore-existing minio/qdrant-backups

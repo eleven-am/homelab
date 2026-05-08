@@ -53,7 +53,7 @@ spec:
                   name: ada-secret
                   key: POSTGRES_PASSWORD
             - name: POSTGRES_DB
-              value: ada_beam_dev
+              value: ada_oss_dev
           readinessProbe:
             exec:
               command:
@@ -61,7 +61,7 @@ spec:
                 - -U
                 - postgres
                 - -d
-                - ada_beam_dev
+                - ada_oss_dev
             initialDelaySeconds: 10
             periodSeconds: 10
           livenessProbe:
@@ -71,7 +71,7 @@ spec:
                 - -U
                 - postgres
                 - -d
-                - ada_beam_dev
+                - ada_oss_dev
             initialDelaySeconds: 30
             periodSeconds: 20
           resources:

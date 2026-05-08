@@ -5,10 +5,11 @@ resources:
   - namespace.yaml
   - secret.yaml
   - postgres.yaml
-  - redis.yaml
   - neo4j.yaml
   - qdrant.yaml
   - minio.yaml
   - minio-buckets.yaml
   - backup.yaml
-  - ada.yaml
+  - service.yaml
+  - deployment.yaml
+  - httproute.yaml
