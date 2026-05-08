@@ -52,9 +52,9 @@ spec:
             - --preload-vad
           env:
             - name: VOX_RTC_STUN_URLS
-              value: stun:turn.horus:3478
+              value: stun:turn.maix.ovh:3478
             - name: VOX_RTC_TURN_URLS
-              value: turn:turn.horus:3478?transport=udp,turn:turn.horus:3478?transport=tcp,turns:turn.horus:5349?transport=tcp
+              value: turn:turn.maix.ovh:3478?transport=udp,turn:turn.maix.ovh:3478?transport=tcp,turns:turn.maix.ovh:5349?transport=tcp
             - name: VOX_RTC_TURN_CREDENTIAL_TTL_SECONDS
               value: "3600"
             - name: VOX_RTC_TURN_SECRET
