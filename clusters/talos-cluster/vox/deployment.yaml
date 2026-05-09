@@ -30,7 +30,7 @@ spec:
               mountPath: /home/vox/.vox
       containers:
         - name: vox
-          image: docker.io/elevenam/vox:v0.2.38@sha256:33cb236e8d7335ba331366304f129d411bacb30361ea642438f0735c512ba854
+          image: docker.io/elevenam/vox:v0.2.39@sha256:3dd400f9c8803d2a8436a829d64bb4664036d62e090db35bc8e67e213b9d124f
           imagePullPolicy: IfNotPresent
           args:
             - vox
@@ -55,6 +55,8 @@ spec:
               value: stun:turn.maix.ovh:3478
             - name: VOX_RTC_TURN_URLS
               value: turn:turn.maix.ovh:3478?transport=udp,turn:turn.maix.ovh:3478?transport=tcp,turns:turn.maix.ovh:5349?transport=tcp
+            - name: VOX_RTC_SERVER_TURN_URLS
+              value: turn:172.198.1.55:3478?transport=udp
             - name: VOX_RTC_TURN_CREDENTIAL_TTL_SECONDS
               value: "3600"
             - name: VOX_RTC_TURN_SECRET
