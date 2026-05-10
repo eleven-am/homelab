@@ -30,7 +30,7 @@ spec:
               mountPath: /home/vox/.vox
       containers:
         - name: vox
-          image: ghcr.io/eleven-am/vox:v0.2.41@sha256:14d1e9e550c27d138a2a4a55f950aec9c5b8d42d1cc08d8235a8d3e5f6ee4ee0
+          image: ghcr.io/eleven-am/vox:v0.2.42@sha256:61a4fa99deba82d413baf7265f7646e3245ac3efd205bc17ef42525ac7a7341b
           imagePullPolicy: IfNotPresent
           args:
             - vox
@@ -52,9 +52,9 @@ spec:
             - --preload-vad
           env:
             - name: VOX_RTC_STUN_URLS
-              value: stun:turn.maix.ovh:3478
+              value: stun:turn.maix.ovh:3478,stun:172.198.1.55:3478
             - name: VOX_RTC_TURN_URLS
-              value: turn:turn.maix.ovh:3478?transport=udp,turn:turn.maix.ovh:3478?transport=tcp,turns:turn.maix.ovh:5349?transport=tcp
+              value: turn:turn.maix.ovh:3478?transport=udp,turn:turn.maix.ovh:3478?transport=tcp,turns:turn.maix.ovh:5349?transport=tcp,turn:172.198.1.55:3478?transport=udp,turn:172.198.1.55:3478?transport=tcp
             - name: VOX_RTC_SERVER_TURN_URLS
               value: turn:172.198.1.55:3478?transport=udp
             - name: VOX_RTC_TURN_CREDENTIAL_TTL_SECONDS
