@@ -28,7 +28,7 @@ services:
       - --limit-mm-per-prompt
       - '{"image": 0}'
       - --speculative-config
-      - '{"model":"google/gemma-4-26B-A4B-it-assistant","num_speculative_tokens":1}'
+      - '{"model":"google/gemma-4-26B-A4B-it-assistant","num_speculative_tokens":4}'
       - --load-format
       - safetensors
       - --enable-auto-tool-choice
