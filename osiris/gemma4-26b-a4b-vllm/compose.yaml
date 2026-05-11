@@ -1,6 +1,7 @@
 services:
   gemma4-26b-a4b-vllm:
-    image: vllm-node-tf5
+    build: .
+    image: vllm-node-tf5-gemma4-mtp
     container_name: gemma4-26b-a4b-vllm
     restart: unless-stopped
     network_mode: host
@@ -27,6 +28,8 @@ services:
       - "0.80"
       - --max-num-batched-tokens
       - "8192"
+      - --speculative-config
+      - '{"method":"mtp","model":"google/gemma-4-26B-A4B-it-assistant","num_speculative_tokens":1}'
       - --load-format
       - safetensors
       - --enable-auto-tool-choice
