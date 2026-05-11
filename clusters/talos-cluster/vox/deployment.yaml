@@ -64,6 +64,8 @@ spec:
                 secretKeyRef:
                   name: coturn-secret
                   key: TURN_SECRET
+            - name: VOX_CORS_ORIGINS
+              value: "*"
           ports:
             - containerPort: 11435
               name: http
