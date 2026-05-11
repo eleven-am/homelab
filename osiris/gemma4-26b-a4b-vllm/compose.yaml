@@ -1,6 +1,6 @@
 services:
   gemma4-26b-a4b-vllm:
-    image: vllm-node-tf5
+    image: vllm/vllm-openai:gemma4-0505-arm64-cu130
     container_name: gemma4-26b-a4b-vllm
     restart: unless-stopped
     network_mode: host
@@ -12,8 +12,6 @@ services:
     volumes:
       - /home/royossai/gemma4-26b-a4b-cache:/data/hf
     command:
-      - vllm
-      - serve
       - google/gemma-4-26B-A4B-it
       - --served-model-name
       - gemma-4-26b-a4b
@@ -27,6 +25,10 @@ services:
       - "0.80"
       - --max-num-batched-tokens
       - "8192"
+      - --limit-mm-per-prompt
+      - '{"image": 0}'
+      - --speculative-config
+      - '{"model":"google/gemma-4-26B-A4B-it-assistant","num_speculative_tokens":1}'
       - --load-format
       - safetensors
       - --enable-auto-tool-choice
