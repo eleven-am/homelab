@@ -30,7 +30,7 @@ spec:
               mountPath: /home/vox/.vox
       containers:
         - name: vox
-          image: ghcr.io/eleven-am/vox:v0.2.50@sha256:3fdf8ce45cf7cc800f79d13412ff17fd5ec1289003d34ceee5a421f6eae02e55
+          image: ghcr.io/eleven-am/vox:v0.2.51@sha256:28606185e3920ba55c20fee3c34429bd6acace450d360c02c6ee4a623f51ccf4
           imagePullPolicy: IfNotPresent
           args:
             - vox
@@ -64,6 +64,11 @@ spec:
                 secretKeyRef:
                   name: coturn-secret
                   key: TURN_SECRET
+            - name: VOX_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: coturn-secret
+                  key: VOX_API_KEY
             - name: VOX_CORS_ORIGINS
               value: "*"
           ports:
