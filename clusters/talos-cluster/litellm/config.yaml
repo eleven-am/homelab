@@ -83,8 +83,8 @@ model_list:
 
   - model_name: osiris/foundation-4
     litellm_params:
-      model: ollama_chat/gemma4:e4b
-      api_base: http://100.64.0.19:11434
+      model: openai/gemma4:e4b
+      api_base: http://100.64.0.19:11434/v1
       timeout: 900
       stream_timeout: 900
       max_retries: 0
@@ -94,8 +94,8 @@ model_list:
 
   - model_name: osiris/uncensored-4
     litellm_params:
-      model: ollama_chat/mdhm_hmmd/gemma4-e4b-uncensored-q8
-      api_base: http://100.64.0.19:11434
+      model: openai/mdhm_hmmd/gemma4-e4b-uncensored-q8
+      api_base: http://100.64.0.19:11434/v1
       timeout: 900
       stream_timeout: 900
       max_retries: 0
