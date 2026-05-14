@@ -58,7 +58,7 @@ spec:
               done
       containers:
         - name: ada
-          image: ghcr.io/eleven-am/adaoss:v0.1.88
+          image: ghcr.io/eleven-am/adaoss:v0.1.89
           imagePullPolicy: IfNotPresent
           ports:
             - name: grpc
