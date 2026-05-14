@@ -38,7 +38,8 @@ services:
       - gemma4
       - --quantization
       - fp8
-      - --enforce-eager
+      - --kv-cache-dtype
+      - fp8
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8000/health >/dev/null || exit 1"]
       interval: 30s
