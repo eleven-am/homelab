@@ -5,8 +5,8 @@ metadata:
   namespace: durable-streams
 spec:
   parentRefs:
-    - name: cloudflare-gateway
-      namespace: cloudflare-gateway
+    - name: envoy-gateway
+      namespace: gateway
   hostnames:
     - "dstreams.horus.maix.ovh"
   rules:
