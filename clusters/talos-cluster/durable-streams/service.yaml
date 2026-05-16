@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: durable-streams-service
+  namespace: durable-streams
+spec:
+  selector:
+    app: durable-streams
+  ports:
+    - port: 4437
+      targetPort: 4437
+      name: http
+  type: ClusterIP

@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: durable-streams
+  namespace: durable-streams
+  labels:
+    app: durable-streams
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: durable-streams
+  template:
+    metadata:
+      labels:
+        app: durable-streams
+    spec:
+      containers:
+        - name: durable-streams
+          image: zot.maix.ovh/durable-streams:v0.0.1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 4437
+              name: http
+          env:
+            - name: DSTREAMS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: durable-streams-secret
+                  key: DSTREAMS_TOKEN
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 4437
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 4437
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          volumeMounts:
+            - name: data
+              mountPath: /data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: durable-streams-data
+      imagePullSecrets:
+        - name: zot-pull-secret
