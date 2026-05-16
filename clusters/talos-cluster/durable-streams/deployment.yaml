@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: durable-streams
-          image: zot.maix.ovh/durable-streams:v0.0.1
+          image: zot.maix.ovh/durable-streams:v0.0.2
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 4437
