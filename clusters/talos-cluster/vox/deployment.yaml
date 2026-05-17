@@ -30,7 +30,7 @@ spec:
               mountPath: /home/vox/.vox
       containers:
         - name: vox
-          image: ghcr.io/eleven-am/vox:v0.2.57@sha256:6db81e17915ce7d1be4740f08a07d69c64ca6777e32af3b6bcc5284146b81d81
+          image: ghcr.io/eleven-am/vox:v0.2.60@sha256:bb76aece576dc7d35ccd6cac25409727fbd7305781e82b5fcd124c52c67774a3
           imagePullPolicy: IfNotPresent
           args:
             - vox
