@@ -26,12 +26,12 @@ ensure_model() {
   fi
 }
 
-ensure_model "gemma4:e4b"
+ensure_model "qwen3:14b"
 ensure_model "bge-m3:latest"
 
 curl -fsS "$OLLAMA_URL/api/generate" \
   -H 'Content-Type: application/json' \
-  -d '{"model":"gemma4:e4b","prompt":"Reply with OK.","stream":false,"keep_alive":"87600h","options":{"num_ctx":4096,"num_predict":1}}' \
+  -d '{"model":"qwen3:14b","prompt":"Reply with OK.","stream":false,"keep_alive":"87600h","options":{"num_ctx":4096,"num_predict":1}}' \
   >/dev/null
 
 curl -fsS "$OLLAMA_URL/api/embed" \
