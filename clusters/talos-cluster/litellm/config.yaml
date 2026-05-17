@@ -105,7 +105,7 @@ model_list:
 
   - model_name: osiris/uncensored-9
     litellm_params:
-      model: ollama_chat/hf.co/HauhauCS/Qwen3.5-9B-Uncensored-HauhauCS-Aggressive:Q6_K
+      model: ollama_chat/hf.co/mradermacher/Huihui-Qwen3.5-9B-abliterated-GGUF:Q6_K
       api_base: http://ollama-service.ollama.svc.cluster.local:11434
       timeout: 900
       stream_timeout: 900
