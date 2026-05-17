@@ -103,9 +103,9 @@ model_list:
       rpm: 20
       tpm: 60000
 
-  - model_name: osiris/uncensored-9
+  - model_name: osiris/uncensored-35
     litellm_params:
-      model: ollama_chat/hf.co/mradermacher/Huihui-Qwen3.5-9B-abliterated-GGUF:Q6_K
+      model: ollama_chat/hf.co/mradermacher/Huihui-Qwen3.6-35B-A3B-abliterated-i1-GGUF:Q4_K_M
       api_base: http://ollama-service.ollama.svc.cluster.local:11434
       timeout: 900
       stream_timeout: 900
