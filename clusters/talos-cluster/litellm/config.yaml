@@ -117,7 +117,7 @@ model_list:
   - model_name: osiris/embedding-1024
     litellm_params:
       model: ollama/bge-m3
-      api_base: http://ollama-service.ollama.svc.cluster.local:11434
+      api_base: http://100.64.0.19:11434
 
   - model_name: osiris/reasoning-4
     litellm_params:
