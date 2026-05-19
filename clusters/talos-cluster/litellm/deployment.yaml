@@ -103,6 +103,11 @@ spec:
                 secretKeyRef:
                   name: litellm-secret
                   key: GEMINI_API_KEY
+            - name: MINIMAX_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-secret
+                  key: MINIMAX_API_KEY
             - name: OSIRIS_GEMMA_API_KEY
               value: "unused"
             - name: VOX_API_KEY
