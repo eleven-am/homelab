@@ -238,6 +238,17 @@ model_list:
 general_settings:
   master_key: os.environ/LITELLM_MASTER_KEY
   database_url: os.environ/DATABASE_URL
+  pass_through_endpoints:
+    - path: "/coding/search"
+      target: "https://api.minimax.io/v1/coding_plan/search"
+      headers:
+        Authorization: "Bearer os.environ/MINIMAX_API_KEY"
+        Content-Type: "application/json"
+    - path: "/coding/vlm"
+      target: "https://api.minimax.io/v1/coding_plan/vlm"
+      headers:
+        Authorization: "Bearer os.environ/MINIMAX_API_KEY"
+        Content-Type: "application/json"
 
 router_settings:
   routing_strategy: simple-shuffle
