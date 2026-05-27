@@ -34,6 +34,10 @@ spec:
       targetPath: io.env.IO_RUNTIME_ENCRYPTION_KEY
     - kind: Secret
       name: io-platform-secret
+      valuesKey: IO_RUNTIME_AUTH_PEPPER_V1
+      targetPath: io.env.IO_RUNTIME_AUTH_PEPPER_V1
+    - kind: Secret
+      name: io-platform-secret
       valuesKey: AUTH_JWT_SECRET
       targetPath: io.env.AUTH_JWT_SECRET
     - kind: Secret
