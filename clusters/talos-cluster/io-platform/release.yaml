@@ -7,7 +7,7 @@ spec:
   chart:
     spec:
       chart: io-platform
-      version: "0.3.45"
+      version: "0.3.46"
       sourceRef:
         kind: HelmRepository
         name: io-platform
@@ -144,6 +144,16 @@ spec:
       image:
         repository: zot.maix.ovh/eleven-am/adaoss
         tag: v0.1.98
+      http:
+        enabled: true
+        port: 4000
+      ingress:
+        enabled: true
+        gatewayRef:
+          name: envoy-gateway
+          namespace: gateway
+        hosts:
+          - host: ada.horus.maix.ovh
       llm:
         baseUrl: &litellm_url "http://litellm-service.litellm.svc.cluster.local:4000/v1"
         model: "osiris/foundation-120"
