@@ -7,7 +7,7 @@ spec:
   chart:
     spec:
       chart: io-platform
-      version: "0.3.49"
+      version: "0.3.50"
       sourceRef:
         kind: HelmRepository
         name: io-platform
@@ -44,6 +44,18 @@ spec:
       name: io-platform-secret
       valuesKey: VOICE_SESSION_SECRET
       targetPath: io.env.VOICE_SESSION_SECRET
+    - kind: Secret
+      name: io-platform-secret
+      valuesKey: SMTP_RELAY
+      targetPath: io.env.SMTP_RELAY
+    - kind: Secret
+      name: io-platform-secret
+      valuesKey: SMTP_USERNAME
+      targetPath: io.env.SMTP_USERNAME
+    - kind: Secret
+      name: io-platform-secret
+      valuesKey: SMTP_PASSWORD
+      targetPath: io.env.SMTP_PASSWORD
     - kind: Secret
       name: io-platform-secret
       valuesKey: POSTGRES_PASSWORD
@@ -88,6 +100,9 @@ spec:
         AUTH_JWT_ISSUER: io
         AUTH_JWT_AUDIENCE: io
         CORS_ALLOWED_ORIGINS: "https://io.maix.ovh"
+        MAIL_FROM: "IO <no-reply@io.maix.ovh>"
+        PASSWORD_RESET_URL: "https://io.maix.ovh/auth/reset-password"
+        EMAIL_VERIFICATION_URL: "https://io.maix.ovh/auth/verify-email"
 
     voice:
       vox:
