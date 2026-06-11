@@ -20,8 +20,8 @@ spec:
       runtimeClassName: nvidia
       containers:
         - name: ollama
-          image: ollama/ollama:latest
-          imagePullPolicy: Always
+          image: ollama/ollama:0.30.7
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 11434
           env:
