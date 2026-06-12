@@ -7,7 +7,7 @@ spec:
   chart:
     spec:
       chart: io-platform
-      version: "0.3.57"
+      version: "0.3.58"
       sourceRef:
         kind: HelmRepository
         name: io-platform
@@ -163,7 +163,7 @@ spec:
       enabled: true
       image:
         repository: zot.maix.ovh/eleven-am/adaoss
-        tag: v0.1.99
+        tag: v0.1.98
       http:
         enabled: true
         port: 4000
