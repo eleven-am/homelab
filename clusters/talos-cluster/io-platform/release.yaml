@@ -7,7 +7,7 @@ spec:
   chart:
     spec:
       chart: io-platform
-      version: "0.3.58"
+      version: "0.3.61"
       sourceRef:
         kind: HelmRepository
         name: io-platform
@@ -95,8 +95,8 @@ spec:
       host: io.maix.ovh
       image:
         repository: io
-        tag: v0.0.71
-        digest: sha256:d69653ffc368e3f0da6795fbdfee194a183a87722483f31f359ba9b3150bbc23
+        tag: v0.0.72
+        digest: sha256:5b8abea2025e443bbc612f8818fd43392d49629189f1794da3a4c9a1588469ae
       env:
         AUTH_JWT_ISSUER: io
         AUTH_JWT_AUDIENCE: io
@@ -129,7 +129,7 @@ spec:
       enabled: true
       image:
         repository: io-web
-        tag: v0.0.18
+        tag: v0.0.19
       ingress:
         enabled: true
         gatewayRef:
@@ -163,7 +163,7 @@ spec:
       enabled: true
       image:
         repository: zot.maix.ovh/eleven-am/adaoss
-        tag: v0.1.98
+        tag: v0.1.99
       http:
         enabled: true
         port: 4000
