@@ -7,7 +7,7 @@ spec:
   chart:
     spec:
       chart: io-platform
-      version: "0.3.72"
+      version: "0.3.73"
       sourceRef:
         kind: HelmRepository
         name: io-platform
@@ -99,8 +99,8 @@ spec:
       host: io.maix.ovh
       image:
         repository: io
-        tag: v0.0.82
-        digest: sha256:58fcea0e5ab198b9e11e5f78c427ced8c0e40dcb78c8c8caf6d13a4a7e9a2657
+        tag: v0.0.83
+        digest: sha256:6bbd03b726a9807be73d8edc8b64121f17e3bad21cdcd9609ba3049e610e976f
       env:
         AUTH_JWT_ISSUER: io
         AUTH_JWT_AUDIENCE: io
