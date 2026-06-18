@@ -7,7 +7,7 @@ spec:
   chart:
     spec:
       chart: io-platform
-      version: "0.3.71"
+      version: "0.3.72"
       sourceRef:
         kind: HelmRepository
         name: io-platform
@@ -78,8 +78,12 @@ spec:
       targetPath: global.internalGrpcAuthToken
     - kind: Secret
       name: io-platform-secret
-      valuesKey: ADA_BEAM_GRPC_AUTH_TOKEN
-      targetPath: global.adaGrpcAuthToken
+      valuesKey: ADA_GRPC_APP_KEY
+      targetPath: global.ada.appKey
+    - kind: Secret
+      name: io-platform-secret
+      valuesKey: ADA_OSS_MASTER_KEY
+      targetPath: global.ada.masterKey
     - kind: Secret
       name: io-platform-secret
       valuesKey: LITELLM_API_KEY
@@ -95,8 +99,8 @@ spec:
       host: io.maix.ovh
       image:
         repository: io
-        tag: v0.0.79
-        digest: sha256:4a530d644a0924069f4404ab573c54c61abeef8bf2176c4d155c80f99a3e85b1
+        tag: v0.0.82
+        digest: sha256:58fcea0e5ab198b9e11e5f78c427ced8c0e40dcb78c8c8caf6d13a4a7e9a2657
       env:
         AUTH_JWT_ISSUER: io
         AUTH_JWT_AUDIENCE: io
@@ -142,7 +146,7 @@ spec:
       enabled: true
       image:
         repository: io-docs
-        tag: v0.0.7
+        tag: v0.0.8
       ingress:
         enabled: true
         gatewayRef:
@@ -155,15 +159,15 @@ spec:
       enabled: true
       image:
         repository: zot.maix.ovh/sprite
-        tag: v0.1.17
+        tag: v0.1.23
       env:
         RUST_LOG: info
 
     ada:
       enabled: true
       image:
-        repository: zot.maix.ovh/eleven-am/adaoss
-        tag: v0.1.99
+        repository: ghcr.io/eleven-am/adaoss
+        tag: v0.1.104
       http:
         enabled: true
         port: 4000
