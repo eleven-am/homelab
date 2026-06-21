@@ -99,8 +99,8 @@ spec:
       host: io.maix.ovh
       image:
         repository: io
-        tag: v0.0.96
-        digest: sha256:17c45c94b9d42694d1655dc3a4236d6b7ea4f4418334b921dd6e5ab9f05fbb97
+        tag: v0.0.97
+        digest: sha256:b03678034943d1c8edf724bfb2f42cfe5424b2b93626918563e6a19d0a4ddd0a
       env:
         AUTH_JWT_ISSUER: io
         AUTH_JWT_AUDIENCE: io
@@ -133,8 +133,8 @@ spec:
       enabled: true
       image:
         repository: io-web
-        tag: v0.0.29
-        digest: sha256:23c8a8a416de26ef62547b931083da620555846e3953297d6f12ea8c37c2557f
+        tag: v0.0.31
+        digest: sha256:0ab1e8b7cdd61ed109109737e064b9df5ee1a7c012f483ae8f9fd928437e436e
       ingress:
         enabled: true
         gatewayRef:
