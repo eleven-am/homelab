@@ -44,6 +44,18 @@ model_list:
       model: openai/gpt-5.3-codex
       api_key: os.environ/OPENAI_API_KEY
 
+  - model_name: osiris/agentic-5.5
+    model_info:
+      mode: responses
+    litellm_params:
+      model: chatgpt/gpt-5.5
+
+  - model_name: osiris/agentic-5.4
+    model_info:
+      mode: responses
+    litellm_params:
+      model: chatgpt/gpt-5.4
+
   - model_name: gemini-3.5-flash
     litellm_params:
       model: gemini/gemini-3.5-flash

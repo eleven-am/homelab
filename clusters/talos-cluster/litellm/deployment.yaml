@@ -15,7 +15,7 @@ spec:
   template:
     metadata:
       annotations:
-        homelab.maix.ovh/config-revision: "2026-04-22-osiris-gemma4-max-concurrency-v1"
+        homelab.maix.ovh/config-revision: "2026-06-25-chatgpt-sub-osiris-agentic-v1"
       labels:
         app: litellm
     spec:
@@ -60,9 +60,30 @@ spec:
                 secretKeyRef:
                   name: litellm-secret
                   key: LITELLM_DB_PASSWORD
+        - name: seed-chatgpt-token
+          image: busybox:1.37
+          command:
+            - sh
+            - -c
+            - |
+              if [ ! -f /tokens/auth.json ]; then
+                printf '%s' "$CHATGPT_AUTH_JSON" > /tokens/auth.json
+                echo "seeded /tokens/auth.json"
+              else
+                echo "/tokens/auth.json already present, leaving refreshed token intact"
+              fi
+          env:
+            - name: CHATGPT_AUTH_JSON
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-secret
+                  key: CHATGPT_AUTH_JSON
+          volumeMounts:
+            - name: chatgpt-tokens
+              mountPath: /tokens
       containers:
         - name: litellm
-          image: ghcr.io/berriai/litellm-database:v1.83.3-stable
+          image: ghcr.io/berriai/litellm-database:v1.84.10
           imagePullPolicy: IfNotPresent
           args:
             - --config
@@ -112,6 +133,8 @@ spec:
               value: "unused"
             - name: VOX_API_KEY
               value: "unused"
+            - name: CHATGPT_TOKEN_DIR
+              value: /tokens
             - name: STORE_MODEL_IN_DB
               value: "True"
             - name: HTTP_PROXY
@@ -123,9 +146,9 @@ spec:
             - name: https_proxy
               value: http://127.0.0.1:1055
             - name: NO_PROXY
-              value: 127.0.0.1,localhost,.svc,.svc.cluster.local,.cluster.local,postgres-service.postgres.svc.cluster.local,.anthropic.com,.openai.com,.googleapis.com,.google.com
+              value: 127.0.0.1,localhost,.svc,.svc.cluster.local,.cluster.local,postgres-service.postgres.svc.cluster.local,.anthropic.com,.openai.com,.chatgpt.com,.googleapis.com,.google.com
             - name: no_proxy
-              value: 127.0.0.1,localhost,.svc,.svc.cluster.local,.cluster.local,postgres-service.postgres.svc.cluster.local,.anthropic.com,.openai.com,.googleapis.com,.google.com
+              value: 127.0.0.1,localhost,.svc,.svc.cluster.local,.cluster.local,postgres-service.postgres.svc.cluster.local,.anthropic.com,.openai.com,.chatgpt.com,.googleapis.com,.google.com
           resources:
             requests:
               cpu: 200m
@@ -137,6 +160,8 @@ spec:
             - name: config
               mountPath: /app/config.yaml
               subPath: config.yaml
+            - name: chatgpt-tokens
+              mountPath: /tokens
           livenessProbe:
             httpGet:
               path: /health/liveliness
@@ -191,3 +216,6 @@ spec:
         - name: tailscale-state
           persistentVolumeClaim:
             claimName: litellm-tailscale-state
+        - name: chatgpt-tokens
+          persistentVolumeClaim:
+            claimName: litellm-chatgpt-tokens
