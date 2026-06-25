@@ -1,0 +1,62 @@
+services:
+  nemotron-3-super-vllm:
+    image: vllm/vllm-openai:v0.20.0-aarch64-cu130-ubuntu2404
+    container_name: nemotron-3-super-vllm
+    restart: unless-stopped
+    network_mode: host
+    ipc: host
+    gpus: all
+    environment:
+      HF_HOME: /data/hf
+      HUGGING_FACE_HUB_CACHE: /data/hf/hub
+      OMP_NUM_THREADS: "4"
+      CUDA_MANAGED_FORCE_DEVICE_ALLOC: "1"
+      PYTORCH_CUDA_ALLOC_CONF: expandable_segments:True
+      VLLM_ALLOW_LONG_MAX_MODEL_LEN: "1"
+      VLLM_USE_FLASHINFER_MOE_FP4: "0"
+      VLLM_MARLIN_USE_ATOMIC_ADD: "1"
+      VLLM_NVFP4_GEMM_BACKEND: marlin
+    volumes:
+      - /home/royossai/nemotron-3-super-cache:/data/hf
+    command:
+      - nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-NVFP4
+      - --served-model-name
+      - nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-NVFP4
+      - nemotron-3-super
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8002"
+      - --max-model-len
+      - "131072"
+      - --max-num-seqs
+      - "4"
+      - --max-num-batched-tokens
+      - "32768"
+      - --gpu-memory-utilization
+      - "0.85"
+      - --quantization
+      - fp4
+      - --moe-backend
+      - marlin
+      - --kv-cache-dtype
+      - fp8
+      - --mamba-ssm-cache-dtype
+      - float32
+      - --async-scheduling
+      - --enable-chunked-prefill
+      - --enable-prefix-caching
+      - --reasoning-parser
+      - nemotron_v3
+      - --enable-auto-tool-choice
+      - --tool-call-parser
+      - qwen3_coder
+      - --speculative-config
+      - '{"method":"mtp","num_speculative_tokens":1,"moe_backend":"triton"}'
+      - --trust-remote-code
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8002/health >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30m

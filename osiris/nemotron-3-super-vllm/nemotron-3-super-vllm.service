@@ -1,0 +1,16 @@
+[Unit]
+Description=Nemotron 3 Super 120B A12B vLLM on Osiris
+After=docker.service network-online.target
+Requires=docker.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/home/royossai/services/nemotron-3-super-vllm
+ExecStart=/usr/bin/docker compose -f /home/royossai/services/nemotron-3-super-vllm/compose.yaml up -d
+ExecStop=/usr/bin/docker compose -f /home/royossai/services/nemotron-3-super-vllm/compose.yaml down
+TimeoutStartSec=0
+
+[Install]
+WantedBy=multi-user.target
