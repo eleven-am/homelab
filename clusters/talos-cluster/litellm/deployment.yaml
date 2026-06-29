@@ -15,7 +15,7 @@ spec:
   template:
     metadata:
       annotations:
-        homelab.maix.ovh/config-revision: "2026-06-25-chatgpt-sub-osiris-agentic-v1"
+        homelab.maix.ovh/config-revision: "2026-06-29-mimir-passthrough-v1"
       labels:
         app: litellm
     spec:
@@ -129,6 +129,11 @@ spec:
                 secretKeyRef:
                   name: litellm-secret
                   key: MINIMAX_API_KEY
+            - name: MIMIR_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-secret
+                  key: MIMIR_API_KEY
             - name: OSIRIS_GEMMA_API_KEY
               value: "unused"
             - name: VOX_API_KEY

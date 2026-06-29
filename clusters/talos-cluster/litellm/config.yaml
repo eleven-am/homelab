@@ -278,6 +278,12 @@ general_settings:
       headers:
         Authorization: "Bearer os.environ/MINIMAX_API_KEY"
         Content-Type: "application/json"
+    - path: "/mimir/extract"
+      target: "http://mimir-service.mimir.svc.cluster.local:3000/v1/extract"
+      headers:
+        Authorization: "Bearer os.environ/MIMIR_API_KEY"
+        Content-Type: "application/json"
+      forward_headers: true
 
 router_settings:
   routing_strategy: simple-shuffle
