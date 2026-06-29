@@ -162,8 +162,9 @@ model_list:
 
   - model_name: osiris/uncensored-70
     litellm_params:
-      model: openrouter/sao10k/l3.3-euryale-70b
-      api_key: os.environ/OPENROUTER_API_KEY
+      model: openai/Sao10K/L3.3-70B-Euryale-v2.3
+      api_base: https://api.featherless.ai/v1
+      api_key: os.environ/FEATHERLESS_API_KEY
 
   - model_name: osiris/embedding-1024
     litellm_params:
