@@ -5,10 +5,10 @@ metadata:
   namespace: ferret
 spec:
   parentRefs:
-    - name: envoy-gateway
-      namespace: gateway
+    - name: cloudflare-gateway
+      namespace: cloudflare-gateway
   hostnames:
-    - "ferret.horus.maix.ovh"
+    - "ferret.maix.ovh"
   rules:
     - matches:
         - path:

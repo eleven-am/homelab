@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: ferret
-          image: zot.maix.ovh/ferret:v0.3.5
+          image: zot.maix.ovh/ferret:v0.3.6@sha256:5483582b24391b19aa0ba68bb353bfc8d3fe59446791bee688108b9b5cdac887
           imagePullPolicy: Always
           resources:
             requests:
@@ -32,36 +32,64 @@ spec:
               value: "3000"
             - name: HOST
               value: "0.0.0.0"
-            - name: REDIS_URL
-              value: "redis://redis-service.redis.svc.cluster.local:6379"
+            - name: SQLITE_PATH
+              value: "/data/ferret.db"
+            - name: BETTER_AUTH_URL
+              value: "https://ferret.maix.ovh"
+            - name: BETTER_AUTH_TRUSTED_ORIGINS
+              value: "https://ferret.maix.ovh"
+            - name: BETTER_AUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: ferret-secrets
+                  key: BETTER_AUTH_SECRET
+            - name: OPENAI_COMPATIBLE_BASE_URL
+              value: "https://litellm.horus.maix.ovh"
+            - name: OPENAI_COMPATIBLE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ferret-secrets
+                  key: OPENAI_COMPATIBLE_API_KEY
+            - name: AGENT_MODEL
+              value: "openai-compatible:osiris/foundation-120"
+            - name: GENERATOR_MODEL
+              value: "openai-compatible:osiris/foundation-120"
+            - name: EXTRACT_MODEL
+              value: "openai-compatible:osiris/foundation-2048"
+            - name: STT_MODEL
+              value: "osiris/speech-stt"
+            - name: SEARCH_BACKENDS
+              value: "litellm,searxng,duckduckgo"
             - name: SEARXNG_URL
               value: "http://searxng.searxng.svc.cluster.local:8080"
-            - name: WEBDOWN_URL
-              value: "http://convex-readable-backend.convex.svc.cluster.local:3210/http/api/webDown"
-            - name: WEBDOWN_API_KEY
+            - name: MIMIR_URL
+              value: "http://mimir-service.mimir.svc.cluster.local:3000"
+            - name: MIMIR_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: ferret-secrets
-                  key: WEBDOWN_API_KEY
-            - name: OPENROUTER_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: ferret-secrets
-                  key: OPENROUTER_API_KEY
-            - name: AGENT_MODEL
-              value: "openai/gpt-5-nano"
-            - name: EXTRACT_MODEL
-              value: "anthropic/claude-haiku-4.5"
-            - name: GENERATOR_MODEL
-              value: "google/gemini-2.5-flash"
-            - name: API_KEYS_KEY
-              value: "ferret:api_keys"
+                  key: MIMIR_API_KEY
+            - name: MIMIR_CLIENT
+              value: "ferret"
+            - name: AUTH_RATE_LIMIT_ENABLED
+              value: "true"
+            - name: API_KEY_RATE_LIMIT_ENABLED
+              value: "true"
             - name: QUEUE_CONCURRENCY_RESEARCH
               value: "1"
             - name: QUEUE_CONCURRENCY_FACTCHECK
               value: "3"
             - name: QUEUE_CONCURRENCY_EXTRACT
               value: "2"
+            - name: EXTRACTION_CACHE_TTL_DAYS
+              value: "30"
+            - name: EXTRACTION_CACHE_MAX_PAGES
+              value: "10000"
+            - name: WORKFLOW_STEPS_TTL_DAYS
+              value: "30"
+          volumeMounts:
+            - name: ferret-data
+              mountPath: /data
           livenessProbe:
             httpGet:
               path: /health
@@ -74,5 +102,9 @@ spec:
               port: 3000
             initialDelaySeconds: 5
             periodSeconds: 5
+      volumes:
+        - name: ferret-data
+          persistentVolumeClaim:
+            claimName: ferret-data
       imagePullSecrets:
         - name: zot-pull-secret
