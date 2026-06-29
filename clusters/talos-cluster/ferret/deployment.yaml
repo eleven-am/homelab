@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: ferret
-          image: zot.maix.ovh/ferret:v0.3.9@sha256:8e3b6f02727a54eb95dead05deda87e03bc018c52715d649fe7a1915f19a6bf7
+          image: zot.maix.ovh/ferret:v0.3.10@sha256:400cbf467f43a0d932369be642c869358ca95cba404ddba58e83c159482df5e5
           imagePullPolicy: Always
           resources:
             requests:
@@ -51,7 +51,7 @@ spec:
                   name: ferret-secrets
                   key: OPENAI_COMPATIBLE_API_KEY
             - name: AGENT_MODEL
-              value: "openai-compatible:osiris/foundation-120"
+              value: "openai-compatible:osiris/agentic-5.4"
             - name: GENERATOR_MODEL
               value: "openai-compatible:osiris/foundation-120"
             - name: EXTRACT_MODEL
