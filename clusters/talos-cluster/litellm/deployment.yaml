@@ -15,7 +15,7 @@ spec:
   template:
     metadata:
       annotations:
-        homelab.maix.ovh/config-revision: "2026-06-29-mimir-passthrough-v1"
+        homelab.maix.ovh/config-revision: "2026-06-29-mimir-passthrough-v2"
       labels:
         app: litellm
     spec:
