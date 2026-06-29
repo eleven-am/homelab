@@ -160,8 +160,8 @@ spec:
       enabled: true
       image:
         repository: zot.maix.ovh/sprite
-        tag: v0.1.27
-        digest: sha256:909f186b1944bf53ae2274e8e52b641035e2a765e3f6ba7a5be4dd22cc8a88c6
+        tag: v0.1.28
+        digest: sha256:3a2326ec0f2e1f8e0ce835714ebd6736c125c656b97416d2eb3fcdffc7941c27
       env:
         RUST_LOG: info
 
