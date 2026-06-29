@@ -15,7 +15,7 @@ spec:
   template:
     metadata:
       annotations:
-        homelab.maix.ovh/config-revision: "2026-06-29-osiris-foundation-3-m3"
+        homelab.maix.ovh/config-revision: "2026-06-29-osiris-uncensored-70-euryale"
       labels:
         app: litellm
     spec:
@@ -134,6 +134,11 @@ spec:
                 secretKeyRef:
                   name: litellm-secret
                   key: MIMIR_API_KEY
+            - name: OPENROUTER_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-secret
+                  key: OPENROUTER_API_KEY
             - name: OSIRIS_GEMMA_API_KEY
               value: "unused"
             - name: VOX_API_KEY
