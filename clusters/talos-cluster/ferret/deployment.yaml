@@ -80,11 +80,11 @@ spec:
             - name: API_KEY_RATE_LIMIT_ENABLED
               value: "true"
             - name: QUEUE_CONCURRENCY_RESEARCH
-              value: "1"
+              value: "5"
             - name: QUEUE_CONCURRENCY_FACTCHECK
-              value: "3"
+              value: "5"
             - name: QUEUE_CONCURRENCY_EXTRACT
-              value: "2"
+              value: "5"
             - name: EXTRACTION_CACHE_TTL_DAYS
               value: "30"
             - name: EXTRACTION_CACHE_MAX_PAGES
