@@ -62,6 +62,10 @@ spec:
               value: "litellm,searxng,duckduckgo"
             - name: SEARXNG_URL
               value: "http://searxng.searxng.svc.cluster.local:8080"
+            - name: RERANKER_BASE_URL
+              value: "http://litellm-service.litellm.svc.cluster.local:4000"
+            - name: RERANKER_MODEL
+              value: "osiris/reranker-568"
             - name: MIMIR_URL
               value: "http://mimir-service.mimir.svc.cluster.local:3000"
             - name: MIMIR_API_KEY
