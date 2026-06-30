@@ -60,6 +60,8 @@ spec:
               value: "osiris/speech-stt"
             - name: SEARCH_BACKENDS
               value: "litellm,searxng,duckduckgo"
+            - name: SEARCH_EXTRACT_CONCURRENCY
+              value: "1"
             - name: LITELLM_SEARCH_URL
               value: "http://litellm-service.litellm.svc.cluster.local:4000/coding/search"
             - name: SEARXNG_URL
