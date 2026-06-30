@@ -53,7 +53,7 @@ spec:
             - name: AGENT_MODEL
               value: "openai-compatible:osiris/agentic-5.4"
             - name: GENERATOR_MODEL
-              value: "openai-compatible:osiris/foundation-120"
+              value: "openai-compatible:osiris/foundation-2048"
             - name: EXTRACT_MODEL
               value: "openai-compatible:osiris/foundation-2048"
             - name: STT_MODEL
