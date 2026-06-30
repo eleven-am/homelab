@@ -100,7 +100,7 @@ spec:
       image:
         repository: io
         tag: v0.0.108
-        digest: sha256:e9a1fd1788732195ab3fad690de195f3ab4ef5617d40ce0bd956efbc18fcddc8
+        digest: sha256:6b6391682dd6b96bd6650b0e45a40b904042704475d590c74971e57f2c76e7a3
       env:
         AUTH_JWT_ISSUER: io
         AUTH_JWT_AUDIENCE: io
@@ -134,7 +134,7 @@ spec:
       image:
         repository: io-web
         tag: v0.0.33
-        digest: sha256:cb8daf833a5bffe55e4ce7fadf0b2a5fa44b2c5e29e4a73914820b3628ce62e9
+        digest: sha256:653848c4cae616f8eacb3311aae2cf842451a5685b2e1e9d6435d0c42fe43d94
       ingress:
         enabled: true
         gatewayRef:
