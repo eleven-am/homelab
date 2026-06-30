@@ -99,8 +99,8 @@ spec:
       host: io.maix.ovh
       image:
         repository: io
-        tag: v0.0.113
-        digest: sha256:d6316d5f8563825ca456a8408ef4aa5270374b5c7749fb8912c295ce9e47c34f
+        tag: v0.0.114
+        digest: sha256:745f9f1003302eb98605992932044087afe8a599786b07b2d3708e5a6ba4c40d
       env:
         AUTH_JWT_ISSUER: io
         AUTH_JWT_AUDIENCE: io
