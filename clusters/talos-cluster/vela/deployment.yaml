@@ -5,6 +5,8 @@ metadata:
   namespace: vela
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: vela
@@ -15,7 +17,7 @@ spec:
     spec:
       containers:
         - name: vela
-          image: elevenam/vela:20251221-041308
+          image: zot.maix.ovh/vela:v0.0.2
           resources:
             requests:
               memory: "512Mi"
@@ -24,60 +26,86 @@ spec:
               memory: "2Gi"
               cpu: "500m"
           ports:
-            - containerPort: 9191
+            - name: http
+              containerPort: 8080
           env:
-            - name: VELA_VIDEO_WATCH_PATH
-              value: /data/videos,/data/videos2
-            - name: VELA_AUDIO_WATCH_PATH
-              value: /data/audios,/data/audios2
-            - name: VELA_STORAGE_PATH
-              value: /data/streaming
-            - name: VELA_DATABASE_PATH
-              value: /data/db/vela.db
-            - name: VELA_ADMIN_USER
+            - name: VELA_ADDR
+              value: ":8080"
+            - name: VELA_DB_PATH
+              value: /data/vela.db
+            - name: VELA_QUEUE_DB_PATH
+              value: /data/queue.db
+            - name: VELA_ASSET_DIR
+              value: /data/assets
+            - name: VELA_ADMIN_USERNAME
               valueFrom:
                 secretKeyRef:
                   name: vela-secret
                   key: VELA_ADMIN_USER
-            - name: VELA_ADMIN_PASS
+            - name: VELA_ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: vela-secret
                   key: VELA_ADMIN_PASS
-            - name: VELA_JWT_SECRET
+            - name: VELA_SESSION_SECRET
               valueFrom:
                 secretKeyRef:
                   name: vela-secret
                   key: VELA_JWT_SECRET
+            - name: VELA_AUTH_COOKIE_NAME
+              value: vela_session
+            - name: VELA_AUTH_COOKIE_SECURE
+              value: "true"
+            - name: VELA_WATCH_INTERVAL
+              value: 1m
+            - name: VELA_PROCESSING_WORKERS
+              value: "1"
+            - name: VELA_MAX_UPLOAD_BYTES
+              value: "10737418240"
+            - name: LITELLM_BASE_URL
+              value: https://litellm.horus.maix.ovh/v1
+            - name: LITELLM_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: vela-secret
+                  key: LITELLM_API_KEY
+            - name: STT_MODEL
+              value: osiris/speech-stt
+            - name: EMBEDDING_MODEL
+              value: osiris/embedding-1024
+            - name: LLM_MODEL
+              value: osiris/foundation-4
+            - name: METADATA_MODEL
+              value: osiris/uncensored-70
           volumeMounts:
             - name: videos
-              mountPath: /data/videos
+              mountPath: /library
               subPath: royossai/Private/Videos
             - name: videos
-              mountPath: /data/videos2
+              mountPath: /library-hypno-video
               subPath: royossai/Private/Hypno/video
             - name: videos
-              mountPath: /data/audios
+              mountPath: /library-audio
               subPath: royossai/Private/Vocals
             - name: videos
-              mountPath: /data/audios2
+              mountPath: /library-hypno-audio
               subPath: royossai/Private/Hypno/audio
             - name: database
-              mountPath: /data/db
+              mountPath: /data
             - name: streaming
-              mountPath: /data/streaming
+              mountPath: /data/assets
             - name: tmp
               mountPath: /tmp
           livenessProbe:
             httpGet:
-              path: /
-              port: 9191
+              path: /healthz
+              port: http
             initialDelaySeconds: 30
             periodSeconds: 10
           readinessProbe:
             httpGet:
-              path: /
-              port: 9191
+              path: /healthz
+              port: http
             initialDelaySeconds: 5
             periodSeconds: 5
       volumes:
@@ -92,3 +120,5 @@ spec:
             claimName: vela-streaming
         - name: tmp
           emptyDir: {}
+      imagePullSecrets:
+        - name: zot-pull-secret
