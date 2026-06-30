@@ -65,6 +65,10 @@ spec:
               value: "3"
             - name: VELA_MAX_UPLOAD_BYTES
               value: "10737418240"
+            - name: NVIDIA_DRIVER_CAPABILITIES
+              value: compute,utility,video
+            - name: LD_LIBRARY_PATH
+              value: /usr/local/nvidia/lib:/usr/local/nvidia/lib64:/usr/local/glibc/usr/lib
             - name: LITELLM_BASE_URL
               value: https://litellm.horus.maix.ovh/v1
             - name: LITELLM_API_KEY
