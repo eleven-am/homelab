@@ -44,7 +44,7 @@ spec:
                   name: ferret-secrets
                   key: BETTER_AUTH_SECRET
             - name: OPENAI_COMPATIBLE_BASE_URL
-              value: "https://litellm.horus.maix.ovh"
+              value: "http://litellm-service.litellm.svc.cluster.local:4000/v1"
             - name: OPENAI_COMPATIBLE_API_KEY
               valueFrom:
                 secretKeyRef:
