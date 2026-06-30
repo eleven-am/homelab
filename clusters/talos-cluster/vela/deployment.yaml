@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: vela
-          image: zot.maix.ovh/vela:v0.0.2
+          image: zot.maix.ovh/vela:v0.0.3
           resources:
             requests:
               memory: "512Mi"
