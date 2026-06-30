@@ -40,6 +40,8 @@ spec:
               value: /data/queue.db
             - name: VELA_ASSET_DIR
               value: /data/assets
+            - name: VELA_FRONTEND_DIR
+              value: /app/frontend
             - name: VELA_ADMIN_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -65,6 +67,8 @@ spec:
               value: "3"
             - name: VELA_MAX_UPLOAD_BYTES
               value: "10737418240"
+            - name: VELA_GOSHL_HWACCEL_MODE
+              value: cuda
             - name: NVIDIA_DRIVER_CAPABILITIES
               value: compute,utility,video
             - name: LD_LIBRARY_PATH
