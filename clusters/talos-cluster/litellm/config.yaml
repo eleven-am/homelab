@@ -56,6 +56,24 @@ model_list:
     litellm_params:
       model: chatgpt/gpt-5.4
 
+  - model_name: osiris/foundation-5.2
+    litellm_params:
+      model: openai/zai-org/GLM-5.2
+      api_base: https://api.featherless.ai/v1
+      api_key: os.environ/FEATHERLESS_API_KEY
+
+  - model_name: osiris/agentic-2.6
+    litellm_params:
+      model: openai/moonshotai/Kimi-K2.6
+      api_base: https://api.featherless.ai/v1
+      api_key: os.environ/FEATHERLESS_API_KEY
+
+  - model_name: osiris/reasoning-48
+    litellm_params:
+      model: openai/deepseek-ai/DeepSeek-V4-Pro
+      api_base: https://api.featherless.ai/v1
+      api_key: os.environ/FEATHERLESS_API_KEY
+
   - model_name: gemini-3.5-flash
     litellm_params:
       model: gemini/gemini-3.5-flash

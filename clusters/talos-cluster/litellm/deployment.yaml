@@ -15,7 +15,7 @@ spec:
   template:
     metadata:
       annotations:
-        homelab.maix.ovh/config-revision: "2026-06-30-uncensored-70-gemma4"
+        homelab.maix.ovh/config-revision: "2026-06-30-add-glm-kimi-deepseek-v4"
       labels:
         app: litellm
     spec:
