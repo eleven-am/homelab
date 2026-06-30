@@ -162,7 +162,7 @@ model_list:
 
   - model_name: osiris/uncensored-70
     litellm_params:
-      model: openai/Sao10K/L3.3-70B-Euryale-v2.3
+      model: openai/InfinimindCreations/gemma-4-31B-it-uncensored
       api_base: https://api.featherless.ai/v1
       api_key: os.environ/FEATHERLESS_API_KEY
 

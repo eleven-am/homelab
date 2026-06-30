@@ -15,7 +15,7 @@ spec:
   template:
     metadata:
       annotations:
-        homelab.maix.ovh/config-revision: "2026-06-29-uncensored-70-featherless"
+        homelab.maix.ovh/config-revision: "2026-06-30-uncensored-70-gemma4"
       labels:
         app: litellm
     spec:
