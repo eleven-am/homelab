@@ -21,12 +21,12 @@ spec:
           image: zot.maix.ovh/vela:v0.0.3
           resources:
             requests:
-              memory: "512Mi"
-              cpu: "100m"
+              memory: "1Gi"
+              cpu: "1"
               nvidia.com/gpu: "1"
             limits:
-              memory: "2Gi"
-              cpu: "500m"
+              memory: "4Gi"
+              cpu: "4"
               nvidia.com/gpu: "1"
           ports:
             - name: http
@@ -62,7 +62,7 @@ spec:
             - name: VELA_WATCH_INTERVAL
               value: 1m
             - name: VELA_PROCESSING_WORKERS
-              value: "1"
+              value: "3"
             - name: VELA_MAX_UPLOAD_BYTES
               value: "10737418240"
             - name: LITELLM_BASE_URL
