@@ -6,7 +6,7 @@ metadata:
   labels:
     app: vox
 spec:
-  replicas: 0
+  replicas: 1
   strategy:
     type: Recreate
   selector:
@@ -53,11 +53,6 @@ spec:
             - trim
             - --device
             - cuda
-            - --preload
-            - parakeet-stt-onnx:tdt-0.6b-v3
-            - --preload
-            - kokoro-tts-onnx:v1.0
-            - --preload-vad
           env:
             - name: VOX_RTC_STUN_URLS
               value: stun:turn.maix.ovh:3478,stun:172.198.1.55:3478
