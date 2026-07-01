@@ -30,7 +30,7 @@ spec:
               mountPath: /home/vox/.vox
       containers:
         - name: vox
-          image: ghcr.io/eleven-am/vox:v0.2.69@sha256:4a7b70bc2ca8cbd8121063f779f31c344dff98079a27b878bae19694ad99695d
+          image: ghcr.io/eleven-am/vox:v0.2.72@sha256:213bc47d88d007dfad92a9f3c2040c739755f43ae0f7cb43d925dd16a4a02eb8
           imagePullPolicy: IfNotPresent
           args:
             - vox
@@ -43,6 +43,14 @@ spec:
             - "0"
             - --max-loaded
             - "2"
+            - --idle-trim-ttl
+            - "300"
+            - --max-vram
+            - 10GiB
+            - --vram-headroom
+            - 1GiB
+            - --memory-over-budget
+            - trim
             - --device
             - cuda
             - --preload
