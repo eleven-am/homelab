@@ -3,7 +3,7 @@ services:
   # NPM - Proxy Manager
   npm:
     container_name: npm
-    image: jc21/nginx-proxy-manager:2.14.0
+    image: jc21/nginx-proxy-manager:2.15.1
     ports:
       - "80:80"
       - "81:81"
@@ -18,7 +18,7 @@ services:
   # Pi-hole - DNS Server
   pi-hole:
     container_name: pihole
-    image: pihole/pihole:2026.04.0
+    image: pihole/pihole:2026.06.0
     ports:
       - "53:53/tcp"
       - "53:53/udp"
@@ -57,7 +57,7 @@ services:
 
   # Headplane - Modern UI for Headscale management (alternative to headscale-admin)
   headplane:
-    image: ghcr.io/tale/headplane:0.7.0-beta.2
+    image: ghcr.io/tale/headplane:0.7.0-beta.4
     container_name: headplane
     restart: unless-stopped
     volumes:
