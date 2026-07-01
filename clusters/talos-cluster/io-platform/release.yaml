@@ -133,8 +133,8 @@ spec:
       enabled: true
       image:
         repository: io-web
-        tag: v0.0.36
-        digest: sha256:17fa4b3eeb95dec8a1232cf90eb66b106c26e92ba8b55c11f6cae3ca54c03235
+        tag: v0.0.38
+        digest: sha256:59a2b884c6232142e5769507588d077b2c50f926f16e90a44e60d9bfb0a990ec
       ingress:
         enabled: true
         gatewayRef:
