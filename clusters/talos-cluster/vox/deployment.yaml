@@ -50,7 +50,7 @@ spec:
             - --vram-headroom
             - 1GiB
             - --memory-over-budget
-            - trim
+            - reject
             - --device
             - cuda
           env:
