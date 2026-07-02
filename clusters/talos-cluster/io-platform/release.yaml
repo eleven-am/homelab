@@ -160,8 +160,8 @@ spec:
       enabled: true
       image:
         repository: zot.maix.ovh/sprite
-        tag: v0.1.29
-        digest: sha256:8b8204937ff72aec0abff9473f3f1af7581991e73f3ab1ec4aa73a60d02df1a0
+        tag: v0.1.30
+        digest: sha256:f9c1991c932d3c22ba8c1891a82e4161424a1fc29a5b22ce17ce8e6227b8dcdb
       env:
         RUST_LOG: info
 
@@ -169,7 +169,7 @@ spec:
       enabled: true
       image:
         repository: ghcr.io/eleven-am/adaoss
-        tag: v0.1.113
+        tag: v0.1.114
       http:
         enabled: true
         port: 4000
