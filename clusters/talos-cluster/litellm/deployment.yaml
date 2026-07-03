@@ -147,7 +147,10 @@ spec:
             - name: OSIRIS_GEMMA_API_KEY
               value: "unused"
             - name: VOX_API_KEY
-              value: "unused"
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-secret
+                  key: VOX_API_KEY
             - name: CHATGPT_TOKEN_DIR
               value: /tokens
             - name: STORE_MODEL_IN_DB
