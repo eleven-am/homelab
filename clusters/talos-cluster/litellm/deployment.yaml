@@ -15,7 +15,7 @@ spec:
   template:
     metadata:
       annotations:
-        homelab.maix.ovh/config-revision: "2026-07-03-rename-foundation-2048-to-agentic-2.5-featherless"
+        homelab.maix.ovh/config-revision: "2026-07-03-add-agentic-2.7-minimax-router"
       labels:
         app: litellm
     spec:
