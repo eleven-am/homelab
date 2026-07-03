@@ -15,7 +15,7 @@ spec:
   template:
     metadata:
       annotations:
-        homelab.maix.ovh/config-revision: "2026-06-30-add-glm-kimi-deepseek-v4"
+        homelab.maix.ovh/config-revision: "2026-07-03-fix-vox-api-key-and-model-names"
       labels:
         app: litellm
     spec:
