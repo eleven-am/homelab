@@ -340,7 +340,6 @@ general_settings:
       target: "http://mimir-service.mimir.svc.cluster.local:3000/v1/extract"
       headers:
         Authorization: "Bearer os.environ/MIMIR_API_KEY"
-      forward_headers: true
 
 router_settings:
   routing_strategy: simple-shuffle

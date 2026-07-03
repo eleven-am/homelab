@@ -15,7 +15,7 @@ spec:
   template:
     metadata:
       annotations:
-        homelab.maix.ovh/config-revision: "2026-07-03-add-agentic-2.7-minimax-router"
+        homelab.maix.ovh/config-revision: "2026-07-04-mimir-extract-drop-forward-headers-standard-auth"
       labels:
         app: litellm
     spec:
