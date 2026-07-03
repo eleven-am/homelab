@@ -286,13 +286,13 @@ model_list:
 
   - model_name: osiris/speech-tts
     litellm_params:
-      model: openai/kokoro-tts-onnx:v1.0
+      model: openai/kokoro-tts:v1.0
       api_base: http://vox-service.vox.svc.cluster.local:11435/v1
       api_key: os.environ/VOX_API_KEY
 
   - model_name: osiris/speech-stt
     litellm_params:
-      model: openai/parakeet-stt-onnx:tdt-0.6b-v3
+      model: openai/parakeet-stt:tdt-0.6b-v3
       api_base: http://vox-service.vox.svc.cluster.local:11435/v1
       api_key: os.environ/VOX_API_KEY
 
