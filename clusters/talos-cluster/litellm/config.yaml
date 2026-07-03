@@ -296,6 +296,22 @@ model_list:
       api_base: http://vox-service.vox.svc.cluster.local:11435/v1
       api_key: os.environ/VOX_API_KEY
 
+  - model_name: osiris/foundation-120t
+    litellm_params:
+      model: openai/gemma-4-31b
+      api_base: https://api.cerebras.ai/v1
+      api_key: os.environ/CEREBRAS_API_KEY
+  - model_name: osiris/foundation-4.7t
+    litellm_params:
+      model: openai/zai-glm-4.7
+      api_base: https://api.cerebras.ai/v1
+      api_key: os.environ/CEREBRAS_API_KEY
+  - model_name: osiris/reasoning-120t
+    litellm_params:
+      model: openai/gpt-oss-120b
+      api_base: https://api.cerebras.ai/v1
+      api_key: os.environ/CEREBRAS_API_KEY
+
   - model_name: "*"
     litellm_params:
       model: "*"

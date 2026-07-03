@@ -15,7 +15,7 @@ spec:
   template:
     metadata:
       annotations:
-        homelab.maix.ovh/config-revision: "2026-07-03-fix-vox-api-key-and-model-names"
+        homelab.maix.ovh/config-revision: "2026-07-03-add-cerebras-turbo-models"
       labels:
         app: litellm
     spec:
@@ -151,6 +151,11 @@ spec:
                 secretKeyRef:
                   name: litellm-secret
                   key: VOX_API_KEY
+            - name: CEREBRAS_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-secret
+                  key: CEREBRAS_API_KEY
             - name: CHATGPT_TOKEN_DIR
               value: /tokens
             - name: STORE_MODEL_IN_DB
