@@ -15,7 +15,7 @@ spec:
   template:
     metadata:
       annotations:
-        homelab.maix.ovh/config-revision: "2026-07-04-mimir-extract-drop-forward-headers-standard-auth"
+        homelab.maix.ovh/config-revision: "2026-07-04-foundation-3-loadbalance-featherless-minimax"
       labels:
         app: litellm
     spec:

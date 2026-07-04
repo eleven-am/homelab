@@ -127,6 +127,12 @@ model_list:
       rpm: 900
       tpm: 1000000
 
+  - model_name: osiris/agentic-2.7
+    litellm_params:
+      model: openai/MiniMaxAI/MiniMax-M2.7
+      api_base: https://api.featherless.ai/v1
+      api_key: os.environ/FEATHERLESS_API_KEY
+
   - model_name: osiris/foundation-3
     litellm_params:
       model: anthropic/MiniMax-M3
@@ -138,6 +144,12 @@ model_list:
       max_parallel_requests: 4
       rpm: 900
       tpm: 1000000
+
+  - model_name: osiris/foundation-3
+    litellm_params:
+      model: openai/MiniMaxAI/MiniMax-M3
+      api_base: https://api.featherless.ai/v1
+      api_key: os.environ/FEATHERLESS_API_KEY
 
   - model_name: osiris/foundation-120
     litellm_params:
