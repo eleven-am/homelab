@@ -314,6 +314,12 @@ model_list:
       api_base: http://vox-service.vox.svc.cluster.local:11435/v1
       api_key: os.environ/VOX_API_KEY
 
+  - model_name: osiris/speech-clone
+    litellm_params:
+      model: openai/chatterbox-tts-turbo:0.1.7
+      api_base: http://vox-service.vox.svc.cluster.local:11435/v1
+      api_key: os.environ/VOX_API_KEY
+
   - model_name: osiris/foundation-120t
     litellm_params:
       model: openai/gemma-4-31b

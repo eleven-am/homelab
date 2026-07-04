@@ -15,7 +15,7 @@ spec:
   template:
     metadata:
       annotations:
-        homelab.maix.ovh/config-revision: "2026-07-04-foundation-3-loadbalance-featherless-minimax"
+        homelab.maix.ovh/config-revision: "2026-07-04-add-speech-clone-chatterbox"
       labels:
         app: litellm
     spec:
