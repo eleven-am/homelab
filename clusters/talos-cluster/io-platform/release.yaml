@@ -7,7 +7,7 @@ spec:
   chart:
     spec:
       chart: io-platform
-      version: "0.3.86"
+      version: "0.3.87"
       sourceRef:
         kind: HelmRepository
         name: io-platform
@@ -160,8 +160,8 @@ spec:
       enabled: true
       image:
         repository: zot.maix.ovh/sprite
-        tag: v0.1.35
-        digest: sha256:68f95169341f4f3d53d39f338d8f246be52f57694607c8d87bf628f7543fbceb
+        tag: v0.1.36
+        digest: sha256:54f6bb1de61d316197b3d7b3870b518b2d9f8d9532e514b5a279d0a57087b684
       env:
         RUST_LOG: info
 
