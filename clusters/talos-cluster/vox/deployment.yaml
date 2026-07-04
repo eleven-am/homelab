@@ -42,7 +42,7 @@ spec:
             - --ttl
             - "0"
             - --max-loaded
-            - "2"
+            - "4"
             - --idle-trim-ttl
             - "300"
             - --max-vram
