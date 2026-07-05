@@ -99,8 +99,8 @@ spec:
       host: io.maix.ovh
       image:
         repository: io
-        tag: v0.0.118
-        digest: sha256:cd9597afa7229681325edd7036ed26124df6039063c318144f057ad4d577d24a
+        tag: v0.0.119
+        digest: sha256:d450dc3951036e1d432f06e96b3fcb4f622ac99d3ef49b8042bb5895dbf34435
       env:
         AUTH_JWT_ISSUER: io
         AUTH_JWT_AUDIENCE: io
@@ -160,8 +160,8 @@ spec:
       enabled: true
       image:
         repository: zot.maix.ovh/sprite
-        tag: v0.1.43
-        digest: sha256:5b76ea70ac09172f82d993ed0b03d909dc79c863186e10d475c36df09ce82faa
+        tag: v0.1.44
+        digest: sha256:7c54fa135e9e0369abc46ab9c443c08483a965c17e2c4df6b5a1f2425efa309a
       env:
         RUST_LOG: info
 
