@@ -46,7 +46,7 @@ spec:
             - --idle-trim-ttl
             - "300"
             - --max-vram
-            - 10GiB
+            - 14GiB
             - --vram-headroom
             - 1GiB
             - --memory-over-budget
