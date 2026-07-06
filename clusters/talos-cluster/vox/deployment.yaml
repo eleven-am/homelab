@@ -103,12 +103,15 @@ spec:
               port: 11435
             initialDelaySeconds: 10
             periodSeconds: 10
+            timeoutSeconds: 5
           livenessProbe:
             httpGet:
               path: /v1/health
               port: 11435
             initialDelaySeconds: 30
             periodSeconds: 15
+            timeoutSeconds: 10
+            failureThreshold: 20
       volumes:
         - name: vox-data
           persistentVolumeClaim:
