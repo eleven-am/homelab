@@ -367,6 +367,10 @@ general_settings:
       target: "http://mimir-service.mimir.svc.cluster.local:3000/v1/extract"
       headers:
         Authorization: "Bearer os.environ/MIMIR_API_KEY"
+    - path: "/mimir/extract/file"
+      target: "http://mimir-service.mimir.svc.cluster.local:3000/v1/extract/file"
+      headers:
+        Authorization: "Bearer os.environ/MIMIR_API_KEY"
 
 router_settings:
   routing_strategy: simple-shuffle
