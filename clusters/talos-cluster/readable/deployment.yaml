@@ -1,0 +1,113 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: readable
+  namespace: readable
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: readable
+  template:
+    metadata:
+      labels:
+        app: readable
+    spec:
+      imagePullSecrets:
+        - name: zot-pull-secret
+      securityContext:
+        fsGroup: 1000
+      containers:
+        - name: readable
+          image: zot.maix.ovh/readable:v0.0.3
+          ports:
+            - name: http
+              containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: HOST
+              value: "0.0.0.0"
+            - name: PORT
+              value: "3000"
+            - name: DATABASE_URL
+              value: "file:/data/readable.db"
+            - name: STORAGE_DIR
+              value: "/data/storage"
+            - name: BETTER_AUTH_URL
+              value: "https://readable.maix.ovh"
+            - name: TRUSTED_ORIGINS
+              value: "https://readable.maix.ovh"
+            - name: LITELLM_URL
+              value: "http://litellm-service.litellm.svc.cluster.local:4000"
+            - name: READABLE_CONTENT_MODEL
+              value: "osiris/uncensored-70"
+            - name: READABLE_PREAMBLE_MODEL
+              value: "osiris/uncensored-70"
+            - name: READABLE_CHAT_MODEL
+              value: "osiris/foundation-120t"
+            - name: ROLEPLAY_EMBEDDING_MODEL
+              value: "osiris/embedding-1024"
+            - name: ROLEPLAY_EMBEDDING_DIMENSION
+              value: "1024"
+            - name: ROLEPLAY_TTS_MODEL
+              value: "osiris/speech-tts"
+            - name: ROLEPLAY_STT_MODEL
+              value: "osiris/speech-stt"
+            - name: ROLEPLAY_DEFAULT_VOICE
+              value: "af_heart"
+            - name: BROWSERLESS_URL
+              value: "http://browserless-service.browserless.svc.cluster.local:3000"
+            - name: VOX_HTTP_BASE
+              value: "http://vox-service.vox.svc.cluster.local:11435"
+            - name: VOX_STT_MODEL
+              value: "parakeet-stt:tdt-0.6b-v3"
+            - name: VOX_TTS_MODEL
+              value: "kokoro-tts:v1.0"
+            - name: VOX_TURN_PROFILE
+              value: "browser_default"
+            - name: VOX_VAD_BACKEND
+              value: "silero"
+            - name: VOX_TURN_DETECTOR
+              value: "livekit"
+            - name: BETTER_AUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: readable-secret
+                  key: BETTER_AUTH_SECRET
+            - name: LITELLM_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: readable-secret
+                  key: LITELLM_API_KEY
+            - name: VOX_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: readable-secret
+                  key: VOX_API_KEY
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 15
+          readinessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 5
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: readable-data
