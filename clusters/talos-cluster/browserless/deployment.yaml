@@ -19,16 +19,16 @@ spec:
     spec:
       containers:
         - name: browserless
-          image: browserless/chrome:1.61.1-chrome-stable
+          image: ghcr.io/browserless/chromium:v2.54.2
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
           env:
-            - name: MAX_CONCURRENT_SESSIONS
+            - name: CONCURRENT
               value: "5"
-            - name: CONNECTION_TIMEOUT
+            - name: TIMEOUT
               value: "60000"
-            - name: MAX_QUEUE_LENGTH
+            - name: QUEUED
               value: "10"
           resources:
             requests:
@@ -38,16 +38,14 @@ spec:
               memory: "2Gi"
               cpu: "2000m"
           livenessProbe:
-            httpGet:
-              path: /pressure
+            tcpSocket:
               port: 3000
             initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 3
           readinessProbe:
-            httpGet:
-              path: /pressure
+            tcpSocket:
               port: 3000
             initialDelaySeconds: 10
             periodSeconds: 5
