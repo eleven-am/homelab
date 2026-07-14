@@ -18,7 +18,7 @@ spec:
       runtimeClassName: nvidia
       containers:
         - name: vela
-          image: zot.maix.ovh/vela:v0.0.15
+          image: zot.maix.ovh/vela:v0.0.16
           resources:
             requests:
               memory: "1Gi"
@@ -88,6 +88,11 @@ spec:
               value: osiris/foundation-4
             - name: METADATA_MODEL
               value: osiris/uncensored-70
+            - name: VOX_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: vela-secret
+                  key: VOX_API_KEY
           volumeMounts:
             - name: videos
               mountPath: /library
