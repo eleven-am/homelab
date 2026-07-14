@@ -19,8 +19,8 @@ spec:
     spec:
       containers:
         - name: browserless
-          image: browserless/chrome:latest
-          imagePullPolicy: Always
+          image: browserless/chrome:1.61.1-chrome-stable
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
           env:
