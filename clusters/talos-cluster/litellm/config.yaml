@@ -371,6 +371,10 @@ general_settings:
       target: "http://mimir-service.mimir.svc.cluster.local:3000/v1/extract/file"
       headers:
         Authorization: "Bearer os.environ/MIMIR_API_KEY"
+    - path: "/vox/voices"
+      target: "http://vox-service.vox.svc.cluster.local:11435/v1/audio/voices"
+      headers:
+        Authorization: "Bearer os.environ/VOX_API_KEY"
 
 router_settings:
   routing_strategy: simple-shuffle
