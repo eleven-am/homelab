@@ -61,7 +61,7 @@ spec:
             - name: BROWSERLESS_URL
               value: "http://browserless-service.browserless.svc.cluster.local:3000"
             - name: VOX_HTTP_BASE
-              value: "https://vox.horus.maix.ovh"
+              value: "http://vox-service.vox.svc.cluster.local:11435"
             - name: VOX_STT_MODEL
               value: "parakeet-stt:tdt-0.6b-v3"
             - name: VOX_TTS_MODEL
