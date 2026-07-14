@@ -21,7 +21,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: readable
-          image: zot.maix.ovh/readable:v0.0.3
+          image: zot.maix.ovh/readable:v0.0.4
           ports:
             - name: http
               containerPort: 3000
@@ -87,6 +87,15 @@ spec:
                 secretKeyRef:
                   name: readable-secret
                   key: VOX_API_KEY
+            - name: DSTREAMS_URL
+              value: "https://dstreams.horus.maix.ovh"
+            - name: DSTREAMS_TTL_SECONDS
+              value: "86400"
+            - name: DSTREAMS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: readable-secret
+                  key: DSTREAMS_TOKEN
           resources:
             requests:
               cpu: 100m
