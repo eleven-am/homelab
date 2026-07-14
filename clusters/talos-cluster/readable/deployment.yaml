@@ -47,7 +47,7 @@ spec:
             - name: READABLE_PREAMBLE_MODEL
               value: "osiris/uncensored-70"
             - name: READABLE_CHAT_MODEL
-              value: "osiris/foundation-120"
+              value: "osiris/foundation-120t"
             - name: ROLEPLAY_EMBEDDING_MODEL
               value: "osiris/embedding-1024"
             - name: ROLEPLAY_EMBEDDING_DIMENSION
