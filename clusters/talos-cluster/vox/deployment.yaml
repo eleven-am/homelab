@@ -86,7 +86,7 @@ spec:
               nvidia.com/gpu: "1"
             limits:
               cpu: 4000m
-              memory: 12Gi
+              memory: 24Gi
               nvidia.com/gpu: "1"
           volumeMounts:
             - name: vox-data
