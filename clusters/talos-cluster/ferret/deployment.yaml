@@ -64,6 +64,13 @@ spec:
               value: "osiris/reranker-568"
             - name: FERRET_STT_MODEL
               value: "osiris/speech-stt"
+            - name: VOX_HTTP_BASE
+              value: "https://vox.horus.maix.ovh"
+            - name: VOX_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ferret-secrets
+                  key: VOX_API_KEY
             - name: FERRET_JOBS_CONCURRENCY
               value: "2"
             - name: FERRET_LLM_CONCURRENCY
