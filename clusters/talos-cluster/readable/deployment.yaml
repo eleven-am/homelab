@@ -21,7 +21,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: readable
-          image: zot.maix.ovh/readable:v0.0.10@sha256:98a67f4bc9c76711176ed786d5be2f97ce5eec32aef485ee59f8be98f709cda9
+          image: zot.maix.ovh/readable:v0.0.12@sha256:6d4ab74afd5ccca38e31020be429704a5a66c3bdc042fa07deb494583d8fd4d2
           ports:
             - name: http
               containerPort: 3000
@@ -61,7 +61,7 @@ spec:
             - name: BROWSERLESS_URL
               value: "http://browserless-service.browserless.svc.cluster.local:3000"
             - name: VOX_HTTP_BASE
-              value: "https://vox.horus.maix.ovh"
+              value: "http://vox-service.vox.svc.cluster.local:11435"
             - name: VOX_STT_MODEL
               value: "parakeet-stt:tdt-0.6b-v3"
             - name: VOX_TTS_MODEL

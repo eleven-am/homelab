@@ -18,7 +18,7 @@ spec:
       runtimeClassName: nvidia
       containers:
         - name: vela
-          image: zot.maix.ovh/vela:v0.0.20
+          image: zot.maix.ovh/vela:v0.0.21@sha256:e71f8a22992b67653748525a3052794f900385aa18ebf8d174e3ddd6bca0c27d
           resources:
             requests:
               memory: "1Gi"
@@ -90,6 +90,8 @@ spec:
               value: osiris/foundation-120
             - name: METADATA_MODEL
               value: osiris/uncensored-70
+            - name: VOX_HTTP_BASE
+              value: http://vox-service.vox.svc.cluster.local:11435
             - name: VOX_API_KEY
               valueFrom:
                 secretKeyRef:
