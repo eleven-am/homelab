@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: mimir
-          image: zot.maix.ovh/mimir:v0.0.26@sha256:5849583c0a0b871fbc06216991030e460c5320285dc889939d365c1ad4dbc7f5
+          image: zot.maix.ovh/mimir:v0.0.28@sha256:c60ef384fab836712301c51f96ac67ece2d3f6b804e37f234c80a7f56c31accb
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
