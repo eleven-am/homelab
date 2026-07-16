@@ -71,6 +71,20 @@ spec:
                 secretKeyRef:
                   name: ferret-secrets
                   key: VOX_API_KEY
+            - name: VOX_STT_MODEL
+              value: "parakeet-stt:tdt-0.6b-v3"
+            - name: VOX_TTS_MODEL
+              value: "kokoro-tts:v1.0"
+            - name: VOX_VOICE
+              value: "af_heart"
+            - name: VOX_TURN_PROFILE
+              value: "browser_default"
+            - name: VOX_VAD_BACKEND
+              value: "silero"
+            - name: VOX_TURN_DETECTOR
+              value: "livekit"
+            - name: FERRET_CALL_IDLE_MS
+              value: "300000"
             - name: FERRET_JOBS_CONCURRENCY
               value: "2"
             - name: FERRET_LLM_CONCURRENCY
