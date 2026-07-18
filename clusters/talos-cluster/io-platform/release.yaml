@@ -169,7 +169,7 @@ spec:
       enabled: true
       image:
         repository: ghcr.io/eleven-am/adaoss
-        tag: v0.1.117
+        tag: v0.1.118
       http:
         enabled: true
         port: 4000
