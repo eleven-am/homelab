@@ -308,6 +308,11 @@ model_list:
   - model_name: osiris/reranker-568
     litellm_params:
       model: hosted_vllm/BAAI/bge-reranker-v2-m3
+      api_base: http://vllm-reranker.vllm-reranker.svc.cluster.local:8001
+
+  - model_name: osiris/reranker-568
+    litellm_params:
+      model: hosted_vllm/BAAI/bge-reranker-v2-m3
       api_base: http://100.64.0.19:8001
       timeout: 300
 
@@ -377,7 +382,10 @@ general_settings:
         Authorization: "Bearer os.environ/VOX_API_KEY"
 
 router_settings:
-  routing_strategy: simple-shuffle
+  routing_strategy: latency-based-routing
+  routing_strategy_args:
+    ttl: 300
+    lowest_latency_buffer: 0.3
   num_retries: 1
   timeout: 900
   allowed_fails: 1
