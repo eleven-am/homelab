@@ -168,9 +168,9 @@ spec:
     ada:
       enabled: true
       image:
-        repository: zot.maix.ovh/adaoss
+        repository: ghcr.io/eleven-am/adaoss
         tag: v0.1.120
-        digest: sha256:c4649e3194c91c805dc17a1e1636aaded194bee03abe9d2e319a4101e7e29d03
+        digest: sha256:247caf0098a89b20b8f1616181dbf1fddddb0f195140b0701bcc6a78e3a31f6c
       http:
         enabled: true
         port: 4000
