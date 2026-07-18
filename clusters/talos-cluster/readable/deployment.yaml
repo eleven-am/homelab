@@ -21,7 +21,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: readable
-          image: zot.maix.ovh/readable:v0.0.13@sha256:9867407e8db1c45fbc723ac5482930e608562d5534f19c24b978899aeed0bb27
+          image: zot.maix.ovh/readable:v0.0.14@sha256:6c3b4c40c01a10423c121dc577da693d113291f3db5a23ffe37f54974d2e0664
           ports:
             - name: http
               containerPort: 3000
