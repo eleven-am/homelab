@@ -74,6 +74,12 @@ model_list:
       api_base: https://api.featherless.ai/v1
       api_key: os.environ/FEATHERLESS_API_KEY
 
+  - model_name: osiris/smol-4
+    litellm_params:
+      model: openai/google/gemma-4-E4B-it
+      api_base: https://api.featherless.ai/v1
+      api_key: os.environ/FEATHERLESS_API_KEY
+
   - model_name: gemini-3.5-flash
     litellm_params:
       model: gemini/gemini-3.5-flash
