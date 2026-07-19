@@ -10,6 +10,7 @@ spec:
   jobTemplate:
     spec:
       backoffLimit: 1
+      activeDeadlineSeconds: 21600
       parallelism: 1
       completions: 1
       template:
@@ -17,7 +18,7 @@ spec:
           runtimeClassName: nvidia
           containers:
             - name: video-processor
-              image: elevenam/video_processor:latest
+              image: elevenam/video_processor:2026-01-08-10-54
               args:
                 - "--gpu"
                 - "-c"
