@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: dashboard
-          image: ghcr.io/get-convex/convex-dashboard:latest
+          image: ghcr.io/get-convex/convex-dashboard:latest@sha256:5f4dca5615a408501ddce6e8d28f4444d9b60d2f5fc17de4c509fdf43191889d
           imagePullPolicy: Always
           ports:
             - containerPort: 6791

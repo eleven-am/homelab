@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: metube
-          image: ghcr.io/alexta69/metube:latest
+          image: ghcr.io/alexta69/metube:latest@sha256:a5fce53f6d4192964d34c59d19a0e2fd322867dd1da95eddf9b59694376fc968
           imagePullPolicy: Always
           ports:
             - name: http

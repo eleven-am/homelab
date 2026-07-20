@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: samba
-          image: crazymax/samba:latest
+          image: crazymax/samba:latest@sha256:40591f9a30df6b0106948d81d89204c632894387639914ec2808b536e307074b
           resources:
             requests:
               memory: "64Mi"
@@ -153,7 +153,7 @@ spec:
     spec:
       containers:
         - name: webdav
-          image: bytemark/webdav:latest
+          image: bytemark/webdav:latest@sha256:21eed0df1238d17766080425f9ef46da2c1130e3e3aa9eaf36794d2a72e7c616
           resources:
             requests:
               memory: "64Mi"

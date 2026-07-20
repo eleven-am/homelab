@@ -23,7 +23,7 @@ spec:
       restartPolicy: Always
       containers:
         - name: prowlarr
-          image: lscr.io/linuxserver/prowlarr:latest
+          image: lscr.io/linuxserver/prowlarr:latest@sha256:4fd7a166c8f46dd3370a871c250ee577d6c2ae97a0dbe0e3614b5ef736205620
           imagePullPolicy: Always
           ports:
             - containerPort: 9696
@@ -49,7 +49,7 @@ spec:
             - name: prowlarr-media
               mountPath: /media
         - name: flaresolverr
-          image: ghcr.io/flaresolverr/flaresolverr:latest
+          image: ghcr.io/flaresolverr/flaresolverr:latest@sha256:139dfee1c6f89249c8d665d1333a42e8ec74ec0a86bc6bb1c8461e10d3a66a47
           resources:
             requests:
               memory: "512Mi"

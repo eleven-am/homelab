@@ -23,7 +23,7 @@ spec:
       restartPolicy: Always
       containers:
         - name: gluetun
-          image: qmcgaw/gluetun:latest
+          image: qmcgaw/gluetun:latest@sha256:b0ee2135e6ba52ad3f102aae9663707cd1c9531485117067a380d3b2b6dd991d
           imagePullPolicy: Always
           securityContext:
             capabilities:
@@ -57,7 +57,7 @@ spec:
             - name: gluetun-config
               mountPath: /gluetun
         - name: base
-          image: tailscale/tailscale:latest
+          image: tailscale/tailscale:latest@sha256:d54b2e6a9c09f0e5ec52e82b9ad4af3d446b54a7c08075e92f11c39dd410105f
           imagePullPolicy: Always
           env:
             - name: TS_KUBE_SECRET

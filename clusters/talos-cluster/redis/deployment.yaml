@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: redis-deployment
-          image: redis:latest
+          image: redis:latest@sha256:3906b477e4b60250660573105110c28bfce93b01243eab37610a484daebceb04
           imagePullPolicy: IfNotPresent
           command: ["redis-server"]
           args: ["--maxmemory", "512mb", "--maxmemory-policy", "allkeys-lru"]

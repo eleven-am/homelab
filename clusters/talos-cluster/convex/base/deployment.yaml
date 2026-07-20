@@ -39,7 +39,7 @@ spec:
                   key: POSTGRES_PASSWORD
       containers:
         - name: backend
-          image: ghcr.io/get-convex/convex-backend:latest
+          image: ghcr.io/get-convex/convex-backend:latest@sha256:1738f1673f8d63161043a7859710d2301b1e9d6271e06afbb7af31594ea3a58f
           imagePullPolicy: Always
           ports:
             - containerPort: 3210
