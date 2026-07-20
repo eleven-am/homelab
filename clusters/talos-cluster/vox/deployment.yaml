@@ -45,12 +45,6 @@ spec:
             - "3"
             - --idle-trim-ttl
             - "300"
-            - --max-vram
-            - 14GiB
-            - --vram-headroom
-            - 1GiB
-            - --memory-over-budget
-            - reject
             - --device
             - cuda
           env:
