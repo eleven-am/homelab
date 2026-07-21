@@ -18,7 +18,7 @@ spec:
       runtimeClassName: nvidia
       containers:
         - name: vela
-          image: zot.maix.ovh/vela:v0.0.22@sha256:e6353aedfd42385376ee4c199528badba075395f1469038c1b26d755b59f021d
+          image: zot.maix.ovh/vela:v0.0.23@sha256:3fc5d74ed0afde4d9a73aaccad65c85aceb24f878417be319ea41fe1b37d8386
           resources:
             requests:
               memory: "1Gi"
