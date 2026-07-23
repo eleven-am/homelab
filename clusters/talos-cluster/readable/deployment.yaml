@@ -72,6 +72,10 @@ spec:
               value: "silero"
             - name: VOX_TURN_DETECTOR
               value: "livekit"
+            - name: VOX_SPEECH_CONTEXT
+              value: "true"
+            - name: VOX_RESPONSE_LANGUAGE
+              value: "true"
             - name: BETTER_AUTH_SECRET
               valueFrom:
                 secretKeyRef:
