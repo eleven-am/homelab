@@ -169,8 +169,8 @@ spec:
       enabled: true
       image:
         repository: ghcr.io/eleven-am/adaoss
-        tag: v0.1.122
-        digest: sha256:455b33454e1c4651d27b634be2892e4a50b2cc08dccd78e503935829269d91bb
+        tag: v0.1.128
+        digest: sha256:db8919500635d5d166ee84ac296961b75406d6335263e4ed43aebf0fd751517e
       http:
         enabled: true
         port: 4000
