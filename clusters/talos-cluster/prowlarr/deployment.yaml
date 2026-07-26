@@ -52,6 +52,8 @@ spec:
               value: "10.0.0.0/8,172.198.1.0/24,192.168.101.0/24"
             - name: FIREWALL_INPUT_PORTS
               value: "9696,8191"
+            - name: PUBLICIP_FILE
+              value: "/gluetun/ip"
           resources:
             limits:
               devic.es/tun: "1"
