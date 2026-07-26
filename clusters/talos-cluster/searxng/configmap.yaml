@@ -5,7 +5,28 @@ metadata:
   namespace: searxng
 data:
   settings.yml: |
-    use_default_settings: true
+    use_default_settings:
+      engines:
+        keep_only:
+          - google
+          - google cse
+          - bing
+          - duckduckgo
+          - startpage
+          - mojeek
+          - wikipedia
+          - github
+          - github code
+          - stackoverflow
+          - reddit
+          - hackernews
+          - arxiv
+          - semantic scholar
+          - mdn
+          - arch linux wiki
+          - docker hub
+          - lib.rs
+          - pkg.go.dev
 
     general:
       instance_name: "SearXNG"
@@ -16,17 +37,20 @@ data:
 
     search:
       safe_search: 0
-      autocomplete: "google"
+      autocomplete: "duckduckgo"
       default_lang: "en"
+      ban_time_on_fail: 30
+      max_ban_time_on_fail: 600
       formats:
         - html
         - json
 
     server:
-      secret_key: "change-this-secret-key-in-production"
+      secret_key: "overridden-by-searxng-secret"
       limiter: false
       image_proxy: true
       http_protocol_version: "1.1"
+      method: "GET"
 
     ui:
       static_use_hash: true
@@ -34,38 +58,52 @@ data:
       results_on_new_tab: false
 
     outgoing:
-      request_timeout: 3.0
-      max_request_timeout: 10.0
+      request_timeout: 6.0
+      max_request_timeout: 15.0
       useragent_suffix: ""
       pool_connections: 100
-      pool_maxsize: 20
+      pool_maxsize: 50
+      enable_http2: true
 
     engines:
       - name: google
-        engine: google
-        shortcut: g
+        disabled: false
+        inactive: false
+      - name: google cse
         disabled: false
       - name: bing
-        engine: bing
-        shortcut: b
         disabled: false
       - name: duckduckgo
-        engine: duckduckgo
-        shortcut: ddg
+        disabled: false
+      - name: startpage
+        disabled: false
+      - name: mojeek
         disabled: false
       - name: wikipedia
-        engine: wikipedia
-        shortcut: w
-        disabled: false
-      - name: wikidata
-        engine: wikidata
-        shortcut: wd
         disabled: false
       - name: arxiv
-        engine: arxiv
-        shortcut: arx
         disabled: false
       - name: github
-        engine: github
-        shortcut: gh
+        disabled: false
+      - name: github code
+        disabled: false
+        inactive: false
+      - name: stackoverflow
+        disabled: false
+      - name: reddit
+        disabled: false
+      - name: hackernews
+        disabled: false
+      - name: semantic scholar
+        disabled: false
+        inactive: false
+      - name: mdn
+        disabled: false
+      - name: arch linux wiki
+        disabled: false
+      - name: docker hub
+        disabled: false
+      - name: lib.rs
+        disabled: false
+      - name: pkg.go.dev
         disabled: false

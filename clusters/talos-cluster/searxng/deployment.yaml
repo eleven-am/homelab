@@ -26,6 +26,11 @@ spec:
               value: "https://searxng.horus.maix.ovh/"
             - name: SEARXNG_PORT
               value: "8080"
+            - name: SEARXNG_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: searxng-secret
+                  key: SEARXNG_SECRET
           resources:
             requests:
               memory: "256Mi"
