@@ -18,7 +18,7 @@ spec:
       serviceAccountName: coturn
       initContainers:
         - name: discover-ip
-          image: alpine:latest
+          image: alpine:3.24.1@sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec434943f8b
           command:
             - sh
             - -c
@@ -55,7 +55,7 @@ spec:
               mountPath: /config
       containers:
         - name: coturn
-          image: coturn/coturn:latest@sha256:0c0e8fc0c263b85a134e9e4242b5e46e1f4c077c5029633511191c05b5c2c814
+          image: coturn/coturn:4.15.0@sha256:0feee4fc1f45c7c053c8fee3e1ab941b1a1b9a0429bc01e18126735410770bfd
           args:
             - -c
             - /config/turnserver.conf

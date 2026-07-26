@@ -22,7 +22,7 @@ spec:
       restartPolicy: Always
       containers:
         - name: jdownloader
-          image: jlesage/jdownloader-2
+          image: jlesage/jdownloader-2:v26.07.2@sha256:47ee6c64917ca5326516ebe868714709c6bdd2e08ca0e33f6e80a943ef2019d2
           imagePullPolicy: Always
           ports:
             - containerPort: 5800

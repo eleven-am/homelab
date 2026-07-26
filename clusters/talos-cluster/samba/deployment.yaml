@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: samba
-          image: crazymax/samba:latest@sha256:40591f9a30df6b0106948d81d89204c632894387639914ec2808b536e307074b
+          image: crazymax/samba:4.23.8@sha256:b37f7af97c773eddb593537f64da6389e5ee6695bcecf44f3ba1a8a6bcf34125
           resources:
             requests:
               memory: "64Mi"
@@ -86,7 +86,7 @@ spec:
               subPath: config.yml
       initContainers:
         - name: init-config
-          image: busybox:latest
+          image: busybox:1.38.0@sha256:fd8d9aa63ba2f0982b5304e1ee8d3b90a210bc1ffb5314d980eb6962f1a9715d
           command: ['sh', '-c', 'cp /config-source/config.yml /data/ && chmod 644 /data/config.yml']
           volumeMounts:
             - mountPath: /config-source
@@ -95,7 +95,7 @@ spec:
               name: samba-data-volume
               subPath: royossai
         - name: fix-permissions
-          image: busybox:latest
+          image: busybox:1.38.0@sha256:fd8d9aa63ba2f0982b5304e1ee8d3b90a210bc1ffb5314d980eb6962f1a9715d
           command: [ 'sh', '-c', 'chown -R 1005:1005 /samba/media' ]
           securityContext:
             runAsUser: 0
@@ -103,7 +103,7 @@ spec:
             - mountPath: /samba/media
               name: samba-media-dir
         - name: create-royossai-user
-          image: busybox:latest
+          image: busybox:1.38.0@sha256:fd8d9aa63ba2f0982b5304e1ee8d3b90a210bc1ffb5314d980eb6962f1a9715d
           command: [ 'sh', '-c', 'adduser -u 1005 -D $SAMBA_USER && passwd -u $SAMBA_USER && echo "$SAMBA_USER:$SAMBA_PASSWORD" | chpasswd' ]
           securityContext:
             runAsUser: 0

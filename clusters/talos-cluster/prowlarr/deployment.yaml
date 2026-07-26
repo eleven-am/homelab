@@ -23,7 +23,7 @@ spec:
       restartPolicy: Always
       containers:
         - name: gluetun
-          image: qmcgaw/gluetun:latest@sha256:b0ee2135e6ba52ad3f102aae9663707cd1c9531485117067a380d3b2b6dd991d
+          image: qmcgaw/gluetun:v3.41.1@sha256:1a5bf4b4820a879cdf8d93d7ef0d2d963af56670c9ebff8981860b6804ebc8ab
           imagePullPolicy: Always
           securityContext:
             capabilities:
@@ -61,7 +61,7 @@ spec:
             - name: gluetun-config
               mountPath: /gluetun
         - name: prowlarr
-          image: lscr.io/linuxserver/prowlarr:latest@sha256:4fd7a166c8f46dd3370a871c250ee577d6c2ae97a0dbe0e3614b5ef736205620
+          image: lscr.io/linuxserver/prowlarr:2.5.2@sha256:2f3d31307beba3ba2dd226d191f5f5c14ee3b4d8b49277c64683f5ed97083179
           imagePullPolicy: Always
           ports:
             - containerPort: 9696
@@ -87,7 +87,7 @@ spec:
             - name: prowlarr-media
               mountPath: /media
         - name: flaresolverr
-          image: ghcr.io/flaresolverr/flaresolverr:latest@sha256:139dfee1c6f89249c8d665d1333a42e8ec74ec0a86bc6bb1c8461e10d3a66a47
+          image: ghcr.io/flaresolverr/flaresolverr:v3.5.0@sha256:139dfee1c6f89249c8d665d1333a42e8ec74ec0a86bc6bb1c8461e10d3a66a47
           resources:
             requests:
               memory: "512Mi"
