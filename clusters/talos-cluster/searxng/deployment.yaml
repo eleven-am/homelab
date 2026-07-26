@@ -15,7 +15,7 @@ spec:
       labels:
         app: searxng
       annotations:
-        searxng.maix.ovh/config-revision: "search-defaults-20260726"
+        searxng.maix.ovh/config-revision: "candidate-engines-20260726"
     spec:
       containers:
         - name: searxng

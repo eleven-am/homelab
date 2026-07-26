@@ -13,6 +13,13 @@ data:
           - startpage
           - duckduckgo via flaresolverr
           - ecosia via flaresolverr
+          - yandex
+          - qwant
+          - brave
+          - presearch
+          - swisscows
+          - marginalia
+          - mwmbl
           - wikipedia
           - github
           - github code
@@ -97,6 +104,30 @@ data:
         content_query: content
         timeout: 60
         disabled: false
+      - name: yandex
+        disabled: false
+        categories: [candidate]
+      - name: qwant
+        disabled: false
+        categories: [candidate]
+      - name: brave
+        disabled: false
+        inactive: false
+        categories: [candidate]
+      - name: presearch
+        disabled: false
+        categories: [candidate]
+      - name: swisscows
+        disabled: false
+        inactive: false
+        categories: [candidate]
+      - name: marginalia
+        disabled: false
+        inactive: false
+        categories: [candidate]
+      - name: mwmbl
+        disabled: false
+        categories: [candidate]
       - name: wikipedia
         disabled: false
       - name: arxiv
