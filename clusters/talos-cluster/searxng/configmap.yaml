@@ -8,13 +8,11 @@ data:
     use_default_settings:
       engines:
         keep_only:
-          - google
           - google cse
           - bing
           - startpage
           - duckduckgo via flaresolverr
           - ecosia via flaresolverr
-          - mojeek
           - wikipedia
           - github
           - github code
@@ -67,9 +65,6 @@ data:
       enable_http2: true
 
     engines:
-      - name: google
-        disabled: false
-        inactive: false
       - name: google cse
         disabled: false
       - name: bing
@@ -92,7 +87,7 @@ data:
       - name: ecosia via flaresolverr
         engine: json_engine
         shortcut: eco
-        categories: [general, web]
+        categories: [ecosia]
         paging: false
         search_url: http://searxng-flaresolverr-adapter.searxng.svc.cluster.local:8081/ecosia?q={query}
         enable_http: true
@@ -101,8 +96,6 @@ data:
         title_query: title
         content_query: content
         timeout: 60
-        disabled: false
-      - name: mojeek
         disabled: false
       - name: wikipedia
         disabled: false
