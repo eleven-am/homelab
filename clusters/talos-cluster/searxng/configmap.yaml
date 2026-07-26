@@ -11,7 +11,6 @@ data:
           - google
           - google cse
           - bing
-          - duckduckgo
           - startpage
           - mojeek
           - wikipedia
@@ -37,7 +36,7 @@ data:
 
     search:
       safe_search: 0
-      autocomplete: "duckduckgo"
+      autocomplete: ""
       default_lang: "en"
       ban_time_on_fail: 30
       max_ban_time_on_fail: 600
@@ -72,8 +71,6 @@ data:
       - name: google cse
         disabled: false
       - name: bing
-        disabled: false
-      - name: duckduckgo
         disabled: false
       - name: startpage
         disabled: false
