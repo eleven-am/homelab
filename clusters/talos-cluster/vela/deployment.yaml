@@ -74,7 +74,7 @@ spec:
             - name: LD_LIBRARY_PATH
               value: /usr/local/nvidia/lib:/usr/local/nvidia/lib64:/usr/local/glibc/usr/lib
             - name: LITELLM_BASE_URL
-              value: https://litellm.horus.maix.ovh/v1
+              value: http://litellm-service.litellm.svc.cluster.local:4000/v1
             - name: LITELLM_API_KEY
               valueFrom:
                 secretKeyRef:
