@@ -4,6 +4,9 @@ resources:
   - namespace.yaml
   - secret.yaml
   - configmap.yaml
+  - flaresolverr-adapter-configmap.yaml
+  - flaresolverr-adapter-deployment.yaml
+  - flaresolverr-adapter-service.yaml
   - deployment.yaml
   - service.yaml
   - httpRoute.yaml

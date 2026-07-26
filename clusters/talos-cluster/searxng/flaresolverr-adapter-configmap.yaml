@@ -1,0 +1,140 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: searxng-flaresolverr-adapter
+  namespace: searxng
+data:
+  adapter.py: |
+    import html
+    import json
+    import os
+    import re
+    import urllib.parse
+    import urllib.request
+    from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+    FLARESOLVERR_URL = os.environ.get(
+        "FLARESOLVERR_URL",
+        "http://prowlarr-service.prowlarr.svc.cluster.local:8191/v1",
+    )
+    MAX_TIMEOUT = int(os.environ.get("FLARESOLVERR_TIMEOUT_MS", "45000"))
+
+    TAG_RE = re.compile(r"<[^>]+>")
+
+    def text(value):
+        value = TAG_RE.sub(" ", value or "")
+        return " ".join(html.unescape(value).split())
+
+    def ddg_url(value):
+        value = html.unescape(value or "")
+        if value.startswith("//"):
+            value = "https:" + value
+        parsed = urllib.parse.urlparse(value)
+        params = urllib.parse.parse_qs(parsed.query)
+        if "uddg" in params:
+            return params["uddg"][0]
+        return value
+
+    def flaresolverr(url):
+        payload = json.dumps({
+            "cmd": "request.get",
+            "url": url,
+            "maxTimeout": MAX_TIMEOUT,
+        }).encode()
+        request = urllib.request.Request(
+            FLARESOLVERR_URL,
+            data=payload,
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        with urllib.request.urlopen(request, timeout=(MAX_TIMEOUT / 1000) + 10) as response:
+            data = json.loads(response.read().decode())
+        if data.get("status") != "ok":
+            raise RuntimeError(data.get("message", "FlareSolverr request failed"))
+        solution = data.get("solution") or {}
+        if int(solution.get("status") or 0) >= 400:
+            raise RuntimeError(f"upstream returned HTTP {solution.get('status')}")
+        return solution.get("response") or ""
+
+    def parse_duckduckgo(page):
+        results = []
+        blocks = re.findall(
+            r'<div class="result results_links.*?</div>\s*</div>\s*</div>',
+            page,
+            flags=re.S,
+        )
+        for block in blocks:
+            link = re.search(r'class="result__a" href="([^"]+)">(.*?)</a>', block, flags=re.S)
+            if not link:
+                continue
+            snippet = re.search(r'class="result__snippet"[^>]*>(.*?)</a>', block, flags=re.S)
+            url = ddg_url(link.group(1))
+            if not url.startswith(("http://", "https://")):
+                continue
+            results.append({
+                "url": url,
+                "title": text(link.group(2)),
+                "content": text(snippet.group(1) if snippet else ""),
+            })
+        return results
+
+    def parse_ecosia(page):
+        results = []
+        blocks = re.findall(
+            r'<article[^>]+data-test-id="organic-result".*?</article>',
+            page,
+            flags=re.S,
+        )
+        for block in blocks:
+            link = re.search(r'data-test-id="result-link" href="([^"]+)".*?</a>', block, flags=re.S)
+            title = re.search(r'data-test-id="result-title"[^>]*>(.*?)</h2>', block, flags=re.S)
+            desc = re.search(r'data-test-id="web-result-description"[^>]*>(.*?)</p>', block, flags=re.S)
+            if not link or not title:
+                continue
+            url = html.unescape(link.group(1))
+            if not url.startswith(("http://", "https://")):
+                continue
+            results.append({
+                "url": url,
+                "title": text(title.group(1)),
+                "content": text(desc.group(1) if desc else ""),
+            })
+        return results
+
+    class Handler(BaseHTTPRequestHandler):
+        def do_GET(self):
+            parsed = urllib.parse.urlparse(self.path)
+            params = urllib.parse.parse_qs(parsed.query)
+            query = (params.get("q") or [""])[0].strip()
+            if parsed.path == "/healthz":
+                self.respond({"ok": True})
+                return
+            if not query:
+                self.respond({"results": []})
+                return
+            try:
+                if parsed.path == "/duckduckgo":
+                    url = "https://html.duckduckgo.com/html/?" + urllib.parse.urlencode({"q": query})
+                    results = parse_duckduckgo(flaresolverr(url))
+                elif parsed.path == "/ecosia":
+                    url = "https://www.ecosia.org/search?" + urllib.parse.urlencode({"q": query})
+                    results = parse_ecosia(flaresolverr(url))
+                else:
+                    self.send_error(404)
+                    return
+                self.respond({"results": results})
+            except Exception as exc:
+                self.respond({"results": [], "error": str(exc)}, status=502)
+
+        def log_message(self, fmt, *args):
+            print("%s - %s" % (self.address_string(), fmt % args), flush=True)
+
+        def respond(self, data, status=200):
+            body = json.dumps(data).encode()
+            self.send_response(status)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+
+    ThreadingHTTPServer(("0.0.0.0", 8081), Handler).serve_forever()

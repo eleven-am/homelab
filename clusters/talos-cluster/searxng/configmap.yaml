@@ -12,6 +12,8 @@ data:
           - google cse
           - bing
           - startpage
+          - duckduckgo via flaresolverr
+          - ecosia via flaresolverr
           - mojeek
           - wikipedia
           - github
@@ -73,6 +75,30 @@ data:
       - name: bing
         disabled: false
       - name: startpage
+        disabled: false
+      - name: duckduckgo via flaresolverr
+        engine: json_engine
+        shortcut: ddg
+        categories: [general, web]
+        paging: false
+        search_url: http://searxng-flaresolverr-adapter.searxng.svc.cluster.local:8081/duckduckgo?q={query}
+        results_query: results
+        url_query: url
+        title_query: title
+        content_query: content
+        timeout: 60
+        disabled: false
+      - name: ecosia via flaresolverr
+        engine: json_engine
+        shortcut: eco
+        categories: [general, web]
+        paging: false
+        search_url: http://searxng-flaresolverr-adapter.searxng.svc.cluster.local:8081/ecosia?q={query}
+        results_query: results
+        url_query: url
+        title_query: title
+        content_query: content
+        timeout: 60
         disabled: false
       - name: mojeek
         disabled: false
