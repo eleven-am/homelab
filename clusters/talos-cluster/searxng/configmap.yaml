@@ -14,11 +14,7 @@ data:
           - duckduckgo via flaresolverr
           - ecosia via flaresolverr
           - yandex
-          - qwant
-          - brave
-          - presearch
           - swisscows
-          - marginalia
           - mwmbl
           - wikipedia
           - github
@@ -107,21 +103,7 @@ data:
       - name: yandex
         disabled: false
         categories: [candidate]
-      - name: qwant
-        disabled: false
-        categories: [candidate]
-      - name: brave
-        disabled: false
-        inactive: false
-        categories: [candidate]
-      - name: presearch
-        disabled: false
-        categories: [candidate]
       - name: swisscows
-        disabled: false
-        inactive: false
-        categories: [candidate]
-      - name: marginalia
         disabled: false
         inactive: false
         categories: [candidate]
