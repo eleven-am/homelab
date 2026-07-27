@@ -97,7 +97,7 @@ spec:
             - name: CALL_LLM_MODEL
               value: osiris/foundation-120
             - name: METADATA_MODEL
-              value: osiris/uncensored-70
+              value: osiris/foundation-120
             - name: VOX_HTTP_BASE
               value: http://vox-service.vox.svc.cluster.local:11435
             - name: VOX_API_KEY
