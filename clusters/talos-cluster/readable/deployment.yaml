@@ -43,9 +43,9 @@ spec:
             - name: LITELLM_URL
               value: "http://litellm-service.litellm.svc.cluster.local:4000"
             - name: READABLE_CONTENT_MODEL
-              value: "osiris/uncensored-70"
+              value: "osiris/foundation-120"
             - name: READABLE_PREAMBLE_MODEL
-              value: "osiris/uncensored-70"
+              value: "osiris/foundation-120"
             - name: READABLE_CHAT_MODEL
               value: "osiris/foundation-120"
             - name: ROLEPLAY_EMBEDDING_MODEL
