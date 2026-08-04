@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: usesend
+  namespace: usesend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: usesend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: usesend
+    spec:
+      initContainers:
+        - name: db-init
+          image: postgres:16-alpine
+          command:
+            - sh
+            - -c
+            - |
+              until pg_isready -h postgres-service.postgres.svc.cluster.local -U $PG_ADMIN_USER; do
+                echo "Waiting for postgres..."
+                sleep 2
+              done
+              PGPASSWORD=$PG_ADMIN_PASSWORD psql -h postgres-service.postgres.svc.cluster.local -U $PG_ADMIN_USER -tc "SELECT 1 FROM pg_database WHERE datname = 'usesend'" | grep -q 1 || \
+              PGPASSWORD=$PG_ADMIN_PASSWORD psql -h postgres-service.postgres.svc.cluster.local -U $PG_ADMIN_USER -c "CREATE DATABASE usesend"
+
+              PGPASSWORD=$PG_ADMIN_PASSWORD psql -h postgres-service.postgres.svc.cluster.local -U $PG_ADMIN_USER -tc "SELECT 1 FROM pg_roles WHERE rolname = '$USESEND_DB_USER'" | grep -q 1 || \
+              PGPASSWORD=$PG_ADMIN_PASSWORD psql -h postgres-service.postgres.svc.cluster.local -U $PG_ADMIN_USER -c "CREATE USER $USESEND_DB_USER WITH PASSWORD '$USESEND_DB_PASSWORD'"
+
+              PGPASSWORD=$PG_ADMIN_PASSWORD psql -h postgres-service.postgres.svc.cluster.local -U $PG_ADMIN_USER -c "GRANT ALL PRIVILEGES ON DATABASE usesend TO $USESEND_DB_USER"
+              PGPASSWORD=$PG_ADMIN_PASSWORD psql -h postgres-service.postgres.svc.cluster.local -U $PG_ADMIN_USER -d usesend -c "GRANT ALL ON SCHEMA public TO $USESEND_DB_USER"
+          env:
+            - name: PG_ADMIN_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_USER
+            - name: PG_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+            - name: USESEND_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: usesend-secret
+                  key: USESEND_DB_USER
+            - name: USESEND_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: usesend-secret
+                  key: USESEND_DB_PASSWORD
+      containers:
+        - name: usesend
+          image: usesend/usesend:v1.9.6@sha256:99eaddbf1abd0461b29a3af341b98330abe2bf7cb781b09610c04c056d25178f
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 3000
+          envFrom:
+            - secretRef:
+                name: usesend-secret
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 40
+            periodSeconds: 20
