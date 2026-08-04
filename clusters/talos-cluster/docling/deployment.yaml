@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: docling
+  namespace: docling
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: docling
+  template:
+    metadata:
+      labels:
+        app: docling
+    spec:
+      containers:
+        - name: docling
+          image: ghcr.io/docling-project/docling-serve-cpu:v1.1.0@sha256:739f4e08e3164e242ec64f76f22a1864b82c5648c775ce6fa77fb25e66f1150e
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "500m"
+            limits:
+              memory: "6Gi"
+              cpu: "6"
+          ports:
+            - name: http
+              containerPort: 5001
+          env:
+            - name: DOCLING_SERVE_ENABLE_UI
+              value: "true"
+            - name: UVICORN_WORKERS
+              value: "1"
+          startupProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 10
+            failureThreshold: 60
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 10
