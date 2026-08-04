@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: vor
-          image: zot.maix.ovh/vor:v0.0.2@sha256:dbb3a08cfe2b58f9c90d9a7ffbee1bc6654f5aa2410b960c5ba805544c28f314
+          image: zot.maix.ovh/vor:v0.0.3@sha256:679358cfd9c11f6b16a158785700c8c4f1ddd689bed2b2cd284a8f0b94f6b260
           imagePullPolicy: Always
           resources:
             requests:
@@ -34,6 +34,10 @@ spec:
               value: "http://searxng.searxng.svc.cluster.local:8080"
             - name: LITELLM_URL
               value: "http://litellm-service.litellm.svc.cluster.local:4000"
+            - name: MIMIR_URL
+              value: "http://mimir-service.mimir.svc.cluster.local:3000"
+            - name: MIMIR_TIMEOUT
+              value: "60s"
             - name: GATEWAY_API_KEY
               valueFrom:
                 secretKeyRef:
@@ -44,6 +48,11 @@ spec:
                 secretKeyRef:
                   name: vor-secrets
                   key: LITELLM_KEY
+            - name: MIMIR_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: vor-secrets
+                  key: MIMIR_API_KEY
           livenessProbe:
             httpGet:
               path: /healthz
