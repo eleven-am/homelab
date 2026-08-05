@@ -10,7 +10,10 @@ spec:
   hostnames:
     - "vela.horus.maix.ovh"
   rules:
-    - matches:
+    - timeouts:
+        request: "120s"
+        backendRequest: "120s"
+      matches:
         - path:
             type: PathPrefix
             value: /
