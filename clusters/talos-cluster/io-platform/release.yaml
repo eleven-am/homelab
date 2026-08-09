@@ -187,8 +187,9 @@ spec:
         embeddingModel: "osiris/embedding-1024"
         timeoutMs: 120000
         embeddingTimeoutMs: 120000
+        rerank:
+          model: "osiris/reranker-568"
       env:
-        ADA_OSS_LLM_RERANK_MODEL: osiris/reranker-568
         ADA_OSS_NEO4J_USER: neo4j
         ADA_OSS_NEO4J_DATABASE: neo4j
 
