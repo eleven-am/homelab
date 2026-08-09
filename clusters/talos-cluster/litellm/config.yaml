@@ -213,13 +213,6 @@ model_list:
       timeout: 20
       max_retries: 0
 
-  - model_name: osiris/embedding-1024
-    litellm_params:
-      model: ollama/bge-m3
-      api_base: http://100.64.0.19:11434
-      timeout: 20
-      max_retries: 0
-
   - model_name: osiris/reasoning-4
     litellm_params:
       model: ollama_chat/phi4-mini-reasoning
