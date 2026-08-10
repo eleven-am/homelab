@@ -5,6 +5,4 @@ resources:
   - secret.yaml
   - tun-device-plugin.yaml
   - ankou
-  - brigantia
-  - meili
   - horus.yaml

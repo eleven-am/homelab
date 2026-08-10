@@ -4,4 +4,3 @@ resources:
   - namespace.yaml
   - dashboard
   - vote-wise
-  - mneme
