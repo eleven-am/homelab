@@ -11,3 +11,6 @@ values.*
 clusters/talos-cluster/secrets
 keys.txt
 .DS_Store
+
+# stray data export containing an HF token — never commit
+fl.json
