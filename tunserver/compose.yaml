@@ -1,0 +1,87 @@
+version: '3.9'
+services:
+  # NPM - Proxy Manager
+  npm:
+    container_name: npm
+    image: jc21/nginx-proxy-manager:2.15.1@sha256:52b2c59994f3d36acfcf70a1626f29734df0ed8c71bacc0269f78b6f939858bb
+    ports:
+      - "80:80"
+      - "81:81"
+      - "443:443"
+    volumes:
+      - ./data/npm/data:/data
+      - ./data/npm/letsencrypt:/etc/letsencrypt
+    restart: always
+    networks:
+      - backend
+
+  # Pi-hole - DNS Server
+  pi-hole:
+    container_name: pihole
+    image: pihole/pihole:2026.06.0@sha256:8ea95136e7c8c15b42d88eadf1a3875421aa1be30ad39e50f661188cc986fb27
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "7070:80"
+    dns:
+      - 127.0.0.1
+      - 1.1.1.1
+      - 8.8.8.8
+    environment:
+      - TZ=Europe/Paris
+      - WEBPASSWORD=${PIHOLE_PASSWORD}
+    volumes:
+      - ./data/pihole/pihole:/etc/pihole/
+      - ./data/pihole/dnsmasq.d:/etc/dnsmasq.d/
+    restart: unless-stopped
+    networks:
+      - backend
+
+  # Headscale - Self-hosted Tailscale server
+  headscale:
+    container_name: headscale
+    image: headscale/headscale:0.29.1@sha256:8453e47ea6bf69cd2c550d230ad23f4cf9d0e7daa31c652da3cbb88dca059c62
+    restart: unless-stopped
+    ports:
+      - "3478:3478/udp"
+    volumes:
+      - ./data/headscale/config:/etc/headscale
+      - ./data/headscale/data:/var/lib/headscale
+    environment:
+      - TZ=Europe/Paris
+    command: serve
+    networks:
+      - backend
+    labels:
+      - "headplane.managed=true"
+
+  # Headplane - Modern UI for Headscale management (alternative to headscale-admin)
+  headplane:
+    image: ghcr.io/tale/headplane:0.7.0-beta.4@sha256:3e93fe1501d78c8fa88f7938353c34e2ac041ff5e452ea1ead350cc073cb0e7b
+    container_name: headplane
+    restart: unless-stopped
+    volumes:
+      - ./data/headplane/config.yaml:/etc/headplane/config.yaml
+      - ./data/headscale/config:/etc/headscale
+      - ./data/headplane/data:/var/lib/headplane
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - headscale
+    networks:
+      - backend
+
+  # Unbound recursive resolver (DNSSEC + privacy) for Pi-hole
+  unbound:
+    container_name: unbound
+    image: mvance/unbound@sha256:76906da36d1806f3387338f15dcf8b357c51ce6897fb6450d6ce010460927e90
+    restart: unless-stopped
+    networks:
+      backend:
+        ipv4_address: 172.20.0.53
+
+networks:
+  backend:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
