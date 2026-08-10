@@ -6,7 +6,7 @@ server:
   port: 3000
   
   # Secret for encoding/decoding web sessions (exactly 32 characters)
-  cookie_secret: "K7mX9pQ2vL8nR5wE3jF6uY1tA4hS0zC9"
+  cookie_secret: "${HEADPLANE_COOKIE_SECRET}"  # real value in host .env; rotate — was committed
   
   # Set to false since NPM handles HTTPS externally
   cookie_secure: false

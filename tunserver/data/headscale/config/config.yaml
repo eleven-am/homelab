@@ -98,42 +98,32 @@ policy:
 dns:
   magic_dns: true
   base_domain: tailnet.maix.ovh
-  override_local_dns: false # Changed to false - let clients use their local DNS
+  override_local_dns: true # Changed to false - let clients use their local DNS
 
   nameservers:
     global:
       - 100.64.0.1
-      - 1.1.1.1
-      - 1.0.0.1
 
   search_domains: []
   extra_records:
     - name: fileserver.tailnet.maix.ovh
       type: A
       value: 192.168.101.100
-    - name: samba.tailnet.maix.ovh
+    - name: plexmediaserver.tailnet.maix.ovh
       type: A
-      value: " 172.198.1.5"
+      value: 192.168.1.32
 
 # Unix socket configuration
 unix_socket: /var/run/headscale/headscale.sock
 unix_socket_permission: "0770"
 
 # OpenID Connect configuration (0.26.0 format)
-oidc:
-  only_start_if_oidc_is_available: true
-  issuer: "https://accounts.google.com"
-  client_id: ""
-  client_secret: ""
-  expiry: 0
-  use_expiry_from_token: false
-  scope: [ "openid", "profile", "email" ]
-  extra_params:
-    domain_hint: maix.ovh
+# oidc: OAuth/OIDC configured on host — intentionally NOT committed (see host config)
 
 # Logtail configuration
 logtail:
   enabled: false
 
-# Randomize client port
-randomize_client_port: false
+# node.expiry moved from oidc.expiry in headscale 0.29 (0 = never expire)
+node:
+  expiry: 0
