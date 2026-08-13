@@ -103,7 +103,7 @@ model_list:
 
   - model_name: osiris/agentic-max
     litellm_params:
-      model: openai/deepseek-ai/DeepSeek-V4-Flash
+      model: openai/MiniMaxAI/MiniMax-M3
       api_base: https://api.featherless.ai/v1
       api_key: os.environ/FEATHERLESS_API_KEY
       reasoning_effort: low
