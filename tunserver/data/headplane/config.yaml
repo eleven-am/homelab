@@ -1,40 +1,48 @@
-# Headplane Configuration for Docker integration with Headscale 0.26.0
+# Headplane configuration (Docker integration with Headscale).
+# SECRETS ARE NOT COMMITTED — cookie_secret, headscale api_key, and the OIDC
+# client id/secret live only in the host copy at /root/data/headplane/config.yaml.
+# The placeholders below mark where the real values go on the host.
 
-# Server configuration
 server:
   host: "0.0.0.0"
   port: 3000
-  
-  # Secret for encoding/decoding web sessions (exactly 32 characters)
-  cookie_secret: "${HEADPLANE_COOKIE_SECRET}"  # real value in host .env; rotate — was committed
-  
-  # Set to false since NPM handles HTTPS externally
+
+  # Public URL of Headplane (browser-visible). OIDC callback is derived from this
+  # as <base_url>/oidc/callback.
+  base_url: "https://headscale.maix.ovh/admin"
+
+  # Exactly 32 chars. Real value on host only.
+  cookie_secret: "${HEADPLANE_COOKIE_SECRET}"
+
+  # NPM terminates TLS externally, so cookies aren't marked Secure here.
   cookie_secure: false
 
-# Headscale configuration
 headscale:
-  # URL to Headscale HTTP API (internal Docker network)
   url: "http://headscale:8080"
-  
-  # Path to Headscale config file
   config_path: "/etc/headscale/config.yaml"
-  
-  # Enable strict validation of Headscale config
   config_strict: true
 
-# Docker integration settings
+  # 1-year Headscale API key used by Headplane for server-side ops + OIDC session
+  # management. Real value on host only.
+  api_key: "${HEADPLANE_HEADSCALE_API_KEY}"
+
 integration:
   docker:
-    # Enable Docker integration
     enabled: true
-    
-    # Container name to manage
     container_name: "headscale"
-    
-    # Docker socket path
     socket: "unix:///var/run/docker.sock"
 
-# Database configuration for Headplane
 database:
   type: "sqlite"
   path: "/var/lib/headplane/headplane.db"
+
+# Google OIDC login — reuses the SAME Google OAuth client as headscale.
+# Redirect URI registered in Google Console:
+#   https://headscale.maix.ovh/admin/oidc/callback
+# client_id/secret are NOT committed (real values on host).
+oidc:
+  issuer: "https://accounts.google.com"
+  client_id: "${HEADPLANE_OIDC_CLIENT_ID}"
+  client_secret: "${HEADPLANE_OIDC_CLIENT_SECRET}"
+  # Keep the Headscale-API-key login form available as a fallback.
+  disable_api_key_login: false
