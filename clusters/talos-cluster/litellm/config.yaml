@@ -44,42 +44,6 @@ model_list:
       model: openai/gpt-5.3-codex
       api_key: os.environ/OPENAI_API_KEY
 
-  - model_name: osiris/agentic-5.5
-    model_info:
-      mode: responses
-    litellm_params:
-      model: chatgpt/gpt-5.5
-
-  - model_name: osiris/agentic-5.4
-    model_info:
-      mode: responses
-    litellm_params:
-      model: chatgpt/gpt-5.4
-
-  - model_name: osiris/foundation-5.2
-    litellm_params:
-      model: openai/zai-org/GLM-5.2
-      api_base: https://api.featherless.ai/v1
-      api_key: os.environ/FEATHERLESS_API_KEY
-
-  - model_name: osiris/agentic-2.6
-    litellm_params:
-      model: openai/moonshotai/Kimi-K2.6
-      api_base: https://api.featherless.ai/v1
-      api_key: os.environ/FEATHERLESS_API_KEY
-
-  - model_name: osiris/reasoning-48
-    litellm_params:
-      model: openai/deepseek-ai/DeepSeek-V4-Pro
-      api_base: https://api.featherless.ai/v1
-      api_key: os.environ/FEATHERLESS_API_KEY
-
-  - model_name: osiris/smol-4
-    litellm_params:
-      model: openai/google/gemma-4-E4B-it
-      api_base: https://api.featherless.ai/v1
-      api_key: os.environ/FEATHERLESS_API_KEY
-
   - model_name: gemini-3.5-flash
     litellm_params:
       model: gemini/gemini-3.5-flash
@@ -115,49 +79,7 @@ model_list:
       model: gemini/gemini-3.1-flash-lite
       api_key: os.environ/GEMINI_API_KEY
 
-  - model_name: osiris/agentic-2.5
-    litellm_params:
-      model: openai/MiniMaxAI/MiniMax-M2.5
-      api_base: https://api.featherless.ai/v1
-      api_key: os.environ/FEATHERLESS_API_KEY
-
-  - model_name: osiris/agentic-2.7
-    litellm_params:
-      model: anthropic/MiniMax-M2.7
-      api_base: https://api.minimax.io/anthropic
-      api_key: os.environ/MINIMAX_API_KEY
-      timeout: 900
-      stream_timeout: 900
-      max_retries: 0
-      max_parallel_requests: 4
-      rpm: 900
-      tpm: 1000000
-
-  - model_name: osiris/agentic-2.7
-    litellm_params:
-      model: openai/MiniMaxAI/MiniMax-M2.7
-      api_base: https://api.featherless.ai/v1
-      api_key: os.environ/FEATHERLESS_API_KEY
-
-  - model_name: osiris/foundation-3
-    litellm_params:
-      model: anthropic/MiniMax-M3
-      api_base: https://api.minimax.io/anthropic
-      api_key: os.environ/MINIMAX_API_KEY
-      timeout: 900
-      stream_timeout: 900
-      max_retries: 0
-      max_parallel_requests: 4
-      rpm: 900
-      tpm: 1000000
-
-  - model_name: osiris/foundation-3
-    litellm_params:
-      model: openai/MiniMaxAI/MiniMax-M3
-      api_base: https://api.featherless.ai/v1
-      api_key: os.environ/FEATHERLESS_API_KEY
-
-  - model_name: osiris/foundation-120
+  - model_name: osiris/foundation
     litellm_params:
       model: openai/gemma-4-26b-a4b
       api_base: http://100.64.0.19:8000/v1
@@ -167,46 +89,40 @@ model_list:
       max_retries: 0
       max_parallel_requests: 38
 
-  - model_name: osiris/foundation-4
+  - model_name: osiris/foundation-max
     litellm_params:
-      model: openai/gemma4:e4b
-      api_base: http://100.64.0.19:11434/v1
-      timeout: 900
-      stream_timeout: 900
-      max_retries: 0
-      max_parallel_requests: 1
-      rpm: 20
-      tpm: 60000
+      model: openai/gemma-4-31b
+      api_base: https://api.cerebras.ai/v1
+      api_key: os.environ/CEREBRAS_API_KEY
 
-  - model_name: osiris/uncensored-4
+  - model_name: osiris/agentic
     litellm_params:
-      model: openai/huihui_ai/gemma-4-abliterated:e4b
-      api_base: http://ollama-service.ollama.svc.cluster.local:11434/v1
-      timeout: 900
-      stream_timeout: 900
-      max_retries: 0
-      max_parallel_requests: 1
-      rpm: 20
-      tpm: 60000
-
-  - model_name: osiris/uncensored-35
-    litellm_params:
-      model: openai/uncensored-35
-      api_base: http://ollama-service.ollama.svc.cluster.local:11434/v1
-      timeout: 900
-      stream_timeout: 900
-      max_retries: 0
-      max_parallel_requests: 1
-      rpm: 20
-      tpm: 60000
-
-  - model_name: osiris/uncensored-70
-    litellm_params:
-      model: openai/InfinimindCreations/gemma-4-31B-it-uncensored
+      model: openai/mistralai/Mistral-Medium-3.5-128B
       api_base: https://api.featherless.ai/v1
       api_key: os.environ/FEATHERLESS_API_KEY
 
-  - model_name: osiris/embedding-1024
+  - model_name: osiris/agentic-max
+    litellm_params:
+      model: openai/deepseek-ai/DeepSeek-V4-Flash
+      api_base: https://api.featherless.ai/v1
+      api_key: os.environ/FEATHERLESS_API_KEY
+      reasoning_effort: low
+
+  - model_name: osiris/reasoning
+    litellm_params:
+      model: openai/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16
+      api_base: https://api.featherless.ai/v1
+      api_key: os.environ/FEATHERLESS_API_KEY
+      reasoning_effort: low
+
+  - model_name: osiris/reasoning-max
+    litellm_params:
+      model: openai/gpt-oss-120b
+      api_base: https://api.cerebras.ai/v1
+      api_key: os.environ/CEREBRAS_API_KEY
+      reasoning_effort: low
+
+  - model_name: osiris/embedding
     model_info:
       max_input_tokens: 4094
     litellm_params:
@@ -218,101 +134,12 @@ model_list:
       num_ctx: 4096
       num_batch: 4096
 
-  - model_name: osiris/reasoning-4
-    litellm_params:
-      model: ollama_chat/phi4-mini-reasoning
-      api_base: http://ollama-service.ollama.svc.cluster.local:11434
-      timeout: 900
-      stream_timeout: 900
-      max_retries: 0
-      max_parallel_requests: 1
-      rpm: 20
-      tpm: 60000
-
-  - model_name: osiris/reasoning-20
-    litellm_params:
-      model: ollama_chat/gpt-oss:20b
-      api_base: http://ollama-service.ollama.svc.cluster.local:11434
-      timeout: 900
-      stream_timeout: 900
-      max_retries: 0
-      max_parallel_requests: 1
-      rpm: 20
-      tpm: 60000
-
-  - model_name: osiris/reasoning-120
-    litellm_params:
-      model: openai/nemotron-3-super
-      api_base: http://100.64.0.19:8002/v1
-      api_key: os.environ/OSIRIS_GEMMA_API_KEY
-      timeout: 900
-      stream_timeout: 900
-      max_retries: 0
-      max_parallel_requests: 2
-      rpm: 10
-      tpm: 120000
-
-  - model_name: osiris/rosetta-12
-    litellm_params:
-      model: ollama_chat/translategemma:12b
-      api_base: http://ollama-service.ollama.svc.cluster.local:11434
-      timeout: 900
-      stream_timeout: 900
-      max_retries: 0
-      max_parallel_requests: 1
-      rpm: 20
-      tpm: 60000
-
-  - model_name: osiris/reasoning-9
-    litellm_params:
-      model: ollama_chat/qwen3.5:9b
-      api_base: http://ollama-service.ollama.svc.cluster.local:11434
-      timeout: 900
-      stream_timeout: 900
-      max_retries: 0
-      max_parallel_requests: 1
-      rpm: 20
-      tpm: 60000
-
-  - model_name: osiris/uncensored-8
-    litellm_params:
-      model: ollama_chat/dolphin-llama3:8b
-      api_base: http://ollama-service.ollama.svc.cluster.local:11434
-      timeout: 900
-      stream_timeout: 900
-      max_retries: 0
-      max_parallel_requests: 1
-      rpm: 20
-      tpm: 60000
-
-  - model_name: osiris/vision-7
-    litellm_params:
-      model: ollama_chat/qwen2.5vl:7b
-      api_base: http://ollama-service.ollama.svc.cluster.local:11434
-      timeout: 900
-      stream_timeout: 900
-      max_retries: 0
-      max_parallel_requests: 1
-      rpm: 20
-      tpm: 60000
-
-  - model_name: osiris/ocr-3
-    litellm_params:
-      model: ollama_chat/deepseek-ocr:latest
-      api_base: http://ollama-service.ollama.svc.cluster.local:11434
-      timeout: 900
-      stream_timeout: 900
-      max_retries: 0
-      max_parallel_requests: 1
-      rpm: 20
-      tpm: 60000
-
-  - model_name: osiris/reranker-568
+  - model_name: osiris/rerank
     litellm_params:
       model: hosted_vllm/BAAI/bge-reranker-v2-m3
       api_base: http://vllm-reranker.vllm-reranker.svc.cluster.local:8001
 
-  - model_name: osiris/reranker-568
+  - model_name: osiris/rerank
     litellm_params:
       model: hosted_vllm/BAAI/bge-reranker-v2-m3
       api_base: http://100.64.0.19:8001
@@ -335,22 +162,6 @@ model_list:
       model: openai/chatterbox-tts-turbo:0.1.7
       api_base: http://vox-service.vox.svc.cluster.local:11435/v1
       api_key: os.environ/VOX_API_KEY
-
-  - model_name: osiris/foundation-120t
-    litellm_params:
-      model: openai/gemma-4-31b
-      api_base: https://api.cerebras.ai/v1
-      api_key: os.environ/CEREBRAS_API_KEY
-  - model_name: osiris/foundation-4.7t
-    litellm_params:
-      model: openai/zai-glm-4.7
-      api_base: https://api.cerebras.ai/v1
-      api_key: os.environ/CEREBRAS_API_KEY
-  - model_name: osiris/reasoning-120t
-    litellm_params:
-      model: openai/gpt-oss-120b
-      api_base: https://api.cerebras.ai/v1
-      api_key: os.environ/CEREBRAS_API_KEY
 
   - model_name: "*"
     litellm_params:

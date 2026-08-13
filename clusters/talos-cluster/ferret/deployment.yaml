@@ -49,19 +49,19 @@ spec:
                   name: ferret-secrets
                   key: OPENAI_COMPATIBLE_API_KEY
             - name: FERRET_MODEL
-              value: "osiris/agentic-2.7"
+              value: "osiris/agentic-max"
             - name: FERRET_MODEL_WRITE
-              value: "osiris/foundation-120"
+              value: "osiris/foundation"
             - name: FERRET_SEARCH_URL
               value: "http://litellm-service.litellm.svc.cluster.local:4000/coding/search"
             - name: FERRET_SEARXNG_URL
               value: "http://searxng.searxng.svc.cluster.local:8080"
             - name: FERRET_EMBEDDING_MODEL
-              value: "osiris/embedding-1024"
+              value: "osiris/embedding"
             - name: FERRET_EMBEDDING_DIM
               value: "1024"
             - name: FERRET_RERANKER_MODEL
-              value: "osiris/reranker-568"
+              value: "osiris/rerank"
             - name: FERRET_STT_MODEL
               value: "osiris/speech-stt"
             - name: VOX_HTTP_BASE

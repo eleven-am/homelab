@@ -91,13 +91,13 @@ spec:
             - name: STT_MODEL
               value: osiris/speech-stt
             - name: EMBEDDING_MODEL
-              value: osiris/embedding-1024
+              value: osiris/embedding
             - name: LLM_MODEL
-              value: osiris/foundation-4
+              value: osiris/foundation
             - name: CALL_LLM_MODEL
-              value: osiris/foundation-120
+              value: osiris/foundation
             - name: METADATA_MODEL
-              value: osiris/foundation-120
+              value: osiris/foundation
             - name: VOX_HTTP_BASE
               value: http://vox-service.vox.svc.cluster.local:11435
             - name: VOX_API_KEY

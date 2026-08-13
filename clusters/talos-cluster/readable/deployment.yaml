@@ -43,13 +43,13 @@ spec:
             - name: LITELLM_URL
               value: "http://litellm-service.litellm.svc.cluster.local:4000"
             - name: READABLE_CONTENT_MODEL
-              value: "osiris/foundation-120"
+              value: "osiris/foundation"
             - name: READABLE_PREAMBLE_MODEL
-              value: "osiris/foundation-120"
+              value: "osiris/foundation"
             - name: READABLE_CHAT_MODEL
-              value: "osiris/foundation-120"
+              value: "osiris/foundation"
             - name: ROLEPLAY_EMBEDDING_MODEL
-              value: "osiris/embedding-1024"
+              value: "osiris/embedding"
             - name: ROLEPLAY_EMBEDDING_DIMENSION
               value: "1024"
             - name: ROLEPLAY_TTS_MODEL

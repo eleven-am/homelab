@@ -183,12 +183,12 @@ spec:
           - host: ada.horus.maix.ovh
       llm:
         baseUrl: &litellm_url "http://litellm-service.litellm.svc.cluster.local:4000/v1"
-        model: "osiris/foundation-120"
-        embeddingModel: "osiris/embedding-1024"
+        model: "osiris/foundation"
+        embeddingModel: "osiris/embedding"
         timeoutMs: 120000
         embeddingTimeoutMs: 120000
         rerank:
-          model: "osiris/reranker-568"
+          model: "osiris/rerank"
       env:
         ADA_OSS_NEO4J_USER: neo4j
         ADA_OSS_NEO4J_DATABASE: neo4j
