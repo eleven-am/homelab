@@ -18,7 +18,7 @@ spec:
       runtimeClassName: nvidia
       containers:
         - name: vela
-          image: zot.maix.ovh/vela:v0.0.43@sha256:7ea5e560b67647c78dec7e6a9141edc8e177f3a91560a60ef553ada935bc0b47
+          image: zot.maix.ovh/vela:v0.0.45@sha256:27f6e8b3bbdcc386980cd020a9a0c290653bdf937fcd6a82151cd3b8cfcb49ff
           resources:
             requests:
               memory: "1Gi"
@@ -93,10 +93,6 @@ spec:
             - name: EMBEDDING_MODEL
               value: osiris/embedding
             - name: LLM_MODEL
-              value: osiris/foundation
-            - name: CALL_LLM_MODEL
-              value: osiris/foundation
-            - name: METADATA_MODEL
               value: osiris/foundation
             - name: VOX_HTTP_BASE
               value: http://vox-service.vox.svc.cluster.local:11435
