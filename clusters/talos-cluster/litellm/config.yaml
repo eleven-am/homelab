@@ -137,7 +137,7 @@ model_list:
 
   - model_name: osiris/reasoning-lite
     litellm_params:
-      model: openai/gpt-oss-20b
+      model: openai/openai/gpt-oss-20b
       api_base: https://api.featherless.ai/v1
       api_key: os.environ/FEATHERLESS_API_KEY
       reasoning_effort: low
