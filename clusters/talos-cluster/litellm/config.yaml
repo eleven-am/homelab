@@ -95,6 +95,12 @@ model_list:
       api_base: https://api.cerebras.ai/v1
       api_key: os.environ/CEREBRAS_API_KEY
 
+  - model_name: osiris/foundation-lite
+    litellm_params:
+      model: openai/unsloth/gemma-4-12b-it
+      api_base: https://api.featherless.ai/v1
+      api_key: os.environ/FEATHERLESS_API_KEY
+
   - model_name: osiris/agentic
     litellm_params:
       model: openai/mistralai/Mistral-Medium-3.5-128B
@@ -127,6 +133,13 @@ model_list:
       model: openai/gpt-oss-120b
       api_base: https://api.cerebras.ai/v1
       api_key: os.environ/CEREBRAS_API_KEY
+      reasoning_effort: low
+
+  - model_name: osiris/reasoning-lite
+    litellm_params:
+      model: openai/gpt-oss-20b
+      api_base: https://api.featherless.ai/v1
+      api_key: os.environ/FEATHERLESS_API_KEY
       reasoning_effort: low
 
   - model_name: osiris/embedding
