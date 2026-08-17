@@ -15,17 +15,6 @@ resources:
   # Experimental channel
   - gateway-api/tlsroutes.yaml
   - gateway-api/tcproutes.yaml
-  # Envoy Gateway's own CRDs, vendored from the gateway-crds-helm chart.
-  # Helm cannot hold these: its release secret stores the whole rendered
-  # manifest and eight CRD schemas exceed the 1MB object limit.
-  - envoy-gateway-crds/backends.yaml
-  - envoy-gateway-crds/backendtrafficpolicies.yaml
-  - envoy-gateway-crds/clienttrafficpolicies.yaml
-  - envoy-gateway-crds/envoyextensionpolicies.yaml
-  - envoy-gateway-crds/envoypatchpolicies.yaml
-  - envoy-gateway-crds/envoyproxies.yaml
-  - envoy-gateway-crds/httproutefilters.yaml
-  - envoy-gateway-crds/securitypolicies.yaml
   - cilium-policy.yaml
   - cilium-pool.yaml
 patches:
