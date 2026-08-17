@@ -4,28 +4,15 @@ resources:
   - gotk-components.yaml
   - gotk-sync.yaml
   - sops-decrypt.yaml
-  # Gateway API v1.4.1, vendored from kubernetes-sigs/gateway-api.
-  # Kept local so reconciling never depends on reaching GitHub.
-  # Standard channel (GA/Beta)
-  - gateway-api/gatewayclasses.yaml
-  - gateway-api/gateways.yaml
-  - gateway-api/httproutes.yaml
-  - gateway-api/referencegrants.yaml
-  - gateway-api/grpcroutes.yaml
-  # Experimental channel
-  - gateway-api/tlsroutes.yaml
-  - gateway-api/tcproutes.yaml
-  # Envoy Gateway's own CRDs, vendored from the gateway-crds-helm chart.
-  # Helm cannot hold these: its release secret stores the whole rendered
-  # manifest and eight CRD schemas exceed the 1MB object limit.
-  - envoy-gateway-crds/backends.yaml
-  - envoy-gateway-crds/backendtrafficpolicies.yaml
-  - envoy-gateway-crds/clienttrafficpolicies.yaml
-  - envoy-gateway-crds/envoyextensionpolicies.yaml
-  - envoy-gateway-crds/envoypatchpolicies.yaml
-  - envoy-gateway-crds/envoyproxies.yaml
-  - envoy-gateway-crds/httproutefilters.yaml
-  - envoy-gateway-crds/securitypolicies.yaml
+  # Gateway API and Envoy Gateway CRDs, rendered from the upstream CRD chart.
+  # Regenerate with the version pinned in envoy-gateway/release.yaml:
+  #   helm template eg oci://docker.io/envoyproxy/gateway-crds-helm --version <v> \
+  #     --set crds.gatewayAPI.enabled=true --set crds.gatewayAPI.channel=experimental \
+  #     --set crds.envoyGateway.enabled=true
+  # Vendored rather than installed by Helm: a release secret cannot hold CRDs
+  # this large, which is why upstream documents template-and-apply instead.
+  - gateway-api
+  - envoy-gateway-crds
   - cilium-policy.yaml
   - cilium-pool.yaml
 patches:

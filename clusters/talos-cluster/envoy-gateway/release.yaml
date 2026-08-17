@@ -13,3 +13,8 @@ spec:
         kind: HelmRepository
         name: envoy-gateway
         namespace: flux-system
+  values:
+    # CRDs are vendored in flux-system and applied by the kustomization, which
+    # is upstream's documented approach for CRDs too large for a Helm release.
+    crds:
+      enabled: false
