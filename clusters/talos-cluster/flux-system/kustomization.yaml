@@ -4,17 +4,6 @@ resources:
   - gotk-components.yaml
   - gotk-sync.yaml
   - sops-decrypt.yaml
-  # Gateway API v1.4.1, vendored from kubernetes-sigs/gateway-api.
-  # Kept local so reconciling never depends on reaching GitHub.
-  # Standard channel (GA/Beta)
-  - gateway-api/gatewayclasses.yaml
-  - gateway-api/gateways.yaml
-  - gateway-api/httproutes.yaml
-  - gateway-api/referencegrants.yaml
-  - gateway-api/grpcroutes.yaml
-  # Experimental channel
-  - gateway-api/tlsroutes.yaml
-  - gateway-api/tcproutes.yaml
   - cilium-policy.yaml
   - cilium-pool.yaml
 patches:
