@@ -14,8 +14,9 @@ from pathlib import Path
 from typing import Optional
 
 STATE_FILE_NAME = ".transcode_state.json"
-STATE_VERSION = 2
+STATE_VERSION = 3
 COMPATIBLE_AUDIO_CODECS = {"aac", "mp3"}
+MAX_AUDIO_CHANNELS = 2
 COMPATIBLE_CONTAINERS = {"mov", "mp4", "m4a", "3gp", "3g2", "mj2"}
 TEXT_SUBTITLE_CODECS = {"mov_text", "tx3g", "subrip", "srt", "ass", "ssa"}
 ENGLISH_LANG_PREFIXES = ("en",)
@@ -242,6 +243,8 @@ def is_html5_compatible(probe: ProbeResult) -> bool:
     for a in probe.audio_streams:
         if a.codec_name not in COMPATIBLE_AUDIO_CODECS:
             return False
+        if a.channels and a.channels > MAX_AUDIO_CHANNELS:
+            return False
 
     return True
 
@@ -267,15 +270,6 @@ def order_audio_streams(audio_streams: list[StreamInfo]) -> list[tuple[int, Stre
     english = [(i, a) for i, a in indexed if is_english_stream(a)]
     others = [(i, a) for i, a in indexed if not is_english_stream(a)]
     return english + others
-
-
-def aac_bitrate_for_channels(channels: Optional[int]) -> str:
-    ch = channels or 2
-    if ch >= 6:
-        return "384k"
-    if ch >= 3:
-        return "256k"
-    return "192k"
 
 
 def build_ffmpeg_command(
@@ -326,12 +320,13 @@ def build_ffmpeg_command(
     audio_order = order_audio_streams(probe.audio_streams)
     for oi, (src_idx, a) in enumerate(audio_order):
         cmd.extend(["-map", f"0:a:{src_idx}"])
-        if a.codec_name in COMPATIBLE_AUDIO_CODECS:
+        if a.codec_name in COMPATIBLE_AUDIO_CODECS and (a.channels or 2) <= MAX_AUDIO_CHANNELS:
             cmd.extend([f"-c:a:{oi}", "copy"])
         else:
             cmd.extend([
                 f"-c:a:{oi}", "aac",
-                f"-b:a:{oi}", aac_bitrate_for_channels(a.channels),
+                f"-ac:a:{oi}", "2",
+                f"-b:a:{oi}", "192k",
             ])
     for oi in range(len(audio_order)):
         cmd.extend([f"-disposition:a:{oi}", "default" if oi == 0 else "0"])
