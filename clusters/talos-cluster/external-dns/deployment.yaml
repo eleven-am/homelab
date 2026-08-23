@@ -72,7 +72,6 @@ spec:
         - --source=service
         - --source=ingress
         - --source=gateway-httproute
-        - --source=gateway-tcproute
         # Pi-hole only supports A/AAAA/CNAME records
         - --registry=noop
         # Don't delete manually managed records
