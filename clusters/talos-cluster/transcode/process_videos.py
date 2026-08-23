@@ -14,8 +14,11 @@ from pathlib import Path
 from typing import Optional
 
 STATE_FILE_NAME = ".transcode_state.json"
-COMPATIBLE_AUDIO_CODECS = {"aac", "ac3", "eac3", "mp3"}
+STATE_VERSION = 2
+COMPATIBLE_AUDIO_CODECS = {"aac", "mp3"}
 COMPATIBLE_CONTAINERS = {"mov", "mp4", "m4a", "3gp", "3g2", "mj2"}
+TEXT_SUBTITLE_CODECS = {"mov_text", "tx3g", "subrip", "srt", "ass", "ssa"}
+ENGLISH_LANG_PREFIXES = ("en",)
 
 logging.basicConfig(
     level=logging.INFO,
@@ -33,6 +36,8 @@ class StreamInfo:
     bit_depth: Optional[int] = None
     color_transfer: Optional[str] = None
     channels: Optional[int] = None
+    language: Optional[str] = None
+    title: Optional[str] = None
 
 
 @dataclass
@@ -72,15 +77,26 @@ class TranscodeState:
             try:
                 with open(self.state_path) as f:
                     raw = json.load(f)
-                    self.data = {k: FileState(**v) for k, v in raw.items()}
-                logger.debug(f"Loaded state with {len(self.data)} entries")
+                if raw.get("_version") == STATE_VERSION:
+                    files = raw.get("files", {})
+                    self.data = {k: FileState(**v) for k, v in files.items()}
+                    logger.debug(f"Loaded state with {len(self.data)} entries")
+                else:
+                    logger.info(
+                        f"State schema changed (found {raw.get('_version')}, need {STATE_VERSION}); re-evaluating all files"
+                    )
+                    self.data = {}
             except (json.JSONDecodeError, TypeError) as e:
                 logger.warning(f"Failed to load state file: {e}")
                 self.data = {}
 
     def save(self):
         with open(self.state_path, "w") as f:
-            json.dump({k: asdict(v) for k, v in self.data.items()}, f, indent=2)
+            json.dump(
+                {"_version": STATE_VERSION, "files": {k: asdict(v) for k, v in self.data.items()}},
+                f,
+                indent=2,
+            )
 
     def should_process(self, file_path: Path) -> bool:
         key = str(file_path)
@@ -135,7 +151,7 @@ def probe_file(file_path: Path) -> Optional[ProbeResult]:
     cmd = [
         "ffprobe",
         "-v", "error",
-        "-show_entries", "format=format_name,duration:stream=index,codec_name,codec_type,bits_per_raw_sample,color_transfer,channels",
+        "-show_entries", "format=format_name,duration:stream=index,codec_name,codec_type,bits_per_raw_sample,color_transfer,channels:stream_tags=language,title",
         "-of", "json",
         str(file_path),
     ]
@@ -161,6 +177,8 @@ def probe_file(file_path: Path) -> Optional[ProbeResult]:
                 bit_depth=bit_depth,
                 color_transfer=s.get("color_transfer"),
                 channels=s.get("channels"),
+                language=(s.get("tags") or {}).get("language"),
+                title=(s.get("tags") or {}).get("title"),
             ))
 
         fmt = data.get("format", {})
@@ -237,6 +255,29 @@ def needs_hdr_tonemap(probe: ProbeResult) -> bool:
     return False
 
 
+def is_english_stream(a: StreamInfo) -> bool:
+    lang = (a.language or "").lower()
+    if lang.startswith(ENGLISH_LANG_PREFIXES):
+        return True
+    return "english" in (a.title or "").lower()
+
+
+def order_audio_streams(audio_streams: list[StreamInfo]) -> list[tuple[int, StreamInfo]]:
+    indexed = list(enumerate(audio_streams))
+    english = [(i, a) for i, a in indexed if is_english_stream(a)]
+    others = [(i, a) for i, a in indexed if not is_english_stream(a)]
+    return english + others
+
+
+def aac_bitrate_for_channels(channels: Optional[int]) -> str:
+    ch = channels or 2
+    if ch >= 6:
+        return "384k"
+    if ch >= 3:
+        return "256k"
+    return "192k"
+
+
 def build_ffmpeg_command(
     input_path: Path,
     output_path: Path,
@@ -247,6 +288,7 @@ def build_ffmpeg_command(
 ) -> list[str]:
     cmd = ["ffmpeg", "-hide_banner", "-loglevel", "warning", "-stats", "-y"]
     cmd.extend(["-i", str(input_path)])
+    cmd.extend(["-map", "0:v:0"])
 
     v = probe.video_streams[0] if probe.video_streams else None
     needs_transcode = False
@@ -281,20 +323,29 @@ def build_ffmpeg_command(
     else:
         cmd.extend(["-c:v", "copy"])
 
-    for i, a in enumerate(probe.audio_streams):
+    audio_order = order_audio_streams(probe.audio_streams)
+    for oi, (src_idx, a) in enumerate(audio_order):
+        cmd.extend(["-map", f"0:a:{src_idx}"])
         if a.codec_name in COMPATIBLE_AUDIO_CODECS:
-            cmd.extend([f"-c:a:{i}", "copy"])
+            cmd.extend([f"-c:a:{oi}", "copy"])
         else:
             cmd.extend([
-                f"-c:a:{i}", "aac",
-                f"-b:a:{i}", "192k",
+                f"-c:a:{oi}", "aac",
+                f"-b:a:{oi}", aac_bitrate_for_channels(a.channels),
             ])
+    for oi in range(len(audio_order)):
+        cmd.extend([f"-disposition:a:{oi}", "default" if oi == 0 else "0"])
 
-    for i, s in enumerate(probe.subtitle_streams):
+    oi = 0
+    for src_idx, s in enumerate(probe.subtitle_streams):
+        if s.codec_name not in TEXT_SUBTITLE_CODECS:
+            continue
+        cmd.extend(["-map", f"0:s:{src_idx}"])
         if s.codec_name in ("mov_text", "tx3g"):
-            cmd.extend([f"-c:s:{i}", "copy"])
-        elif s.codec_name in ("subrip", "srt", "ass", "ssa"):
-            cmd.extend([f"-c:s:{i}", "mov_text"])
+            cmd.extend([f"-c:s:{oi}", "copy"])
+        else:
+            cmd.extend([f"-c:s:{oi}", "mov_text"])
+        oi += 1
 
     cmd.extend(["-movflags", "+faststart", "-f", "mp4", str(output_path)])
     return cmd
