@@ -101,6 +101,14 @@ model_list:
       api_base: https://api.featherless.ai/v1
       api_key: os.environ/FEATHERLESS_API_KEY
 
+  - model_name: osiris/vision
+    model_info:
+      supports_vision: true
+    litellm_params:
+      model: openai/Qwen/Qwen3-VL-32B-Instruct
+      api_base: https://api.featherless.ai/v1
+      api_key: os.environ/FEATHERLESS_API_KEY
+
   - model_name: osiris/agentic
     litellm_params:
       model: openai/mistralai/Mistral-Medium-3.5-128B
