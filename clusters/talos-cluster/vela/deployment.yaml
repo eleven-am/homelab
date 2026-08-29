@@ -1,0 +1,148 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vela
+  namespace: vela
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: vela
+  template:
+    metadata:
+      labels:
+        app: vela
+    spec:
+      runtimeClassName: nvidia
+      containers:
+        - name: vela
+          image: zot.maix.ovh/vela:v0.0.56@sha256:c58bf0ccfa9189acebf676f3e1b84b72228d88e1d9178d8e9147d5570dbd8ff6
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "1"
+              nvidia.com/gpu: "1"
+            limits:
+              memory: "4Gi"
+              cpu: "4"
+              nvidia.com/gpu: "1"
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: VELA_ADDR
+              value: ":8080"
+            - name: VELA_DB_PATH
+              value: /data/vela.db
+            - name: VELA_QUEUE_DB_PATH
+              value: /data/queue.db
+            - name: VELA_ASSET_DIR
+              value: /data/assets
+            - name: VELA_FRONTEND_DIR
+              value: /app/frontend
+            - name: VELA_ADMIN_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: vela-secret
+                  key: VELA_ADMIN_USER
+            - name: VELA_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: vela-secret
+                  key: VELA_ADMIN_PASS
+            - name: VELA_SESSION_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: vela-secret
+                  key: VELA_JWT_SECRET
+            - name: VELA_AUTH_COOKIE_NAME
+              value: vela_session
+            - name: VELA_AUTH_COOKIE_SECURE
+              value: "true"
+            - name: VELA_WATCH_INTERVAL
+              value: 1m
+            - name: VELA_PROCESSING_WORKERS
+              value: "12"
+            - name: VELA_STT_CONCURRENCY
+              value: "1"
+            - name: VELA_AI_METADATA_CONCURRENCY
+              value: "3"
+            - name: VELA_SPRITES_CONCURRENCY
+              value: "3"
+            - name: VELA_PREVIEW_CONCURRENCY
+              value: "3"
+            - name: VELA_MAX_UPLOAD_BYTES
+              value: "10737418240"
+            - name: VELA_GOSHL_HWACCEL_MODE
+              value: cuda
+            - name: NVIDIA_DRIVER_CAPABILITIES
+              value: compute,utility,video
+            - name: LD_LIBRARY_PATH
+              value: /usr/local/nvidia/lib:/usr/local/nvidia/lib64:/usr/local/glibc/usr/lib
+            - name: LITELLM_BASE_URL
+              value: http://litellm-service.litellm.svc.cluster.local:4000/v1
+            - name: LITELLM_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: vela-secret
+                  key: LITELLM_API_KEY
+            - name: STT_MODEL
+              value: osiris/speech-stt
+            - name: EMBEDDING_MODEL
+              value: osiris/embedding
+            - name: LLM_MODEL
+              value: osiris/foundation
+            - name: VOX_HTTP_BASE
+              value: http://vox-service.vox.svc.cluster.local:11435
+            - name: VOX_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: vela-secret
+                  key: VOX_API_KEY
+          volumeMounts:
+            - name: videos
+              mountPath: /library
+              subPath: royossai/Private/Videos
+            - name: videos
+              mountPath: /library-hypno-video
+              subPath: royossai/Private/Hypno/video
+            - name: videos
+              mountPath: /library-audio
+              subPath: royossai/Private/Vocals
+            - name: videos
+              mountPath: /library-hypno-audio
+              subPath: royossai/Private/Hypno/audio
+            - name: database
+              mountPath: /data
+            - name: streaming
+              mountPath: /data/assets
+            - name: tmp
+              mountPath: /tmp
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+      volumes:
+        - name: videos
+          persistentVolumeClaim:
+            claimName: vela-data
+        - name: database
+          persistentVolumeClaim:
+            claimName: vela-db
+        - name: streaming
+          persistentVolumeClaim:
+            claimName: vela-streaming
+        - name: tmp
+          emptyDir: {}
+      imagePullSecrets:
+        - name: zot-pull-secret

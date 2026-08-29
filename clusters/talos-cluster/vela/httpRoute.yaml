@@ -1,0 +1,22 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: vela-horus-route
+  namespace: vela
+spec:
+  parentRefs:
+    - name: envoy-gateway
+      namespace: gateway
+  hostnames:
+    - "vela.horus.maix.ovh"
+  rules:
+    - timeouts:
+        request: "120s"
+        backendRequest: "120s"
+      matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: vela
+          port: 8080
