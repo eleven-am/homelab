@@ -23,7 +23,14 @@ spec:
       initContainers:
         - name: fix-permissions
           image: busybox:1.36
-          command: ['sh', '-c', 'mkdir -p /transcode/hls && chmod -R 777 /transcode']
+          command: ['sh', '-c', 'mkdir -p /transcode/hls && chmod 777 /transcode /transcode/hls']
+          resources:
+            requests:
+              cpu: 25m
+              memory: 64Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi
           volumeMounts:
             - name: transcode-data
               mountPath: /transcode
@@ -33,6 +40,13 @@ spec:
         - name: frames
           image: elevenam/frames:dev-x86
           imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+            limits:
+              cpu: 2000m
+              memory: 4Gi
           ports:
             - containerPort: 3000
           livenessProbe:

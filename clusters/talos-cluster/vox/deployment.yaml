@@ -25,6 +25,13 @@ spec:
             - sh
             - -lc
             - mkdir -p /home/vox/.vox/adapters && chown 10000:10000 /home/vox/.vox /home/vox/.vox/adapters
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi
           volumeMounts:
             - name: vox-data
               mountPath: /home/vox/.vox
@@ -75,8 +82,8 @@ spec:
               name: grpc
           resources:
             requests:
-              cpu: 500m
-              memory: 4Gi
+              cpu: 4000m
+              memory: 24Gi
               nvidia.com/gpu: "1"
             limits:
               cpu: 4000m
