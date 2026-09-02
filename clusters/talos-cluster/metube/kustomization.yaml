@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - pvc.yaml
+  - ytdlp-requirements.yaml
   - deployment.yaml
   - service.yaml
   - httpRoute.yaml

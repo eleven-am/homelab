@@ -20,7 +20,7 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             - |
-              pip install --no-cache-dir -U yt-dlp || true
+              pip install --no-cache-dir --require-hashes -r /config/requirements.txt
               exec /usr/bin/tini -g -- /app/docker-entrypoint.sh
           workingDir: /app
           ports:
@@ -41,6 +41,9 @@ spec:
           volumeMounts:
             - name: downloads
               mountPath: /downloads
+            - name: ytdlp-requirements
+              mountPath: /config
+              readOnly: true
           livenessProbe:
             httpGet:
               path: /
@@ -57,3 +60,6 @@ spec:
         - name: downloads
           persistentVolumeClaim:
             claimName: metube-downloads
+        - name: ytdlp-requirements
+          configMap:
+            name: metube-ytdlp-requirements
