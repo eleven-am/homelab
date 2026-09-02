@@ -17,6 +17,12 @@ spec:
         - name: metube
           image: ghcr.io/alexta69/metube:2026.07.24@sha256:3b3b847a125e78037983d3a27c76212e2fc7a0c3a813591ec0de53613e0be874
           imagePullPolicy: Always
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              pip install --no-cache-dir -U yt-dlp || true
+              exec /usr/bin/tini -g -- /app/docker-entrypoint.sh
+          workingDir: /app
           ports:
             - name: http
               containerPort: 8081
@@ -39,7 +45,7 @@ spec:
             httpGet:
               path: /
               port: 8081
-            initialDelaySeconds: 15
+            initialDelaySeconds: 45
             periodSeconds: 10
           readinessProbe:
             httpGet:
