@@ -17,3 +17,23 @@ spec:
       backendRefs:
         - name: durable-streams-service
           port: 4437
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: durable-streams-cloudflare-route
+  namespace: durable-streams
+spec:
+  parentRefs:
+    - name: cloudflare-gateway
+      namespace: cloudflare-gateway
+  hostnames:
+    - "dstreams.maix.ovh"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: durable-streams-service
+          port: 4437
