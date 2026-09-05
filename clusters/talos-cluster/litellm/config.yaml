@@ -160,7 +160,6 @@ model_list:
       max_retries: 0
       truncate: true
       num_ctx: 8192
-      num_batch: 8192
 
   - model_name: osiris/rerank
     litellm_params:
