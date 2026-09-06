@@ -49,7 +49,7 @@ spec:
             - name: VOX_VOICE
               value: "af_heart"
             - name: LITELLM_BASE_URL
-              value: "https://litellm.horus.maix.ovh/v1"
+              value: "http://litellm-service.litellm.svc.cluster.local:4000/v1"
             - name: LLM_MODEL
               value: "osiris/foundation"
             - name: APP_PASSWORD
