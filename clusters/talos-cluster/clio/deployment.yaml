@@ -22,22 +22,40 @@ spec:
         fsGroup: 10001
         seccompProfile:
           type: RuntimeDefault
+      initContainers:
+        - name: init-db
+          image: zot.maix.ovh/clio:20260907-golem
+          args: ["init-db"]
+          env:
+            - name: DATABASE_PATH
+              value: "/data/clio.db"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: tmp
+              mountPath: /tmp
       containers:
         - name: clio
-          image: zot.maix.ovh/clio:20260906-221813
+          image: zot.maix.ovh/clio:20260907-golem
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
               containerPort: 8080
           env:
-            - name: APP_USERNAME
-              value: "eleven-am"
             - name: APP_ORIGIN
               value: "https://clio.horus.maix.ovh"
+            - name: ALLOW_SIGNUP
+              value: "true"
             - name: LISTEN_ADDR
               value: ":8080"
             - name: DATABASE_PATH
-              value: "/data/naturalisation.db"
+              value: "/data/clio.db"
             - name: WEB_DIR
               value: "/app/web"
             - name: VOX_HTTP_BASE
@@ -52,11 +70,6 @@ spec:
               value: "http://litellm-service.litellm.svc.cluster.local:4000/v1"
             - name: LLM_MODEL
               value: "osiris/foundation"
-            - name: APP_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: clio-secrets
-                  key: APP_PASSWORD
             - name: VOX_API_KEY
               valueFrom:
                 secretKeyRef:
