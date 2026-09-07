@@ -24,7 +24,7 @@ spec:
           type: RuntimeDefault
       initContainers:
         - name: init-db
-          image: zot.maix.ovh/clio:20260907-nfs-fix
+          image: zot.maix.ovh/clio:v0.1.2
           args: ["init-db"]
           env:
             - name: DATABASE_PATH
@@ -42,7 +42,7 @@ spec:
               mountPath: /tmp
       containers:
         - name: clio
-          image: zot.maix.ovh/clio:20260907-nfs-fix
+          image: zot.maix.ovh/clio:v0.1.2
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
