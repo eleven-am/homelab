@@ -153,7 +153,20 @@ spec:
     spec:
       containers:
         - name: webdav
-          image: bytemark/webdav:2.4@sha256:bcabbc024c511b9c63ed3345f88573e31d84c952ee493c9acb3fe345f4f80f57
+          image: ghcr.io/hacdias/webdav:v5.17.1@sha256:c8d8c436816e51e5773525f901d829afe748d3516995a31a80de1f67fb0a02ca
+          args:
+            - -c
+            - /config/config.yml
+          securityContext:
+            runAsUser: 82
+            runAsGroup: 82
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
           resources:
             requests:
               memory: "64Mi"
@@ -162,29 +175,25 @@ spec:
               memory: "256Mi"
               cpu: "200m"
           ports:
-            - containerPort: 80
+            - containerPort: 8080
               name: http
-            - containerPort: 443
-              name: https
           env:
-            - name: AUTH_TYPE
-              value: "Digest"
-            - name: USERNAME
-              value: "royossai"
-            - name: PASSWORD
+            - name: WEBDAV_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: samba-secret
                   key: password
-            - name: REALM
-              value: "WebDAV"
-            - name: SERVER_NAMES
-              value: "webdav.horus.maix.ovh"
           volumeMounts:
-            - mountPath: /var/lib/dav/data
+            - mountPath: /data
               name: webdav-media-dir
               subPath: royossai
+            - mountPath: /config
+              name: webdav-config
+              readOnly: true
       volumes:
         - name: webdav-media-dir
           persistentVolumeClaim:
             claimName: webdav-media
+        - name: webdav-config
+          configMap:
+            name: webdav-config
