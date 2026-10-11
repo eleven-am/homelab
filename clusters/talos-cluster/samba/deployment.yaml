@@ -153,7 +153,7 @@ spec:
     spec:
       containers:
         - name: webdav
-          image: bytemark/webdav:latest@sha256:21eed0df1238d17766080425f9ef46da2c1130e3e3aa9eaf36794d2a72e7c616
+          image: bytemark/webdav:2.4@sha256:bcabbc024c511b9c63ed3345f88573e31d84c952ee493c9acb3fe345f4f80f57
           resources:
             requests:
               memory: "64Mi"
