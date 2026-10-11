@@ -176,6 +176,7 @@ model_list:
       max_retries: 0
       truncate: true
       num_ctx: 8192
+      keep_alive: 5m
 
   - model_name: voyage-4
     litellm_params:
