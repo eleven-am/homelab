@@ -13,6 +13,16 @@ spec:
       template:
         spec:
           restartPolicy: OnFailure
+          volumes:
+            - name: mc-bin
+              emptyDir: {}
+          initContainers:
+            - name: mc
+              image: docker.io/pgsty/mc:RELEASE.2026-09-16T00-00-00Z@sha256:cfc83108c3abb371f8fb84d99c1fdc88f8c237e022409b0081fb7c0a3be634dd
+              command: ["/bin/sh", "-c", "cp /usr/bin/mc /mc-bin/mc"]
+              volumeMounts:
+                - name: mc-bin
+                  mountPath: /mc-bin
           containers:
             - name: backup
               image: postgres:17
@@ -30,8 +40,7 @@ spec:
                   BACKUP_FILE="backup-${TIMESTAMP}.sql.gz"
 
                   apt-get update && apt-get install -y -qq curl > /dev/null 2>&1
-                  curl -sS https://dl.min.io/client/mc/release/linux-amd64/mc -o /usr/local/bin/mc
-                  chmod +x /usr/local/bin/mc
+                  export PATH="/mc-bin:$PATH"
                   mc alias set minio http://minio-service.minio:9000 "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD"
 
                   pg_dumpall -h postgres-service -U "$POSTGRES_USER" | gzip | mc pipe "minio/postgres-backups/${BACKUP_FILE}"
@@ -60,6 +69,9 @@ spec:
                     secretKeyRef:
                       name: minio-secret
                       key: MINIO_ROOT_PASSWORD
+              volumeMounts:
+                - name: mc-bin
+                  mountPath: /mc-bin
               resources:
                 requests:
                   cpu: 100m
