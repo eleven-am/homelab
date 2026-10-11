@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: docling
-          image: ghcr.io/docling-project/docling-serve-cpu:v1.1.0@sha256:739f4e08e3164e242ec64f76f22a1864b82c5648c775ce6fa77fb25e66f1150e
+          image: ghcr.io/docling-project/docling-serve-cpu:v1.36.0@sha256:225c8586e20d5d0fc6811a9e0e044fa602bcc4393f00389009bad42d6787b58f
           imagePullPolicy: IfNotPresent
           resources:
             requests:
