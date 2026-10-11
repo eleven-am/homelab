@@ -83,7 +83,7 @@ spec:
               mountPath: /tokens
       containers:
         - name: litellm
-          image: ghcr.io/berriai/litellm-database:v1.84.10
+          image: ghcr.io/berriai/litellm-database:v1.104.3@sha256:95ef69d1ef01a55049e1c8e113909fd6859ecdaaa0be33f55d3fd6efe5de3f52
           imagePullPolicy: IfNotPresent
           args:
             - --config
