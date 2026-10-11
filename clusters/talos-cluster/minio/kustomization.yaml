@@ -5,11 +5,9 @@ resources:
   - pvc.yaml
   - secret.yaml
   - b2-backup-secret.yaml
-  - deployment.yaml
   - service.yaml
   - httpRoute.yaml
   - b2-backup-cronjob.yaml
   - rustfs-pvc.yaml
   - rustfs-deployment.yaml
-  - rustfs-service.yaml
 
