@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: tuwunel
-          image: ghcr.io/matrix-construct/tuwunel:v1.6.1
+          image: ghcr.io/matrix-construct/tuwunel:v1.9.4@sha256:0e86c6164d6c9f5b60291938eb61ad8395021c37fe58d47a963ea7edddbedaec
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
