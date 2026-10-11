@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: browserless
-          image: ghcr.io/browserless/chromium:v2.54.2
+          image: ghcr.io/browserless/chromium:v2.57.0
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000

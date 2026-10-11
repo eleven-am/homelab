@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: redis-deployment
-          image: redis:8.8.1@sha256:c88d347edef6249a6d2293f926f1eeb48bd40c57cbcd02c07f52e7f1fd2cb46b
+          image: redis:8.10.2@sha256:2c2dff791878316e3b083188be0d578423b24813cdda5de0e80ea4f7b3e6bfd6
           imagePullPolicy: IfNotPresent
           command: ["redis-server"]
           args: ["--maxmemory", "512mb", "--maxmemory-policy", "allkeys-lru"]

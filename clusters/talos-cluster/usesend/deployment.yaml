@@ -57,7 +57,7 @@ spec:
                   key: USESEND_DB_PASSWORD
       containers:
         - name: usesend
-          image: usesend/usesend:v1.9.6@sha256:99eaddbf1abd0461b29a3af341b98330abe2bf7cb781b09610c04c056d25178f
+          image: usesend/usesend:v1.9.8@sha256:2b2939e10d0861c336cede3de04d5dbcdb28b4eceda249ff57b4d2773259fff0
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

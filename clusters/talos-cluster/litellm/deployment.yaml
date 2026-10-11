@@ -61,7 +61,7 @@ spec:
                   name: litellm-secret
                   key: LITELLM_DB_PASSWORD
         - name: seed-chatgpt-token
-          image: busybox:1.37
+          image: busybox:1.38.0
           command:
             - sh
             - -c

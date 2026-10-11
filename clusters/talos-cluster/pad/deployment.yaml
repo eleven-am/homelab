@@ -27,7 +27,7 @@ spec:
 
       initContainers:
         - name: fix-permissions
-          image: busybox:1.36-musl
+          image: busybox:1.38.0-musl
           command:
             - sh
             - -c

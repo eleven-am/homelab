@@ -20,7 +20,7 @@ spec:
       runtimeClassName: nvidia
       initContainers:
         - name: fix-vox-permissions
-          image: alpine:3.22
+          image: alpine:3.24.2
           command:
             - sh
             - -lc
