@@ -119,6 +119,11 @@ spec:
                 secretKeyRef:
                   name: litellm-secret
                   key: OPENAI_API_KEY
+            - name: VOYAGE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-secret
+                  key: VOYAGE_API_KEY
             - name: GEMINI_API_KEY
               valueFrom:
                 secretKeyRef:
