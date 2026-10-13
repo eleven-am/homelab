@@ -15,7 +15,7 @@ spec:
   template:
     metadata:
       annotations:
-        homelab.maix.ovh/config-revision: "2026-10-13-add-osiris-embedding-rerank-pro"
+        homelab.maix.ovh/config-revision: "2026-10-13-typesafe-passthrough"
       labels:
         app: litellm
     spec:
@@ -139,6 +139,11 @@ spec:
                 secretKeyRef:
                   name: litellm-secret
                   key: MIMIR_API_KEY
+            - name: TYPESAFE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: litellm-secret
+                  key: TYPESAFE_API_KEY
             - name: OPENROUTER_API_KEY
               valueFrom:
                 secretKeyRef:
