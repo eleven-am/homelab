@@ -35,7 +35,7 @@ spec:
             - name: LITELLM_URL
               value: "http://litellm-service.litellm.svc.cluster.local:4000"
             - name: RERANK_MODEL
-              value: "osiris/rerank"
+              value: "osiris/rerank-pro"
             - name: SEARXNG_TIMEOUT
               value: "15s"
             - name: MIMIR_URL
