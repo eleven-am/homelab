@@ -15,7 +15,7 @@ spec:
   template:
     metadata:
       annotations:
-        homelab.maix.ovh/config-revision: "2026-07-04-add-speech-clone-chatterbox"
+        homelab.maix.ovh/config-revision: "2026-10-13-add-osiris-embedding-rerank-pro"
       labels:
         app: litellm
     spec:

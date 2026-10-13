@@ -193,6 +193,16 @@ model_list:
       model: voyage/rerank-3
       api_key: os.environ/VOYAGE_API_KEY
 
+  - model_name: osiris/embedding-pro
+    litellm_params:
+      model: voyage/voyage-4
+      api_key: os.environ/VOYAGE_API_KEY
+
+  - model_name: osiris/rerank-pro
+    litellm_params:
+      model: voyage/rerank-3
+      api_key: os.environ/VOYAGE_API_KEY
+
   - model_name: osiris/rerank
     litellm_params:
       model: hosted_vllm/BAAI/bge-reranker-v2-m3
