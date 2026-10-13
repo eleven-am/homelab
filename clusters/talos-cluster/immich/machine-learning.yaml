@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: immich-machine-learning
+  namespace: immich
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: immich-machine-learning
+  template:
+    metadata:
+      labels:
+        app: immich-machine-learning
+    spec:
+      runtimeClassName: nvidia
+      containers:
+        - name: machine-learning
+          image: ghcr.io/immich-app/immich-machine-learning:v3.3.1-cuda@sha256:d1a195d377cfac65886901a6b2d4040b61b7e7db7ca55db1598622d3a2f125e2
+          ports:
+            - name: http
+              containerPort: 3003
+          env:
+            - name: TZ
+              value: Europe/Paris
+            - name: MACHINE_LEARNING_CACHE_FOLDER
+              value: /cache
+            - name: MACHINE_LEARNING_MODEL_TTL
+              value: "300"
+            - name: MACHINE_LEARNING_WORKERS
+              value: "1"
+            - name: NVIDIA_DRIVER_CAPABILITIES
+              value: compute,utility
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+              nvidia.com/gpu: "1"
+            limits:
+              memory: "6Gi"
+              cpu: "4"
+              nvidia.com/gpu: "1"
+          volumeMounts:
+            - name: cache
+              mountPath: /cache
+          readinessProbe:
+            httpGet:
+              path: /ping
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /ping
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 20
+      volumes:
+        - name: cache
+          persistentVolumeClaim:
+            claimName: immich-ml-cache
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: immich-machine-learning
+  namespace: immich
+spec:
+  selector:
+    app: immich-machine-learning
+  ports:
+    - name: http
+      port: 3003
+      targetPort: http
