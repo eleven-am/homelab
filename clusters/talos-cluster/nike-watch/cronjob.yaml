@@ -1,0 +1,47 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: nike-watch
+  namespace: nike-watch
+spec:
+  schedule: "0 9,18 * * *"
+  timeZone: Europe/Paris
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 2
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: 900
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: watch
+              image: docker.io/library/python:3.13-slim@sha256:70729b46c69b4f1e97c4822c1af3df53a1476cf5ddc6c087c0c10bc3a5678c2f
+              command: ["python3", "-I", "/app/watch.py"]
+              env:
+                - name: STATE_PATH
+                  value: /data/state.json
+              envFrom:
+                - secretRef:
+                    name: nike-watch-secret
+              resources:
+                requests:
+                  memory: "32Mi"
+                  cpu: "10m"
+                limits:
+                  memory: "128Mi"
+                  cpu: "250m"
+              volumeMounts:
+                - name: app
+                  mountPath: /app
+                - name: state
+                  mountPath: /data
+          volumes:
+            - name: app
+              configMap:
+                name: nike-watch-script
+            - name: state
+              persistentVolumeClaim:
+                claimName: nike-watch-state
