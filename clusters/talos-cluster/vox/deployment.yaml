@@ -6,7 +6,7 @@ metadata:
   labels:
     app: vox
 spec:
-  replicas: 0
+  replicas: 1
   strategy:
     type: Recreate
   selector:
@@ -116,4 +116,4 @@ spec:
       volumes:
         - name: vox-data
           persistentVolumeClaim:
-            claimName: vox-data
+            claimName: vox-data-blizzard
