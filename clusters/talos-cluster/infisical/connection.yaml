@@ -1,0 +1,27 @@
+apiVersion: secrets.infisical.com/v1beta1
+kind: InfisicalConnection
+metadata:
+  name: infisical-eu
+  namespace: infisical
+spec:
+  address: https://eu.infisical.com
+---
+apiVersion: secrets.infisical.com/v1beta1
+kind: InfisicalAuth
+metadata:
+  name: homelab
+  namespace: infisical
+spec:
+  infisicalConnectionRef:
+    name: infisical-eu
+    namespace: infisical
+  method: universal
+  universal:
+    clientIdRef:
+      name: infisical-cluster-credentials
+      namespace: infisical
+      key: clientId
+    clientSecretRef:
+      name: infisical-cluster-credentials
+      namespace: infisical
+      key: clientSecret

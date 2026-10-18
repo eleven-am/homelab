@@ -1,0 +1,29 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: infisical-operator
+  namespace: infisical
+spec:
+  chart:
+    spec:
+      chart: secrets-operator
+      version: 0.11.11
+      sourceRef:
+        kind: HelmRepository
+        name: infisical
+        namespace: flux-system
+  interval: 15m
+  timeout: 5m
+  releaseName: infisical-operator
+  install:
+    crds: Skip
+  upgrade:
+    crds: Skip
+  values:
+    installCRDs: false
+    hostAPI: https://eu.infisical.com/api
+    controllerManager:
+      manager:
+        image:
+          repository: infisical/kubernetes-operator
+          tag: v0.11.11@sha256:8c1cf30ef822ba77f339439b0c43707809acabf782ee79696237f3e181ffbb29
