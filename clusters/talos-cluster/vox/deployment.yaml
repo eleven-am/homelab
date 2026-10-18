@@ -55,6 +55,8 @@ spec:
             - --device
             - cuda
           env:
+            - name: UV_CACHE_DIR
+              value: /home/vox/.vox/cache/uv
             - name: VOX_RTC_STUN_URLS
               value: stun:turn.maix.ovh:3478,stun:172.198.1.55:3478
             - name: VOX_RTC_TURN_URLS
