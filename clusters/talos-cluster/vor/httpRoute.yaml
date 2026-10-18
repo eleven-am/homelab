@@ -10,7 +10,10 @@ spec:
   hostnames:
     - "vor.horus.maix.ovh"
   rules:
-    - matches:
+    - timeouts:
+        request: 660s
+        backendRequest: 660s
+      matches:
         - path:
             type: PathPrefix
             value: /

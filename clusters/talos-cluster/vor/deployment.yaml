@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: vor
-          image: zot.maix.ovh/vor:v0.0.4@sha256:ec4e4db940bde0aead75cee87624600a46a10ac881157e13848a165a3f56e5d8
+          image: zot.maix.ovh/vor:v0.0.5@sha256:12cbd0363b9bcf8cb0b3a4c8aac4e89a1c18edff0301b89d350aa39eb8779f10
           imagePullPolicy: Always
           resources:
             requests:
@@ -41,7 +41,7 @@ spec:
             - name: MIMIR_URL
               value: "http://mimir-service.mimir.svc.cluster.local:3000"
             - name: MIMIR_TIMEOUT
-              value: "60s"
+              value: "10m"
             - name: GATEWAY_API_KEY
               valueFrom:
                 secretKeyRef:
