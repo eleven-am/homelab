@@ -6,7 +6,7 @@ metadata:
   labels:
     app: vox
 spec:
-  replicas: 0
+  replicas: 1
   strategy:
     type: Recreate
   selector:
@@ -37,7 +37,7 @@ spec:
               mountPath: /home/vox/.vox
       containers:
         - name: vox
-          image: ghcr.io/eleven-am/vox:v0.2.133@sha256:e91846d08f9187d57de0b93edae91a33e9e34feae34991c1103376e5e7a85c72
+          image: ghcr.io/eleven-am/vox:v0.2.136@sha256:b201e2535e8274563ababb0630e36226727589834c30b69909a31cf53bf65e9b
           imagePullPolicy: IfNotPresent
           args:
             - vox
