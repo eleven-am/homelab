@@ -21,32 +21,58 @@ spec:
       labels:
         app: overseerr-server
     spec:
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: overseerr-server
-          image: lscr.io/linuxserver/overseerr:1.35.0@sha256:6108ed066d4a919c05251d9dab041c1e55e67ff7247e7b31be97b65ffcbaeeb1
-          imagePullPolicy: Always
+          image: ghcr.io/seerr-team/seerr:v3.5.0@sha256:27602401178d54f1964442287b9f23f67a3fa2252645ee8065839ea1c3f69e45
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
           ports:
             - containerPort: 5055
               name: overseerr
           resources:
             requests:
-              memory: "128Mi"
+              memory: "256Mi"
               cpu: "50m"
             limits:
-              memory: "512Mi"
-              cpu: "250m"
+              memory: "1Gi"
+              cpu: "1"
           env:
-            - name: PUID
-              value: "1000"
-            - name: PGID
-              value: "1000"
-            - name: VERSION
-              value: "latest"
             - name: TZ
               value: "Europe/Paris"
+            - name: PORT
+              value: "5055"
           volumeMounts:
-            - mountPath: /config
+            - mountPath: /app/config
               name: overseerr-config-volume
+          startupProbe:
+            httpGet:
+              path: /api/v1/settings/public
+              port: overseerr
+            periodSeconds: 10
+            failureThreshold: 60
+          livenessProbe:
+            httpGet:
+              path: /api/v1/settings/public
+              port: overseerr
+            periodSeconds: 15
+            timeoutSeconds: 3
+          readinessProbe:
+            httpGet:
+              path: /api/v1/settings/public
+              port: overseerr
+            periodSeconds: 15
+            timeoutSeconds: 3
       restartPolicy: Always
       volumes:
         - name: overseerr-config-volume
