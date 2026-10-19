@@ -9,3 +9,5 @@ resources:
   - machine-learning.yaml
   - server.yaml
   - httpRoute.yaml
+  - backup-secret.yaml
+  - backup-cronjob.yaml

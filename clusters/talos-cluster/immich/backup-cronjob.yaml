@@ -1,0 +1,104 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: immich-b2-backup
+  namespace: immich
+spec:
+  schedule: "30 3 * * *"
+  timeZone: Europe/Paris
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      template:
+        spec:
+          restartPolicy: OnFailure
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: restic
+              image: docker.io/restic/restic:0.19.1@sha256:136600b6ff6843d61d355f7f71f460a166429f35de6fd11b568fece3c9a4d510
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop: ["ALL"]
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  set -eu
+                  notify_failure() {
+                    MSG="{\"title\":\"Backup Failed: Immich B2\",\"message\":\"Immich restic backup failed at $(date '+%Y-%m-%d %H:%M')\",\"priority\":1}"
+                    wget -q -O /dev/null --post-data="$MSG" --header="Content-Type: application/json" https://ntfy.maix.ovh/notify 2>/dev/null || true
+                  }
+                  trap '[ $? -ne 0 ] && notify_failure' EXIT
+
+                  export RESTIC_REPOSITORY="s3:${B2_S3_ENDPOINT}/${B2_BUCKET}/restic"
+
+                  if ! restic cat config >/dev/null 2>&1; then
+                    echo "Initialising restic repository..."
+                    restic init
+                  fi
+
+                  echo "Backing up Immich originals and database dumps..."
+                  restic backup --host immich --tag nightly /data/library /data/upload /data/backups
+
+                  echo "Applying retention..."
+                  if [ "$(date +%u)" = "7" ]; then
+                    restic forget --host immich --keep-daily 7 --keep-weekly 4 --keep-monthly 12 --prune
+                    restic check
+                  else
+                    restic forget --host immich --keep-daily 7 --keep-weekly 4 --keep-monthly 12
+                  fi
+
+                  echo "Immich B2 backup completed"
+              env:
+                - name: RESTIC_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: immich-backup
+                      key: RESTIC_PASSWORD
+                - name: AWS_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: immich-backup
+                      key: B2_KEY_ID
+                - name: AWS_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: immich-backup
+                      key: B2_APPLICATION_KEY
+                - name: B2_BUCKET
+                  valueFrom:
+                    secretKeyRef:
+                      name: immich-backup
+                      key: B2_BUCKET
+                - name: B2_S3_ENDPOINT
+                  valueFrom:
+                    secretKeyRef:
+                      name: immich-backup
+                      key: B2_S3_ENDPOINT
+                - name: RESTIC_CACHE_DIR
+                  value: /cache
+              volumeMounts:
+                - name: library
+                  mountPath: /data
+                  readOnly: true
+                - name: cache
+                  mountPath: /cache
+              resources:
+                requests:
+                  cpu: 250m
+                  memory: 1Gi
+                limits:
+                  memory: 4Gi
+          volumes:
+            - name: library
+              persistentVolumeClaim:
+                claimName: immich-library
+                readOnly: true
+            - name: cache
+              emptyDir:
+                sizeLimit: 5Gi
