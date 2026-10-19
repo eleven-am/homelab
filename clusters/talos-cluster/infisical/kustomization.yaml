@@ -7,4 +7,3 @@ resources:
   - release.yaml
   - secret.yaml
   - connection.yaml
-  - test.yaml
