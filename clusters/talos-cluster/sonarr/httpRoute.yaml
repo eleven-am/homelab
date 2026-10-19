@@ -17,3 +17,26 @@ spec:
       backendRefs:
         - name: sonarr-service
           port: 8989
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: sonarr-api-route
+  namespace: sonarr
+spec:
+  parentRefs:
+    - name: envoy-gateway
+      namespace: gateway
+  hostnames:
+    - "sonarr.horus.maix.ovh"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /api
+        - path:
+            type: PathPrefix
+            value: /feed
+      backendRefs:
+        - name: sonarr-service
+          port: 8989
