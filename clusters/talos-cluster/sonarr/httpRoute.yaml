@@ -14,6 +14,12 @@ spec:
         - path:
             type: PathPrefix
             value: /
+      filters:
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            remove:
+              - X-Forwarded-For
+              - X-Real-IP
       backendRefs:
         - name: sonarr-service
           port: 8989
