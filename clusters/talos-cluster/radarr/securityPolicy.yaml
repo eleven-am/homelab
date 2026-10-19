@@ -1,0 +1,50 @@
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: radarr-sso
+  namespace: radarr
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: radarr-route
+  oidc:
+    provider:
+      issuer: "https://auth.horus.maix.ovh/application/o/horus-gateway/"
+    clientID: "pKDBtRs9FBZdXG3BSyaSKubnb37yQmB5wz1h8JCm"
+    clientSecret:
+      name: horus-gateway-oidc
+    redirectURL: "https://radarr.horus.maix.ovh/oauth2/callback"
+    logoutPath: "/oauth2/logout"
+    scopes:
+      - openid
+      - email
+      - profile
+      - offline_access
+    cookieNames:
+      accessToken: horus-sso-at
+      idToken: horus-sso-id
+  jwt:
+    providers:
+      - name: authentik
+        issuer: "https://auth.horus.maix.ovh/application/o/horus-gateway/"
+        audiences:
+          - "pKDBtRs9FBZdXG3BSyaSKubnb37yQmB5wz1h8JCm"
+        remoteJWKS:
+          uri: "https://auth.horus.maix.ovh/application/o/horus-gateway/jwks/"
+        extractFrom:
+          cookies:
+            - horus-sso-id
+  authorization:
+    defaultAction: Deny
+    rules:
+      - name: horus-admins-only
+        action: Allow
+        principal:
+          jwt:
+            provider: authentik
+            claims:
+              - name: groups
+                valueType: StringArray
+                values:
+                  - horus-admins
