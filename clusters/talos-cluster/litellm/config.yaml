@@ -106,6 +106,13 @@ model_list:
       api_base: https://api.featherless.ai/v1
       api_key: os.environ/FEATHERLESS_API_KEY
 
+  - model_name: osiris/foundation-pro
+    litellm_params:
+      model: anthropic/claude-haiku-5-5
+      api_key: os.environ/ANTHROPIC_API_KEY
+      max_budget: 190
+      budget_duration: 12d
+
   - model_name: osiris/vision
     model_info:
       supports_vision: true
