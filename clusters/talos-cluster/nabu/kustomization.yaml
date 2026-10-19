@@ -3,7 +3,7 @@ kind: Kustomization
 namespace: nabu
 resources:
   - namespace.yaml
-  - secret.yaml
+  - infisical-secret.yaml
   - deployment.yaml
   - service.yaml
   - httproute.yaml
