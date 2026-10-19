@@ -21,10 +21,13 @@ spec:
       ports:
         - protocol: TCP
           port: 9696
-    - ports:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: mimir
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: searxng
+      ports:
         - protocol: TCP
           port: 8191
-        - protocol: TCP
-          port: 8388
-        - protocol: UDP
-          port: 8388

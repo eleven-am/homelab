@@ -27,26 +27,6 @@ spec:
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: flaresolverr-route
-  namespace: prowlarr
-spec:
-  parentRefs:
-    - name: envoy-gateway
-      namespace: gateway
-  hostnames:
-    - "flare.horus.maix.ovh"
-  rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /
-      backendRefs:
-        - name: prowlarr-service
-          port: 8191
----
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
   name: prowlarr-api-route
   namespace: prowlarr
 spec:
