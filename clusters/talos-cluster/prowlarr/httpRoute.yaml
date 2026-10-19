@@ -37,3 +37,23 @@ spec:
       backendRefs:
         - name: prowlarr-service
           port: 8191
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: prowlarr-api-route
+  namespace: prowlarr
+spec:
+  parentRefs:
+    - name: envoy-gateway
+      namespace: gateway
+  hostnames:
+    - "prowlarr.horus.maix.ovh"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /api
+      backendRefs:
+        - name: prowlarr-service
+          port: 9696
