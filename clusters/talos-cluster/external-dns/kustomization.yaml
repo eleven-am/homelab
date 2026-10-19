@@ -3,5 +3,5 @@ kind: Kustomization
 namespace: external-dns
 resources:
   - namespace.yaml
-  - secret.yaml
+  - infisical-secret.yaml
   - deployment.yaml
