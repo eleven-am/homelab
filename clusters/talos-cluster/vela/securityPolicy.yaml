@@ -1,0 +1,26 @@
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: vela-sso
+  namespace: vela
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: vela-horus-route
+  oidc:
+    provider:
+      issuer: "https://auth.horus.maix.ovh/application/o/horus-gateway/"
+    clientID: "pKDBtRs9FBZdXG3BSyaSKubnb37yQmB5wz1h8JCm"
+    clientSecret:
+      name: horus-gateway-oidc
+    redirectURL: "https://vela.horus.maix.ovh/oauth2/callback"
+    logoutPath: "/oauth2/logout"
+    scopes:
+      - openid
+      - email
+      - profile
+      - offline_access
+    cookieNames:
+      accessToken: horus-sso-at
+      idToken: horus-sso-id
