@@ -3,7 +3,7 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - pvc.yaml
-  - secret.yaml
+  - infisical-secret.yaml
   - valkey.yaml
   - postgres.yaml
   - machine-learning.yaml
