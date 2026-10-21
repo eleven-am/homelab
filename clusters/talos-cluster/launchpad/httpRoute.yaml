@@ -29,6 +29,7 @@ spec:
       namespace: gateway
   hostnames:
     - "camille.horus.maix.ovh"
+    - "research.horus.maix.ovh"
   rules:
     - matches:
         - path:
