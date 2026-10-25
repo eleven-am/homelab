@@ -60,27 +60,6 @@ spec:
                 secretKeyRef:
                   name: litellm-secret
                   key: LITELLM_DB_PASSWORD
-        - name: seed-chatgpt-token
-          image: busybox:1.38.0
-          command:
-            - sh
-            - -c
-            - |
-              if [ ! -f /tokens/auth.json ]; then
-                printf '%s' "$CHATGPT_AUTH_JSON" > /tokens/auth.json
-                echo "seeded /tokens/auth.json"
-              else
-                echo "/tokens/auth.json already present, leaving refreshed token intact"
-              fi
-          env:
-            - name: CHATGPT_AUTH_JSON
-              valueFrom:
-                secretKeyRef:
-                  name: litellm-secret
-                  key: CHATGPT_AUTH_JSON
-          volumeMounts:
-            - name: chatgpt-tokens
-              mountPath: /tokens
       containers:
         - name: litellm
           image: ghcr.io/berriai/litellm-database:v1.104.3@sha256:95ef69d1ef01a55049e1c8e113909fd6859ecdaaa0be33f55d3fd6efe5de3f52
@@ -166,8 +145,6 @@ spec:
                 secretKeyRef:
                   name: litellm-secret
                   key: CEREBRAS_API_KEY
-            - name: CHATGPT_TOKEN_DIR
-              value: /tokens
             - name: STORE_MODEL_IN_DB
               value: "True"
             - name: HTTP_PROXY
@@ -193,8 +170,6 @@ spec:
             - name: config
               mountPath: /app/config.yaml
               subPath: config.yaml
-            - name: chatgpt-tokens
-              mountPath: /tokens
           livenessProbe:
             httpGet:
               path: /health/liveliness
@@ -249,6 +224,3 @@ spec:
         - name: tailscale-state
           persistentVolumeClaim:
             claimName: litellm-tailscale-state
-        - name: chatgpt-tokens
-          persistentVolumeClaim:
-            claimName: litellm-chatgpt-tokens
