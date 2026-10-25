@@ -9,3 +9,4 @@ resources:
   - httpRoute.yaml
   - sso-secret.yaml
   - securityPolicy.yaml
+  - networkPolicy.yaml
