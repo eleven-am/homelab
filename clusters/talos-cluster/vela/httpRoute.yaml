@@ -17,6 +17,9 @@ spec:
         - path:
             type: PathPrefix
             value: /
+        - path:
+            type: PathPrefix
+            value: /api/vox/rtc
       backendRefs:
         - name: vela
           port: 8080

@@ -16,6 +16,7 @@ spec:
       name: horus-gateway-oidc
     redirectURL: "https://vela.horus.maix.ovh/oauth2/callback"
     logoutPath: "/oauth2/logout"
+    refreshToken: true
     scopes:
       - openid
       - email
