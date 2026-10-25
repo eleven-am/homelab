@@ -18,7 +18,7 @@ spec:
       runtimeClassName: nvidia
       containers:
         - name: vela
-          image: zot.maix.ovh/vela:v0.0.58@sha256:10b22bb5e2862c6059ef58c9db8f75731415e6ef5d0808c965e15e1c896e0fd5
+          image: zot.maix.ovh/vela:v0.0.59@sha256:f8ba8ba45dc18c43c21ae039ea2cbf11915b3aa6297da73a7c9e65019514c5e1
           resources:
             requests:
               memory: "1Gi"
@@ -42,25 +42,21 @@ spec:
               value: /data/assets
             - name: VELA_FRONTEND_DIR
               value: /app/frontend
-            - name: VELA_ADMIN_USERNAME
+            - name: VELA_OIDC_ISSUER
+              value: https://auth.horus.maix.ovh/application/o/horus-gateway/
+            - name: VELA_OIDC_JWKS_URL
+              value: https://auth.horus.maix.ovh/application/o/horus-gateway/jwks/
+            - name: VELA_OIDC_AUDIENCE
+              value: pKDBtRs9FBZdXG3BSyaSKubnb37yQmB5wz1h8JCm
+            - name: VELA_OWNER_SUB
+              value: 8387432b5824e1356ec1423380b1568649aab6336d6f56c24e2cb4b1048dcf16
+            - name: VELA_SSO_COOKIE_NAME
+              value: horus-sso-id
+            - name: VELA_CSRF_SECRET
               valueFrom:
                 secretKeyRef:
                   name: vela-secret
-                  key: VELA_ADMIN_USER
-            - name: VELA_ADMIN_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: vela-secret
-                  key: VELA_ADMIN_PASS
-            - name: VELA_SESSION_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: vela-secret
-                  key: VELA_JWT_SECRET
-            - name: VELA_AUTH_COOKIE_NAME
-              value: vela_session
-            - name: VELA_AUTH_COOKIE_SECURE
-              value: "true"
+                  key: VELA_CSRF_SECRET
             - name: VELA_WATCH_INTERVAL
               value: 1m
             - name: VELA_PROCESSING_WORKERS
