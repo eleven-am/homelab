@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: vor
-          image: zot.maix.ovh/vor:v0.0.5@sha256:12cbd0363b9bcf8cb0b3a4c8aac4e89a1c18edff0301b89d350aa39eb8779f10
+          image: zot.maix.ovh/vor:v0.0.6@sha256:66086c57b2c90d290f7657c90e2eb0962960898a87347ca3d3b11e7902c96b2e
           imagePullPolicy: Always
           resources:
             requests:
