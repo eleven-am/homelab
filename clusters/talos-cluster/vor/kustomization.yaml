@@ -5,4 +5,5 @@ resources:
   - infisical-secret.yaml
   - deployment.yaml
   - service.yaml
+  - searxng-service.yaml
   - httpRoute.yaml

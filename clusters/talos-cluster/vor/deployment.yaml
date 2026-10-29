@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: vor
-          image: zot.maix.ovh/vor:v0.0.6@sha256:66086c57b2c90d290f7657c90e2eb0962960898a87347ca3d3b11e7902c96b2e
+          image: zot.maix.ovh/vor:v0.0.7@sha256:c84617c5deba3f3ab2096a0f3f8aa9a4f402d98e8583c47ea21839fcb10b9e87
           imagePullPolicy: Always
           resources:
             requests:
@@ -27,9 +27,15 @@ spec:
           ports:
             - name: http
               containerPort: 8080
+            - name: searxng
+              containerPort: 8081
           env:
             - name: HTTP_ADDR
               value: ":8080"
+            - name: SEARXNG_COMPAT_ADDR
+              value: ":8081"
+            - name: SEARXNG_COMPAT_TIMEOUT
+              value: "9s"
             - name: SEARXNG_URL
               value: "http://searxng.searxng.svc.cluster.local:8080"
             - name: LITELLM_URL
