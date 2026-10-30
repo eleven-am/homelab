@@ -18,84 +18,104 @@ spec:
       imagePullSecrets:
         - name: zot-pull-secret
       securityContext:
-        fsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        fsGroupChangePolicy: OnRootMismatch
       containers:
         - name: readable
-          image: zot.maix.ovh/readable:v0.0.46@sha256:fe3e4ff03f30b4c93061ed36dd6f740bfc383c5c65658befd10f7a533f9c085e
+          image: zot.maix.ovh/readable:v0.0.49@sha256:eeff292d2f937fdc38925ec0d37349c3c9ae2fdb142d14adece764c48b7b8daf
+          securityContext:
+            allowPrivilegeEscalation: false
           ports:
             - name: http
-              containerPort: 3000
+              containerPort: 8080
           env:
-            - name: NODE_ENV
-              value: "production"
-            - name: HOST
-              value: "0.0.0.0"
-            - name: PORT
-              value: "3000"
-            - name: DATABASE_URL
-              value: "file:/data/readable.db"
+            - name: GOLEM_HTTP_ADDRESS
+              value: ":8080"
+            - name: GOLEM_DATABASE_DSN
+              value: "file:/data/readable.sqlite"
+            - name: GOLEM_SQLITE_DURABILITY
+              value: "network-filesystem"
             - name: STORAGE_DIR
               value: "/data/storage"
-            - name: BETTER_AUTH_URL
-              value: "https://readable.maix.ovh"
+            - name: AUTH_COOKIE_SECURE
+              value: "true"
             - name: TRUSTED_ORIGINS
               value: "https://readable.maix.ovh"
+            - name: AUTHENTIK_ISSUER
+              valueFrom:
+                secretKeyRef:
+                  name: readable-secret
+                  key: AUTHENTIK_ISSUER
+            - name: AUTHENTIK_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: readable-secret
+                  key: AUTHENTIK_CLIENT_ID
+            - name: AUTHENTIK_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: readable-secret
+                  key: AUTHENTIK_CLIENT_SECRET
+            - name: AUTHENTIK_REDIRECT_URL
+              valueFrom:
+                secretKeyRef:
+                  name: readable-secret
+                  key: AUTHENTIK_REDIRECT_URL
+            - name: AUTHENTIK_POST_LOGOUT_REDIRECT_URL
+              valueFrom:
+                secretKeyRef:
+                  name: readable-secret
+                  key: AUTHENTIK_POST_LOGOUT_REDIRECT_URL
+            - name: MIMIR_URL
+              value: "http://mimir-service.mimir.svc.cluster.local:3000"
+            - name: MIMIR_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: readable-secret
+                  key: MIMIR_API_KEY
             - name: LITELLM_URL
               value: "http://litellm-service.litellm.svc.cluster.local:4000"
+            - name: LITELLM_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: readable-secret
+                  key: LITELLM_API_KEY
             - name: READABLE_CONTENT_MODEL
               value: "osiris/foundation"
             - name: READABLE_PREAMBLE_MODEL
               value: "osiris/foundation"
             - name: READABLE_CHAT_MODEL
               value: "osiris/foundation"
-            - name: ROLEPLAY_EMBEDDING_MODEL
+            - name: READABLE_VISION_MODEL
+              value: "osiris/foundation"
+            - name: READABLE_EMBEDDING_MODEL
               value: "osiris/embedding"
-            - name: ROLEPLAY_EMBEDDING_DIMENSION
-              value: "1024"
-            - name: ROLEPLAY_TTS_MODEL
-              value: "osiris/speech-tts"
-            - name: ROLEPLAY_STT_MODEL
-              value: "osiris/speech-stt"
-            - name: ROLEPLAY_DEFAULT_VOICE
-              value: "af_heart"
             - name: BROWSERLESS_URL
               value: "http://browserless-service.browserless.svc.cluster.local:3000"
-            - name: VOX_HTTP_BASE
+            - name: VOX_URL
               value: "http://vox-service.vox.svc.cluster.local:11435"
+            - name: VOX_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: readable-secret
+                  key: VOX_API_KEY
             - name: VOX_STT_MODEL
               value: "parakeet-stt:tdt-0.6b-v3"
             - name: VOX_TTS_MODEL
               value: "kokoro-tts:v1.0"
+            - name: VOX_VOICE
+              value: "af_heart"
+            - name: ROLEPLAY_DEFAULT_VOICE
+              value: "af_heart"
             - name: VOX_TURN_PROFILE
               value: "browser_default"
             - name: VOX_VAD_BACKEND
               value: "silero"
             - name: VOX_TURN_DETECTOR
               value: "livekit"
-            - name: BETTER_AUTH_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: readable-secret
-                  key: BETTER_AUTH_SECRET
-            - name: LITELLM_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: readable-secret
-                  key: LITELLM_API_KEY
-            - name: VOX_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: readable-secret
-                  key: VOX_API_KEY
-            - name: DSTREAMS_URL
-              value: "https://dstreams.horus.maix.ovh"
-            - name: DSTREAMS_TTL_SECONDS
-              value: "86400"
-            - name: DSTREAMS_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: readable-secret
-                  key: DSTREAMS_TOKEN
           resources:
             requests:
               cpu: 100m
@@ -103,20 +123,22 @@ spec:
             limits:
               cpu: "1"
               memory: 1Gi
-          volumeMounts:
-            - name: data
-              mountPath: /data
           livenessProbe:
-            tcpSocket:
+            httpGet:
+              path: /healthz
               port: http
             initialDelaySeconds: 20
             periodSeconds: 15
           readinessProbe:
-            tcpSocket:
+            httpGet:
+              path: /readyz
               port: http
             initialDelaySeconds: 10
             periodSeconds: 5
+          volumeMounts:
+            - name: data
+              mountPath: /data
       volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: readable-data
+            claimName: readable-v4-data-20261030
