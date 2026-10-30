@@ -4,7 +4,6 @@ resources:
   - namespace.yaml
   - infisical-secret.yaml
   - pvc.yaml
-  - configmap.yaml
   - deployment.yaml
   - service.yaml
   - httpRoute.yaml
