@@ -37,7 +37,7 @@ spec:
               mountPath: /home/vox/.vox
       containers:
         - name: vox
-          image: ghcr.io/eleven-am/vox:v0.2.136@sha256:b201e2535e8274563ababb0630e36226727589834c30b69909a31cf53bf65e9b
+          image: ghcr.io/eleven-am/vox:v0.2.137@sha256:3e35d9eb1b92966cd9ee0b0f33b1b4aedddce758de7b7b049108abf72a883e71
           imagePullPolicy: IfNotPresent
           args:
             - vox
@@ -105,7 +105,7 @@ spec:
             failureThreshold: 60
           readinessProbe:
             httpGet:
-              path: /v1/health
+              path: /readyz
               port: 11435
             initialDelaySeconds: 10
             periodSeconds: 10
