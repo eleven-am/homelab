@@ -3,7 +3,7 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - infisical-secret.yaml
+  - pvc.yaml
   - deployment.yaml
   - service.yaml
-  - searxng-service.yaml
   - httpRoute.yaml
