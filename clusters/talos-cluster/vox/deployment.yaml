@@ -14,6 +14,9 @@ spec:
       app: vox
   template:
     metadata:
+      annotations:
+        vox.eleven.am/chatterbox-adapter: "0.1.13"
+        vox.eleven.am/parakeet-adapter: "0.2.38"
       labels:
         app: vox
     spec:
