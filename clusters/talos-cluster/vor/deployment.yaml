@@ -22,7 +22,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: vor
-          image: zot.maix.ovh/vor:v0.0.9@sha256:61f087c2c1b1dd879f8b106b564c81ca9e99a6f3fc758ee172349a10da920805
+          image: zot.maix.ovh/vor:v0.0.10@sha256:b062dc2e83bb7a96385fb4f733cf33e6452205fe93b89e7d58c19feef8af9a16
           imagePullPolicy: Always
           securityContext:
             allowPrivilegeEscalation: false
