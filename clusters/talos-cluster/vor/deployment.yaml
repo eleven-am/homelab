@@ -5,6 +5,8 @@ metadata:
   namespace: vor
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: vor
@@ -13,10 +15,24 @@ spec:
       labels:
         app: vor
     spec:
+      securityContext:
+        fsGroup: 65532
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: vor
-          image: zot.maix.ovh/vor:v0.0.7@sha256:c84617c5deba3f3ab2096a0f3f8aa9a4f402d98e8583c47ea21839fcb10b9e87
+          image: zot.maix.ovh/vor:v0.0.8@sha256:0b8c36b4b13613801c90c9de7428c67cd9ccc6ef4f34594cf0800996d5707e7e
           imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 65532
+            runAsGroup: 65532
           resources:
             requests:
               memory: "64Mi"
@@ -27,15 +43,27 @@ spec:
           ports:
             - name: http
               containerPort: 8080
-            - name: searxng
-              containerPort: 8081
           env:
             - name: HTTP_ADDR
               value: ":8080"
-            - name: SEARXNG_COMPAT_ADDR
-              value: ":8081"
             - name: SEARXNG_COMPAT_TIMEOUT
               value: "9s"
+            - name: DATABASE_PATH
+              value: "/data/vor.db"
+            - name: USAGE_RETENTION
+              value: "2160h"
+            - name: BOOTSTRAP_SERVICE_NAME
+              value: "legacy-gateway"
+            - name: BOOTSTRAP_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: vor-secrets
+                  key: GATEWAY_API_KEY
+            - name: ADMIN_MASTER_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: vor-secrets
+                  key: ADMIN_MASTER_API_KEY
             - name: SEARXNG_URL
               value: "http://searxng.searxng.svc.cluster.local:8080"
             - name: LITELLM_URL
@@ -48,11 +76,6 @@ spec:
               value: "http://mimir-service.mimir.svc.cluster.local:3000"
             - name: MIMIR_TIMEOUT
               value: "10m"
-            - name: GATEWAY_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: vor-secrets
-                  key: GATEWAY_API_KEY
             - name: LITELLM_KEY
               valueFrom:
                 secretKeyRef:
@@ -63,17 +86,24 @@ spec:
                 secretKeyRef:
                   name: vor-secrets
                   key: MIMIR_API_KEY
+          volumeMounts:
+            - name: data
+              mountPath: /data
           livenessProbe:
             httpGet:
-              path: /healthz
+              path: /api/healthz
               port: http
             initialDelaySeconds: 5
             periodSeconds: 10
           readinessProbe:
             httpGet:
-              path: /healthz
+              path: /api/readyz
               port: http
             initialDelaySeconds: 3
             periodSeconds: 5
       imagePullSecrets:
         - name: zot-pull-secret
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: vor-data
