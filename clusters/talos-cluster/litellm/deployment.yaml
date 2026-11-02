@@ -15,7 +15,7 @@ spec:
   template:
     metadata:
       annotations:
-        homelab.maix.ovh/config-revision: "2026-10-13-typesafe-passthrough"
+        homelab.maix.ovh/config-revision: "2026-11-02-rerank-qwen"
       labels:
         app: litellm
     spec:
