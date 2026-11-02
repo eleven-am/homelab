@@ -25,7 +25,7 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
       containers:
         - name: readable
-          image: zot.maix.ovh/readable:v0.0.80@sha256:49084d66daf3a9ab188cce4e175412805f587400940cbee0046bcdfc7e5c78d3
+          image: zot.maix.ovh/readable:v0.0.81@sha256:e5fc471032a180d38a654b550ae22dca3064474d482259fd1b7bc5998e8b9ce7
           securityContext:
             allowPrivilegeEscalation: false
           ports:
@@ -37,7 +37,7 @@ spec:
             - name: GOLEM_DATABASE_DSN
               value: "file:/data/readable.sqlite"
             - name: GOLEM_SQLITE_DURABILITY
-              value: "network-filesystem"
+              value: "network-filesystem-wal"
             - name: STORAGE_DIR
               value: "/data/storage"
             - name: AUTH_COOKIE_SECURE
