@@ -6,6 +6,7 @@ resources:
   - pvc.yaml
   - pvc-v4.yaml
   - pvc-v5.yaml
+  - pvc-v6.yaml
   - deployment.yaml
   - service.yaml
   - httpRoute.yaml
