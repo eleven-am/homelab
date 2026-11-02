@@ -37,7 +37,7 @@ spec:
             - name: LDR_DATA_DIR
               value: "/data"
             - name: LDR_APP_ALLOW_REGISTRATIONS
-              value: "true"
+              value: "false"
             - name: LDR_LLM_PROVIDER
               value: "openai_endpoint"
             - name: LDR_LLM_OPENAI_ENDPOINT_URL
