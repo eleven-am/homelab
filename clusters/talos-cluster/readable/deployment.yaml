@@ -37,7 +37,7 @@ spec:
             - name: GOLEM_DATABASE_DSN
               value: "file:/data/readable.sqlite"
             - name: GOLEM_SQLITE_DURABILITY
-              value: "network-filesystem"
+              value: "wal"
             - name: STORAGE_DIR
               value: "/data/storage"
             - name: AUTH_COOKIE_SECURE
