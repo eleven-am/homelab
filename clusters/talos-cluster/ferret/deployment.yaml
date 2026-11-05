@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: ferret
-          image: zot.maix.ovh/ferret:v0.5.0@sha256:93a2309ae66c155f86eeb712ed89db91546ec2ea3ec195bf79754fe9753eb299
+          image: zot.maix.ovh/ferret:v0.5.1@sha256:6947e09fc2f836c5106da0706c8f3ff1b184a8179836aefb469de8f123495348
           imagePullPolicy: Always
           resources:
             requests:
