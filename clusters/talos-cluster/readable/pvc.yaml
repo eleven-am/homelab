@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: readable-data-20261102-fresh
+  name: readable-data-20261106-ferret
   namespace: readable
 spec:
   storageClassName: app-storage

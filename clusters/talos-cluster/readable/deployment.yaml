@@ -25,7 +25,7 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
       containers:
         - name: readable
-          image: zot.maix.ovh/readable:v0.0.89@sha256:c2c4d5d5e342ba5536473019348e18f47655179207d2278a69b412d85eb11944
+          image: zot.maix.ovh/readable:v0.0.90@sha256:1fa453a4ac5e78eb6fdf3734c03aa5a73318b51d2070b06cda2ee9f70cc281b6
           securityContext:
             allowPrivilegeEscalation: false
           ports:
@@ -141,4 +141,4 @@ spec:
       volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: readable-data-20261102-fresh
+            claimName: readable-data-20261106-ferret
