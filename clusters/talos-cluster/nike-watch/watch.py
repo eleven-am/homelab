@@ -25,7 +25,7 @@ LIVE_RE = re.compile(r"\b(available now|out now|in stock|shop now|buy now|dispon
 def extract(url):
     body = json.dumps({"url": url, "timeout_seconds": 80}).encode()
     req = urllib.request.Request(MIMIR_URL + "/api/fetch", data=body, headers={
-        "Authorization": "Bearer " + os.environ["MIMIR_KEY_V52"], "Content-Type": "application/json"})
+        "Authorization": "Bearer " + os.environ["MIMIR_KEY"], "Content-Type": "application/json"})
     with urllib.request.urlopen(req, timeout=110) as r:
         d = json.load(r)
     md = d.get("markdown") or ""

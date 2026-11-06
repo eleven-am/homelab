@@ -85,7 +85,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: vor-secrets
-                  key: MIMIR_API_KEY_V52
+                  key: MIMIR_API_KEY
           volumeMounts:
             - name: data
               mountPath: /data
