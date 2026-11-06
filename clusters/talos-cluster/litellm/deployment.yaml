@@ -117,7 +117,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: litellm-secret
-                  key: MIMIR_API_KEY
+                  key: MIMIR_API_KEY_V52
             - name: TYPESAFE_API_KEY
               valueFrom:
                 secretKeyRef:
