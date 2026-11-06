@@ -274,14 +274,6 @@ general_settings:
       headers:
         Authorization: "Bearer os.environ/MINIMAX_API_KEY"
         Content-Type: "application/json"
-    - path: "/mimir/fetch"
-      target: "http://mimir-service.mimir.svc.cluster.local:3000/api/fetch"
-      headers:
-        Authorization: "Bearer os.environ/MIMIR_API_KEY"
-    - path: "/mimir/upload"
-      target: "http://mimir-service.mimir.svc.cluster.local:3000/api/upload"
-      headers:
-        Authorization: "Bearer os.environ/MIMIR_API_KEY"
     - path: "/typesafe/systemone"
       target: "https://api.typesafe.ai/v1/systemone"
       headers:

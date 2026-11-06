@@ -113,11 +113,6 @@ spec:
                 secretKeyRef:
                   name: litellm-secret
                   key: MINIMAX_API_KEY
-            - name: MIMIR_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: litellm-secret
-                  key: MIMIR_API_KEY_V52
             - name: TYPESAFE_API_KEY
               valueFrom:
                 secretKeyRef:
