@@ -18,7 +18,7 @@ spec:
         app: mimir
     spec:
       securityContext:
-        fsGroup: 999
+        fsGroup: 997
         fsGroupChangePolicy: OnRootMismatch
       containers:
         - name: mimir
