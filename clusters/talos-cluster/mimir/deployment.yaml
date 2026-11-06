@@ -17,27 +17,29 @@ spec:
       labels:
         app: mimir
     spec:
+      securityContext:
+        fsGroup: 999
+        fsGroupChangePolicy: OnRootMismatch
       containers:
         - name: mimir
-          image: zot.maix.ovh/mimir:v0.0.52@sha256:d223a7dbf94c6b9ed43437c6b62c0b1e6eb6332a5519bd96b753f6176ce5f8b9
+          image: zot.maix.ovh/mimir:v0.0.52@sha256:4d3a9ee3c6afa18c9bea432a174c8bf36cfe1be1e33b66a8605e15c0701a6103
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
               name: http
-          envFrom:
-            - configMapRef:
-                name: mimir-config
           env:
-            - name: MIMIR_API_KEY
+            - name: PORT
+              value: "3000"
+            - name: MIMIR_DATABASE_URL
+              value: "sqlite:///data/mimir.db"
+            - name: MIMIR_ADMIN_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: mimir-secret
-                  key: MIMIR_API_KEY
-            - name: MIMIR_STT_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: mimir-secret
-                  key: LITELLM_API_KEY
+                  key: MIMIR_ADMIN_API_KEY
+          volumeMounts:
+            - name: data
+              mountPath: /data
           resources:
             requests:
               cpu: 200m
@@ -47,15 +49,19 @@ spec:
               memory: 2Gi
           livenessProbe:
             httpGet:
-              path: /health
+              path: /api/healthz
               port: 3000
             initialDelaySeconds: 20
             periodSeconds: 15
           readinessProbe:
             httpGet:
-              path: /ready
+              path: /api/readyz
               port: 3000
             initialDelaySeconds: 15
             periodSeconds: 10
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: mimir-data-v2
       imagePullSecrets:
         - name: zot-pull-secret

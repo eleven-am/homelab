@@ -3,7 +3,7 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - infisical-secret.yaml
-  - configmap.yaml
+  - pvc.yaml
   - deployment.yaml
   - service.yaml
   - httpRoute.yaml
