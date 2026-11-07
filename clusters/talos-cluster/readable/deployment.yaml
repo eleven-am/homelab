@@ -102,5 +102,8 @@ spec:
             claimName: readable-data-20261107-db-settings
         - name: settings-key
           secret:
-            secretName: readable-settings-key
+            secretName: readable-secret
+            items:
+              - key: READABLE_SETTINGS_KEY
+                path: settings.key
             defaultMode: 0440
