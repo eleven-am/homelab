@@ -25,7 +25,7 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
       containers:
         - name: readable
-          image: zot.maix.ovh/readable:v0.0.91@sha256:d8d6e3fbde3354c020df9c626a0f7dd063499982282592e1483e802a5025f385
+          image: zot.maix.ovh/readable:v0.0.92@sha256:401dd63210fb279dc4a3ac549f46306a623371c4fd046f86d9b9dad52a1163c8
           securityContext:
             allowPrivilegeEscalation: false
           ports:
@@ -38,6 +38,8 @@ spec:
               value: "file:/data/readable.sqlite"
             - name: GOLEM_SQLITE_DURABILITY
               value: "network-filesystem-wal"
+            - name: READABLE_SETTINGS_KEY_FILE
+              value: "/run/secrets/readable/settings.key"
             - name: STORAGE_DIR
               value: "/data/storage"
             - name: AUTH_COOKIE_SECURE
@@ -138,7 +140,14 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /data
+            - name: settings-key
+              mountPath: /run/secrets/readable
+              readOnly: true
       volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: readable-data-20261106-ferret
+            claimName: readable-data-20261107-settings
+        - name: settings-key
+          secret:
+            secretName: readable-settings-key
+            defaultMode: 0440
