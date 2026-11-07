@@ -25,7 +25,7 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
       containers:
         - name: readable
-          image: zot.maix.ovh/readable:v0.0.95@sha256:aef18ee9040958fd45922e6bc0029e50ee429560fe510102a74fb87785c6cc05
+          image: zot.maix.ovh/readable:v0.0.96@sha256:fd8ef22e9d8e7aab5c9802761ec23a948e8c70c0d753889be111744b03c6077e
           securityContext:
             allowPrivilegeEscalation: false
           ports:
