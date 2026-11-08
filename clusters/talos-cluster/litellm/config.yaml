@@ -127,9 +127,8 @@ model_list:
     model_info:
       supports_vision: true
     litellm_params:
-      model: openai/Qwen/Qwen3-VL-32B-Instruct
-      api_base: https://api.featherless.ai/v1
-      api_key: os.environ/FEATHERLESS_API_KEY
+      model: openrouter/qwen/qwen3-vl-30b-a3b-instruct
+      api_key: os.environ/OPENROUTER_API_KEY
 
   - model_name: osiris/agentic
     litellm_params:
