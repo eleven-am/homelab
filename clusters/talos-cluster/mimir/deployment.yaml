@@ -22,7 +22,7 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
       containers:
         - name: mimir
-          image: zot.maix.ovh/mimir:v0.0.58@sha256:9fb54e74121eeeccbc1a721f40d9e10bb25400c161185ee39b3f25f05ca9e735
+          image: zot.maix.ovh/mimir:v0.0.59@sha256:2a79be70d072c55d3a24d343872b07c47c2e29c21d0e6c922c8e12a20d871338
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
