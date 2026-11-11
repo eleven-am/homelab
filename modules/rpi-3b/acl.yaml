@@ -5,13 +5,8 @@ groups:
   group:devs:
     - maixperiyon
 
-  group:clara:
-    - poncetcla
-
   group:horus:
     - maixperiyon
-    - poncetcla
-    - "a.s.h.e.s.343"
 
   group:thebes:
     - thebes
@@ -49,8 +44,3 @@ acls:
       - "100.64.0.4/32:*"
       - "192.168.101.100/32:*"
 
-  - action: accept
-    src:
-      - group:clara
-    dst:
-      - group:clara:*
