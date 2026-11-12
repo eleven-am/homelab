@@ -9,6 +9,7 @@ spec:
       namespace: cloudflare-gateway
   hostnames:
     - "launchpad.maix.ovh"
+    - "cr-frames.maix.ovh"
   rules:
     - matches:
         - path:
