@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alpha
+  namespace: alpha
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: alpha
+  template:
+    metadata:
+      labels:
+        app: alpha
+    spec:
+      runtimeClassName: nvidia
+      containers:
+        - name: frames
+          image: zot.maix.ovh/frames:91942f2f@sha256:7c413ab2d30471650c528ebe4610396df86608020ac69f685e573728917ba3e5
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "1"
+              nvidia.com/gpu: "1"
+            limits:
+              memory: "4Gi"
+              cpu: "4"
+              nvidia.com/gpu: "1"
+          ports:
+            - name: http
+              containerPort: 4000
+          env:
+            - name: FRAMES_SERVER_ADDR
+              value: ":4000"
+            - name: FRAMES_PUBLIC_URL
+              value: https://alpha.maix.ovh
+            - name: FRAMES_TRUSTED_PROXY_CIDRS
+              value: 10.244.0.0/24
+            - name: PUID
+              value: "1005"
+            - name: PGID
+              value: "1005"
+            - name: NVIDIA_DRIVER_CAPABILITIES
+              value: compute,utility,video
+            - name: LD_LIBRARY_PATH
+              value: /usr/local/nvidia/lib:/usr/local/nvidia/lib64:/usr/local/glibc/usr/lib
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: media
+              mountPath: /media
+          startupProbe:
+            httpGet:
+              path: /health/live
+              port: http
+            periodSeconds: 10
+            failureThreshold: 60
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: http
+            periodSeconds: 15
+            timeoutSeconds: 10
+            failureThreshold: 6
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: http
+            periodSeconds: 10
+            failureThreshold: 3
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: alpha-data
+        - name: media
+          persistentVolumeClaim:
+            claimName: alpha-media
+      imagePullSecrets:
+        - name: zot-pull-secret
