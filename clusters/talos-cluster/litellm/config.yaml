@@ -219,6 +219,11 @@ model_list:
       model: voyage/rerank-3
       api_key: os.environ/VOYAGE_API_KEY
 
+  - model_name: osiris/decision
+    litellm_params:
+      model: typesafe/jev-1.14.0
+      api_key: os.environ/TYPESAFE_API_KEY
+
   - model_name: osiris/rerank
     litellm_params:
       model: hosted_vllm/BAAI/bge-reranker-v2-m3
