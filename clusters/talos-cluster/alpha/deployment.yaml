@@ -38,8 +38,6 @@ spec:
               value: https://alpha.maix.ovh
             - name: FRAMES_TRUSTED_PROXY_CIDRS
               value: 10.244.0.0/24
-            - name: FRAMES_PPROF_ADDR
-              value: 127.0.0.1:6060
             - name: PUID
               value: "1005"
             - name: PGID
