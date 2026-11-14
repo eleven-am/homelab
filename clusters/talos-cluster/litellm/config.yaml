@@ -278,10 +278,6 @@ general_settings:
       headers:
         Authorization: "Bearer os.environ/MINIMAX_API_KEY"
         Content-Type: "application/json"
-    - path: "/typesafe/systemone"
-      target: "https://api.typesafe.ai/v1/systemone"
-      headers:
-        Authorization: "Bearer os.environ/TYPESAFE_API_KEY"
     - path: "/vox/voices"
       target: "http://vox-service.vox.svc.cluster.local:11435/v1/audio/voices"
       headers:
