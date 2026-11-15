@@ -137,7 +137,7 @@ spec:
             - name: tmp
               mountPath: /tmp
         - name: migrate
-          image: zot.maix.ovh/sampo-migrate:v0.1.2@sha256:28b1f17792e234d046e669daab9939a088488ba1e63f123ca6d958bf05e9b545
+          image: zot.maix.ovh/sampo-migrate:v0.1.3@sha256:3c967474627b5729f4297528c9c94ce12470a9e6c653bb0c238f9411bbe5b7c8
           env:
             - name: DB_USER
               valueFrom:
@@ -163,7 +163,7 @@ spec:
               drop: ["ALL"]
       containers:
         - name: sampo
-          image: zot.maix.ovh/sampo:v0.1.2@sha256:8ccc25f900a4880a99e040b7e21bad46177fc4a4af6353c702914571fff5a873
+          image: zot.maix.ovh/sampo:v0.1.3@sha256:0eaabe7048f9bf80a4f3f14cca1a464a7afbd08cd97e68f4f136fc8df7400714
           ports:
             - name: http
               containerPort: 8080
