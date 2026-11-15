@@ -238,7 +238,7 @@ spec:
                   name: sampo-secret
                   key: SAMPO_USESEND_API_KEY
             - name: SAMPO_MAIL_FROM
-              value: "Sampo <sampo@maix.ovh>"
+              value: "Sampo <sampo@sampo.maix.ovh>"
             - name: SAMPO_PUBLISHER_GROUP
               value: "sampo-publishers"
             - name: SAMPO_ASK_URL
