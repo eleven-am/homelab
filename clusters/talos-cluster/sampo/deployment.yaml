@@ -1,0 +1,283 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sampo
+  namespace: sampo
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: sampo
+  template:
+    metadata:
+      labels:
+        app: sampo
+    spec:
+      terminationGracePeriodSeconds: 45
+      imagePullSecrets:
+        - name: zot-pull-secret
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        - name: init-db
+          image: postgres:17
+          command:
+            - sh
+            - -c
+            - |
+              USER_EXISTS=$(psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='$DB_USER'")
+              if [ "$USER_EXISTS" != "1" ]; then
+                psql -c "CREATE USER $DB_USER WITH PASSWORD '$DB_PASSWORD';"
+              else
+                psql -c "ALTER USER $DB_USER WITH PASSWORD '$DB_PASSWORD';"
+              fi
+              DB_EXISTS=$(psql -tAc "SELECT 1 FROM pg_database WHERE datname='$DB_NAME'")
+              if [ "$DB_EXISTS" != "1" ]; then
+                psql -c "CREATE DATABASE $DB_NAME OWNER $DB_USER;"
+              fi
+              psql -c "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USER;"
+          env:
+            - name: PGHOST
+              value: "postgres-service.postgres.svc.cluster.local"
+            - name: PGPORT
+              value: "5432"
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_USER
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: sampo-secret
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: sampo-secret
+                  key: DB_PASSWORD
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: sampo-secret
+                  key: DB_NAME
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+        - name: init-bucket
+          image: docker.io/pgsty/mc:RELEASE.2026-09-16T00-00-00Z@sha256:cfc83108c3abb371f8fb84d99c1fdc88f8c237e022409b0081fb7c0a3be634dd
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -eu
+              export MC_CONFIG_DIR=/tmp/mc
+              mc alias set root http://minio-service.minio.svc.cluster.local:9000 "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD"
+              mc mb --ignore-existing "root/$SAMPO_MINIO_BUCKET"
+              cat > /tmp/sampo-policy.json <<POLICY
+              {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {"Effect": "Allow", "Action": ["s3:GetBucketLocation", "s3:ListBucket"], "Resource": ["arn:aws:s3:::$SAMPO_MINIO_BUCKET"]},
+                  {"Effect": "Allow", "Action": ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"], "Resource": ["arn:aws:s3:::$SAMPO_MINIO_BUCKET/*"]}
+                ]
+              }
+              POLICY
+              mc admin policy create root sampo-app /tmp/sampo-policy.json
+              mc admin user add root "$SAMPO_MINIO_ACCESS_KEY" "$SAMPO_MINIO_SECRET_KEY"
+              if ! mc admin policy attach root sampo-app --user "$SAMPO_MINIO_ACCESS_KEY"; then
+                attached="$(mc admin user info root "$SAMPO_MINIO_ACCESS_KEY")"
+                case "$attached" in
+                  *sampo-app*) ;;
+                  *) echo "could not attach policy sampo-app to $SAMPO_MINIO_ACCESS_KEY" >&2; exit 1 ;;
+                esac
+              fi
+          env:
+            - name: MINIO_ROOT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: minio-secret
+                  key: MINIO_ROOT_USER
+            - name: MINIO_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: minio-secret
+                  key: MINIO_ROOT_PASSWORD
+            - name: SAMPO_MINIO_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: sampo-secret
+                  key: SAMPO_MINIO_ACCESS_KEY
+            - name: SAMPO_MINIO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: sampo-secret
+                  key: SAMPO_MINIO_SECRET_KEY
+            - name: SAMPO_MINIO_BUCKET
+              value: "sampo"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+        - name: migrate
+          image: zot.maix.ovh/sampo-migrate:v0.1.1@sha256:310934b13e4f4ea7be5f3a56cafdd206c2f1694cd6c613d0f50e187a0423907c
+          env:
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: sampo-secret
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: sampo-secret
+                  key: DB_PASSWORD
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: sampo-secret
+                  key: DB_NAME
+            - name: SAMPO_DATABASE_URL
+              value: "postgres://$(DB_USER):$(DB_PASSWORD)@postgres-service.postgres.svc.cluster.local:5432/$(DB_NAME)?sslmode=disable"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+      containers:
+        - name: sampo
+          image: zot.maix.ovh/sampo:v0.1.1@sha256:29f6400b156c02c9c646b4089600be1d57c868ed269a18228c9323efa5d567ca
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: SAMPO_LISTEN_ADDR
+              value: ":8080"
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: sampo-secret
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: sampo-secret
+                  key: DB_PASSWORD
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: sampo-secret
+                  key: DB_NAME
+            - name: SAMPO_DATABASE_URL
+              value: "postgres://$(DB_USER):$(DB_PASSWORD)@postgres-service.postgres.svc.cluster.local:5432/$(DB_NAME)?sslmode=disable"
+            - name: SAMPO_MINIO_ENDPOINT
+              value: "minio-service.minio.svc.cluster.local:9000"
+            - name: SAMPO_MINIO_USE_SSL
+              value: "false"
+            - name: SAMPO_MINIO_BUCKET
+              value: "sampo"
+            - name: SAMPO_MINIO_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: sampo-secret
+                  key: SAMPO_MINIO_ACCESS_KEY
+            - name: SAMPO_MINIO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: sampo-secret
+                  key: SAMPO_MINIO_SECRET_KEY
+            - name: SAMPO_SHELL_ORIGIN
+              value: "https://sampo.maix.ovh"
+            - name: SAMPO_CONTENT_ORIGIN
+              value: "https://sampo-content.maix.ovh"
+            - name: SAMPO_OIDC_ISSUER
+              value: "https://auth.maix.ovh/application/o/sampo/"
+            - name: SAMPO_OIDC_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: sampo-secret
+                  key: SAMPO_OIDC_CLIENT_ID
+            - name: SAMPO_OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: sampo-secret
+                  key: SAMPO_OIDC_CLIENT_SECRET
+            - name: SAMPO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: sampo-secret
+                  key: SAMPO_SECRET_KEY
+            - name: SAMPO_TRUSTED_PROXIES
+              value: "10.244.0.0/16"
+            - name: SAMPO_CLIENT_IP_HEADER
+              value: "CF-Connecting-IP"
+            - name: SAMPO_MAIL_MODE
+              value: "usesend"
+            - name: SAMPO_USESEND_URL
+              value: "http://usesend.usesend.svc.cluster.local"
+            - name: SAMPO_USESEND_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: sampo-secret
+                  key: SAMPO_USESEND_API_KEY
+            - name: SAMPO_MAIL_FROM
+              value: "Sampo <sampo@maix.ovh>"
+            - name: SAMPO_PUBLISHER_GROUP
+              value: "sampo-publishers"
+            - name: SAMPO_ASK_URL
+              value: "http://litellm-service.litellm.svc.cluster.local:4000/v1"
+            - name: SAMPO_ASK_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: sampo-secret
+                  key: SAMPO_ASK_API_KEY
+            - name: SAMPO_ASK_MODELS
+              value: "claude-haiku-4-5,osiris/foundation"
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: "1"
+              memory: 2Gi
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 2
+            failureThreshold: 30
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 10
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+      volumes:
+        - name: tmp
+          emptyDir: {}

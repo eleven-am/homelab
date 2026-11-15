@@ -39,6 +39,9 @@ spec:
                   echo "Mirroring neo4j-backups..."
                   mc mirror --overwrite minio/neo4j-backups b2/$B2_BUCKET/neo4j-backups
 
+                  echo "Mirroring sampo..."
+                  mc mirror --overwrite minio/sampo b2/$B2_BUCKET/sampo
+
                   echo "B2 backup mirror completed"
               env:
                 - name: MINIO_ROOT_USER
