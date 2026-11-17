@@ -117,6 +117,9 @@ model_list:
       api_key: os.environ/ANTHROPIC_API_KEY
       max_budget: 190
       budget_duration: 12d
+      cache_control_injection_points:
+        - location: message
+          role: system
 
   - model_name: osiris/foundation-luna
     litellm_params:
