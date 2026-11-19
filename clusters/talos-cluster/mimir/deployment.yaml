@@ -27,7 +27,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: mimir
-          image: zot.maix.ovh/mimir:v0.0.72@sha256:52374a6cc2e39d0c4c28ee64021ef9314e5f825b271d50ce5d59a4dd3be0254e
+          image: zot.maix.ovh/mimir:v0.0.73@sha256:9bc2da52cc5dadba1840ed5a5aff5e3c92ba7d893e51b0ec6752b939550626c2
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false
