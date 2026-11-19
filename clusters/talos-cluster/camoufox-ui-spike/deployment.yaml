@@ -27,11 +27,13 @@ spec:
           type: RuntimeDefault
       containers:
         - name: browser-ui
-          image: zot.maix.ovh/mimir-browser-ui:v0.0.2@sha256:23bb22089404c8b98a6343b8521f99655daad049f066efbfdbe9509f13035816
+          image: zot.maix.ovh/mimir-browser-ui:v0.0.3@sha256:af7ec330434833dc162cb9bd396f791f12976b7d887e072d823d18dd9c56c7b8
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
               containerPort: 6080
+            - name: control
+              containerPort: 6081
           env:
             - name: BROWSER_UI_INITIAL_URL
               value: "https://example.com"

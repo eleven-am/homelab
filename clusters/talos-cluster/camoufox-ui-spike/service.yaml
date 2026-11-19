@@ -12,3 +12,7 @@ spec:
       protocol: TCP
       port: 6080
       targetPort: http
+    - name: control
+      protocol: TCP
+      port: 6081
+      targetPort: control
