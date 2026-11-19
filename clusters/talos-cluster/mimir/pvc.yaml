@@ -9,4 +9,7 @@ spec:
   storageClassName: app-storage
   resources:
     requests:
-      storage: 1Gi
+      # Mimir enforces 1 GiB per browser profile and an 8 GiB aggregate
+      # browser-profile budget. Keep separate space for SQLite, WAL files,
+      # atomic profile quarantine and cleanup.
+      storage: 12Gi

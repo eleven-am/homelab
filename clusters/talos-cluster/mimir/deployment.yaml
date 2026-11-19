@@ -27,7 +27,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: mimir
-          image: zot.maix.ovh/mimir:v0.0.70@sha256:bd0502e91617d5e0625ba4c394ed11ce249ba2830967aba4dd59bd54857131bd
+          image: zot.maix.ovh/mimir:v0.0.71@sha256:7f5b6dfae3160e5ca03ff50481a364e6520ee757952e1a9011293fbc3bd4ed96
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false
@@ -71,6 +71,7 @@ spec:
               port: 3000
             initialDelaySeconds: 15
             periodSeconds: 10
+            timeoutSeconds: 5
       volumes:
         - name: data
           persistentVolumeClaim:
