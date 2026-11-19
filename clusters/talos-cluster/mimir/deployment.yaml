@@ -18,12 +18,20 @@ spec:
         app: mimir
     spec:
       securityContext:
+        runAsNonRoot: true
         fsGroup: 997
         fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: mimir
-          image: zot.maix.ovh/mimir:v0.0.63@sha256:0a87caa1c3bc983063785e7af005f2d79af072269def2650fb0e34edcc785876
+          image: zot.maix.ovh/mimir:v0.0.68@sha256:8f2b269c95cb4923f45d6aa9a62561ae429b9d05ea144f61e5e114ad80bbb884
           imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 3000
               name: http
@@ -40,6 +48,8 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /data
+            - name: shared-memory
+              mountPath: /dev/shm
           resources:
             requests:
               cpu: 200m
@@ -63,5 +73,9 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: mimir-data-v2
+        - name: shared-memory
+          emptyDir:
+            medium: Memory
+            sizeLimit: 512Mi
       imagePullSecrets:
         - name: zot-pull-secret
