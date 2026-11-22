@@ -15,7 +15,7 @@ spec:
   template:
     metadata:
       annotations:
-        homelab.maix.ovh/config-revision: "2026-11-17-foundation-pro-prompt-cache"
+        homelab.maix.ovh/config-revision: "2026-11-22-foundation-tiers"
       labels:
         app: litellm
     spec:

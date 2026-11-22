@@ -111,7 +111,7 @@ model_list:
       api_base: https://api.featherless.ai/v1
       api_key: os.environ/FEATHERLESS_API_KEY
 
-  - model_name: osiris/foundation-pro
+  - model_name: osiris/foundation-a-air
     litellm_params:
       model: anthropic/claude-haiku-5-5
       api_key: os.environ/ANTHROPIC_API_KEY
@@ -121,10 +121,61 @@ model_list:
         - location: message
           role: system
 
-  - model_name: osiris/foundation-luna
+  - model_name: osiris/foundation-a-pro
+    litellm_params:
+      model: anthropic/claude-sonnet-5-5
+      api_key: os.environ/ANTHROPIC_API_KEY
+      max_budget: 20
+      budget_duration: 30d
+      cache_control_injection_points:
+        - location: message
+          role: system
+
+  - model_name: osiris/foundation-a-max
+    litellm_params:
+      model: anthropic/claude-opus-5-5
+      api_key: os.environ/ANTHROPIC_API_KEY
+      max_budget: 20
+      budget_duration: 30d
+      cache_control_injection_points:
+        - location: message
+          role: system
+
+  - model_name: isis/foundation-a-ultra
+    litellm_params:
+      model: anthropic/claude-fable-5-2
+      api_key: os.environ/ANTHROPIC_API_KEY
+      max_budget: 20
+      budget_duration: 30d
+      cache_control_injection_points:
+        - location: message
+          role: system
+
+  - model_name: osiris/foundation-o-air
     litellm_params:
       model: openai/gpt-6-luna
       api_key: os.environ/OPENAI_API_KEY
+
+  - model_name: osiris/foundation-o-pro
+    litellm_params:
+      model: openai/gpt-6.1-terra
+      api_key: os.environ/OPENAI_API_KEY
+      max_budget: 20
+      budget_duration: 30d
+
+  - model_name: osiris/foundation-o-max
+    litellm_params:
+      model: openai/gpt-6.2-sol
+      api_key: os.environ/OPENAI_API_KEY
+      max_budget: 20
+      budget_duration: 30d
+
+  - model_name: isis/foundation-o-ultra
+    litellm_params:
+      model: openai/gpt-6.2-astra
+      api_key: os.environ/OPENAI_API_KEY
+      max_budget: 20
+      budget_duration: 30d
 
   - model_name: osiris/vision
     model_info:
@@ -276,6 +327,9 @@ general_settings:
         Authorization: "Bearer os.environ/VOX_API_KEY"
 
 router_settings:
+  model_group_alias:
+    osiris/foundation-pro: osiris/foundation-a-air
+    osiris/foundation-luna: osiris/foundation-o-air
   routing_strategy: latency-based-routing
   routing_strategy_args:
     ttl: 300
