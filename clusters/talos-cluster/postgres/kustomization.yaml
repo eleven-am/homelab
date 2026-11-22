@@ -6,6 +6,5 @@ resources:
   - configmap.yaml
   - pvc.yaml
   - deployment.yaml
-  - autoscaling.yaml
   - service.yaml
   - backup-cronjob.yaml
