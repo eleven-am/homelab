@@ -16,6 +16,11 @@ data "helm_template" "cilium" {
     value = "true"
   }
 
+  set {
+    name  = "operator.replicas"
+    value = "1"
+  }
+
   # Enable VXLAN tunnel mode (required for multicast)
   set {
     name  = "routingMode"
