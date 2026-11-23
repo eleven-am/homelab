@@ -18,7 +18,7 @@ spec:
       runtimeClassName: nvidia
       containers:
         - name: frames
-          image: zot.maix.ovh/frames:3c3f3852@sha256:e4f7a2244cff8363104232c5091bf3000d659a4351d9926fbbcb520fd8536623
+          image: zot.maix.ovh/frames:1d69e1ba@sha256:45aa406b763685dbb842aa4d701e4e501c8486cd728f5474a18d2196e0fa7ae0
           resources:
             requests:
               memory: "1Gi"
