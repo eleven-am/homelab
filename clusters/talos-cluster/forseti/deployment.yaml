@@ -1,0 +1,138 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: forseti
+  namespace: forseti
+  labels:
+    app.kubernetes.io/name: forseti
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: forseti
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: forseti
+    spec:
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 40
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: forseti
+          image: zot.maix.ovh/forseti:v0.0.22@sha256:ecb2e363be3c966734eac5699a298e9089d4f257d08442b3080cdf1fb38338ac
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+            - name: realtime
+              containerPort: 3001
+              protocol: TCP
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: HOST
+              value: 0.0.0.0
+            - name: PORT
+              value: "3000"
+            - name: LOG_LEVEL
+              value: info
+            - name: DATABASE_PATH
+              value: /data/forseti.sqlite
+            - name: IDENTITY_ROOT
+              value: /data/identities
+            - name: CAPTURE_ROOT
+              value: /data/captures
+            - name: REALTIME_PORT
+              value: "3001"
+            - name: MAX_LIVE_SESSIONS
+              value: "4"
+            - name: BROWSER_EGRESS_ALLOWLIST
+              value: ""
+            - name: FETCH_TIMEOUT_MILLISECONDS
+              value: "600000"
+            - name: YOUTUBE_MAX_AUDIO_BYTES
+              value: "536870912"
+            - name: YOUTUBE_MAX_CONCURRENT_DOWNLOADS
+              value: "1"
+            - name: BETTER_AUTH_URL
+              value: https://forseti.horus.maix.ovh
+            - name: TRUSTED_ORIGINS
+              value: https://forseti.horus.maix.ovh
+            - name: MCP_RESOURCE_URL
+              value: https://forseti.horus.maix.ovh/mcp
+            - name: PROVIDER_EGRESS_ALLOWLIST
+              value: http://searxng.searxng.svc.cluster.local:8080,http://litellm-service.litellm.svc.cluster.local:4000
+            - name: BETTER_AUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: forseti-runtime
+                  key: BETTER_AUTH_SECRET
+            - name: FORSETI_DATA_ENCRYPTION_KEYS
+              valueFrom:
+                secretKeyRef:
+                  name: forseti-runtime
+                  key: FORSETI_DATA_ENCRYPTION_KEYS
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: runtime
+              mountPath: /run/forseti
+            - name: shared-memory
+              mountPath: /dev/shm
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              cpu: "4"
+              memory: 8Gi
+          startupProbe:
+            httpGet:
+              path: /health/ready
+              port: http
+            failureThreshold: 30
+            periodSeconds: 5
+            timeoutSeconds: 3
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: http
+            periodSeconds: 15
+            timeoutSeconds: 3
+            failureThreshold: 3
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: forseti-data
+        - name: runtime
+          emptyDir:
+            sizeLimit: 4Gi
+        - name: shared-memory
+          emptyDir:
+            medium: Memory
+            sizeLimit: 1Gi
+      imagePullSecrets:
+        - name: zot-pull-secret

@@ -1,0 +1,34 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: forseti
+  namespace: forseti
+  labels:
+    app.kubernetes.io/name: forseti
+spec:
+  parentRefs:
+    - name: envoy-gateway
+      namespace: gateway
+  hostnames:
+    - forseti.horus.maix.ovh
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /realtime
+      timeouts:
+        request: 0s
+        backendRequest: 0s
+      backendRefs:
+        - name: forseti
+          port: 3001
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      timeouts:
+        request: 0s
+        backendRequest: 0s
+      backendRefs:
+        - name: forseti
+          port: 3000
