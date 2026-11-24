@@ -29,7 +29,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: forseti
-          image: zot.maix.ovh/forseti:v0.0.25@sha256:654b5c21b9890d1afa8b4715c5d55a835e9d0ba01c6a2109e6831b6c0a67a0c8
+          image: zot.maix.ovh/forseti:v0.0.26@sha256:42c6018cf113175bad5fd881bcfeb9f8f0137bda9e13121e7e0c5e64f0186b2b
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false
@@ -70,6 +70,12 @@ spec:
               value: "536870912"
             - name: YOUTUBE_MAX_CONCURRENT_DOWNLOADS
               value: "1"
+            - name: DOCLING_URL
+              value: http://docling.docling.svc.cluster.local
+            - name: DOCLING_MAX_CONCURRENCY
+              value: "2"
+            - name: DOCUMENT_MAX_SOURCE_BYTES
+              value: "536870912"
             - name: BETTER_AUTH_URL
               value: https://forseti.horus.maix.ovh
             - name: TRUSTED_ORIGINS
