@@ -29,7 +29,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: forseti
-          image: zot.maix.ovh/forseti:v0.0.24@sha256:d1a6b553472babf8e118b07c0af94f14ef55e2d84cf067a0b8a6cd4b87c739e7
+          image: zot.maix.ovh/forseti:v0.0.25@sha256:654b5c21b9890d1afa8b4715c5d55a835e9d0ba01c6a2109e6831b6c0a67a0c8
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false
