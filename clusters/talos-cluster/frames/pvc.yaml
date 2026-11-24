@@ -27,3 +27,19 @@ spec:
   resources:
     requests:
       storage: 100Mi
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: frames-ent-data
+  namespace: frames
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  storageClassName: blizzard-storage
+  resources:
+    requests:
+      storage: 20Gi
