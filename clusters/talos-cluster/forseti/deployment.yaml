@@ -83,7 +83,7 @@ spec:
             - name: MCP_RESOURCE_URL
               value: https://forseti.horus.maix.ovh/mcp
             - name: PROVIDER_EGRESS_ALLOWLIST
-              value: http://searxng.searxng.svc.cluster.local:8080,http://litellm-service.litellm.svc.cluster.local:4000
+              value: http://searxng.searxng.svc.cluster.local:8080,http://litellm-service.litellm.svc.cluster.local:4000,http://docling.docling.svc.cluster.local
             - name: BETTER_AUTH_SECRET
               valueFrom:
                 secretKeyRef:
