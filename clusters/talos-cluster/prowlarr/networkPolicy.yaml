@@ -24,9 +24,6 @@ spec:
     - from:
         - namespaceSelector:
             matchLabels:
-              kubernetes.io/metadata.name: mimir
-        - namespaceSelector:
-            matchLabels:
               kubernetes.io/metadata.name: searxng
       ports:
         - protocol: TCP
